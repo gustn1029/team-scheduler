@@ -1,8 +1,18 @@
-// 폴더 구조 설정을 위한 테스트 컴포넌트
-const Button = () => {
-  return (
-    <button>Button</button>
-  )
+import { ButtonStyleEnum } from "../../types/enum/ButtonEnum";
+import styles from "./button.module.scss";
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  buttonStyle?: ButtonStyleEnum;
+  type?: "button" | "submit" | "reset" | undefined
 }
 
-export default Button
+const Button = ({ children, buttonStyle = ButtonStyleEnum.Primary, type = "button", ...props }: ButtonProps) => {
+  return (
+    <button type={type} className={`${styles.button} ${styles[buttonStyle]}`} {...props}>
+      {children}
+    </button>
+  );
+};
+
+export default Button;
