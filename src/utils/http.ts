@@ -13,11 +13,14 @@ import {
   where,
 } from "firebase/firestore";
 import { UserData } from "../types";
+
+type CurrentUserData = Omit<UserData, "token">
+
 // 통신 관련
 export const queryClient = new QueryClient();
 
 // 로그인 정보 가져오기
-export const userDataFetch = async (userId: string): Promise<UserData | null> => {
+export const userDataFetch = async (userId: string): Promise<CurrentUserData | null> => {
   if (!userId) {
     throw new Error("userId is required");
   }
@@ -30,7 +33,7 @@ export const userDataFetch = async (userId: string): Promise<UserData | null> =>
     return null;
   }
 
-  return querySnapshot.docs[0].data() as UserData;
+  return querySnapshot.docs[0].data() as CurrentUserData;
 };
 
 // 구글 인증

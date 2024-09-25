@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import { UserData } from '../types';
 
+export type UserInfo = Pick<UserData, "uid" | "token">;
+
 interface UserStore {
-  userData: UserData | null;
-  setUserData: (data: UserData | null) => void;
+  userData: UserInfo | null;
+  setUserData: (data: UserInfo | null) => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
