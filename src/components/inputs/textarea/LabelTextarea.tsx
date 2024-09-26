@@ -1,4 +1,3 @@
-import React from "react";
 import LabelLayout from "../LabelLayout";
 import { LabelInputProps } from "../../../types";
 import { ErrorMessage } from "@hookform/error-message";

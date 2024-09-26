@@ -1,4 +1,3 @@
-import React from "react";
 import { LabelInputProps } from "../../../types";
 import style from "./labelToggle.module.scss";
 
