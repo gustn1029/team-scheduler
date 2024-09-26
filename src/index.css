@@ -74,7 +74,17 @@ button {
   display: none;
 }
 
+.sOnly {
+  width: 0; height: 0;
+  line-height: 0; font-size: 0;
+  position: absolute; left: -9999px; top: -9999px;
+  z-index: -10;
+  overflow: hidden;
+}
+
 #root {
   margin: 0 auto;
+  height: 100vh;
   max-width: 390px;
+  background-color: #FFFEEF;
 }

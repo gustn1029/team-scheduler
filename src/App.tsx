@@ -1,4 +1,5 @@
 import Login from "./components/pages/Login";
+import { SignUp } from "./components/pages/SignUp/SignUp";
 import { useUserData } from "./hooks/useUserDataHook";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <>
       <h1>team-scheduler</h1>
       <Login />
+      <SignUp />
     </>
   );
 }
