@@ -27,9 +27,6 @@ export const SignUp: React.FC = () => {
           placeholder="이메일 주소"
           register={register("userEmail", {
             required: { value: true, message: "필수 입력칸 입니다" },
-            onChange: (e: ChangeEvent<HTMLInputElement>) => {
-              console.log(e.target.value);
-            },
           })}
           watch={watch}
           aria-invalid={
@@ -45,9 +42,6 @@ export const SignUp: React.FC = () => {
           placeholder="비밀번호"
           register={register("userPassword", {
             required: { value: true, message: "필수 입력칸 입니다" },
-            onChange: (e: ChangeEvent<HTMLInputElement>) => {
-              console.log(e.target.value);
-            },
             minLength: {
               value: 8,
               message: "8자리 이상 입력",
