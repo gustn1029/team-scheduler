@@ -1,0 +1,13 @@
+.labelInput {
+    &:focus {
+        border: inherit;
+        outline: none;
+    }
+    &[aria-invalid="true"] {
+        border: 1px solid #F5333F;
+    }
+
+    &[aria-invalid="false"] {
+        border: 1px solid #00B65F;
+    }
+  }
