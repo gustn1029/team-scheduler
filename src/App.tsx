@@ -1,14 +1,20 @@
-import Login from "./components/pages/Login";
-import { SignUp } from "./components/pages/signup/SignUp";
+import Home from "./components/pages/home/Home";
+// import Login from "./components/pages/Login";
+// import { SignUp } from "./components/pages/SignUp/SignUp";
 import { useUserData } from "./hooks/useUserDataHook";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   useUserData();
   return (
     <>
-      <h1>team-scheduler</h1>
-      <Login />
-      <SignUp />
+      {/* <Login />*/}
+      {/* <SignUp />  */}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

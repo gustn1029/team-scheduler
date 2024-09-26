@@ -1,4 +1,3 @@
-import React from "react";
 import LabelLayout from "../LabelLayout";
 import { LabelInputProps } from "../../../types";
 import styles from "./labelInput.module.scss";
@@ -13,10 +12,11 @@ const LabelInput = (props: LabelInputProps) => {
         {...props.register}
         id={props.label}
         placeholder={props.placeholder}
-        className={`${
+        className={`${styles.labelInput} ${
           props.inputClassName ? styles[props.inputClassName] : ""
         }`}
         defaultValue={props.watch(props.label)}
+        aria-invalid={props.ariaInvalid}
       />
       {props.errorView && (
         <ErrorMessage

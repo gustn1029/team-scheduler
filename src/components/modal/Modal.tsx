@@ -1,24 +1,30 @@
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import styles from './modal.module.scss';
+import { useModalStore } from "../../store/useModalStore";
 
 interface ModalProps {
   children: React.ReactNode;
-  onClose: () => void;
 }
 
-const Modal = ({ children, onClose }: ModalProps) => {
+const Modal = ({ children}: ModalProps) => {
+  const { isOpen, closeModal } = useModalStore();
   const dialog = useRef<HTMLDialogElement | null>(null);
+
   useEffect(() => {
     const modal = dialog.current;
-    modal?.showModal();
-
-    return () => {
+    if (isOpen) {
+      modal?.showModal();
+    } else {
       modal?.close();
-    };
-  }, []);
+    }
+  }, [isOpen]);
 
-  const modalEl = document.getElementById("modal") || document.createElement("div");
+  if (!isOpen) {
+    return null;
+  }
+
+  const modalEl =
+    document.getElementById("modal") || document.createElement("div");
 
   if (!document.getElementById("modal")) {
     modalEl.id = "modal";
@@ -26,7 +32,7 @@ const Modal = ({ children, onClose }: ModalProps) => {
   }
 
   return createPortal(
-    <dialog ref={dialog} onClose={onClose}>
+    <dialog ref={dialog} onClose={closeModal}>
       {children}
     </dialog>,
     modalEl
