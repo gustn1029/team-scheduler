@@ -1,0 +1,22 @@
+.button {
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.primary {
+    background-color: #1BC7FC;
+    color: white;
+}
+.danger {
+    background-color: #ef4444;
+    color: white;
+}
+.success {
+    background-color: #34d399;
+    color: white;
+}
+.normal {
+    border: 1px solid #1BC7FC;
+    color: #1BC7FC;
+}

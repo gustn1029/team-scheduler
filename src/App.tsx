@@ -1,11 +1,15 @@
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./utils/http";
+import Login from "./components/pages/Login";
+import { SignUp } from "./components/pages/SignUp/SignUp";
+import { useUserData } from "./hooks/useUserDataHook";
 
 function App() {
+  useUserData();
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <h1>team-scheduler</h1>
-    </QueryClientProvider>
+      <Login />
+      <SignUp />
+    </>
   );
 }
 
