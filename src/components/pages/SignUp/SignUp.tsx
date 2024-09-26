@@ -4,6 +4,7 @@ import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { appAuth } from "../../../firebase/config";
+import styles from "./signup.module.scss";
 
 interface FormData {
   userEmail: string;
@@ -33,7 +34,7 @@ export const SignUp: React.FC = () => {
 
   return (
     <>
-      <img src="../../../assets/images/logo.svg" alt="TimeFlow" />
+      <img src="/src/assets/images/logo.svg" alt="TimeFlow" />
       <h1>TimeFlow</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -49,10 +50,10 @@ export const SignUp: React.FC = () => {
             isSubmitted ? (errors.userEmail ? true : false) : undefined
           }
           children={undefined}
+          error={errors}
+          errorView={errors.userEmail}
         />
-        {errors.userEmail && (
-          <p>{errors.userEmail.message as React.ReactNode}</p>
-        )}
+
         <LabelInput
           type="password"
           label="userPassword"
@@ -69,10 +70,10 @@ export const SignUp: React.FC = () => {
             isSubmitted ? (errors.userEmail ? true : false) : undefined
           }
           children={undefined}
+          error={errors}
+          errorView={errors.userPassword}
         />
-        {errors.userPassword && (
-          <p>{errors.userPassword.message as React.ReactNode}</p>
-        )}
+
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "처리중" : "확인"}
         </Button>
