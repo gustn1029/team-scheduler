@@ -2,18 +2,34 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { appAuth } from "../../../firebase/config";
+
+interface FormData {
+  userEmail: string;
+  userPassword: string;
+}
 
 export const SignUp: React.FC = () => {
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
-
   const {
     handleSubmit,
     register,
     watch,
     formState: { errors, isSubmitted, isSubmitting },
-  } = useForm();
+  } = useForm<FormData>();
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        appAuth,
+        data.userEmail,
+        data.userPassword
+      );
+      console.log("User signed up:", userCredential.user);
+    } catch (error) {
+      console.error("Error signing up", error);
+    }
+  };
 
   return (
     <>
@@ -32,6 +48,7 @@ export const SignUp: React.FC = () => {
           aria-invalid={
             isSubmitted ? (errors.userEmail ? true : false) : undefined
           }
+          children={undefined}
         />
         {errors.userEmail && (
           <p>{errors.userEmail.message as React.ReactNode}</p>
@@ -51,6 +68,7 @@ export const SignUp: React.FC = () => {
           aria-invalid={
             isSubmitted ? (errors.userEmail ? true : false) : undefined
           }
+          children={undefined}
         />
         {errors.userPassword && (
           <p>{errors.userPassword.message as React.ReactNode}</p>
