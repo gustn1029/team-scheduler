@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 import { appAuth } from "../../firebase/config";
 import { userDataFetch } from "../../utils/http";
 
