@@ -1,36 +1,86 @@
-import React, { useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
+import React, { ChangeEvent } from "react";
+// import { useAuth } from "../../../hooks/useAuth";
+import { useForm } from "react-hook-form";
+// import LabelInput from "../../inputs/input/LabelInput";
+import Button from "../../button/Button";
+import LabelInput from "../../inputs/input/LabelInput";
 
 export const SignUp: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { signUp, isLoading, error } = useAuth();
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const { signUp, isLoading, error } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    signUp({ email, password });
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   signUp({ email, password });
+  // };
+
+  // const { register, handleSubmit } = useForm();
+  // const onSubmit = (data: any) => {
+  //   console.log(data);
+  // };
+
+  const onSubmit = (data: any) => {
+    console.log(data);
   };
 
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors, isSubmitted, isSubmitting },
+  } = useForm();
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? "Signing Up..." : "Sign Up"}
-      </button>
-      {error && <p>Error: {error.message}</p>}
-    </form>
+    <>
+      <img src="../../../assets/images/logo.svg" alt="TimeFlow" />
+      <h1>TimeFlow</h1>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <LabelInput
+          type="email"
+          label="userEmail"
+          placeholder="이메일 주소"
+          register={register("userEmail", {
+            required: { value: true, message: "필수 입력칸 입니다" },
+            onChange: (e: ChangeEvent<HTMLInputElement>) => {
+              console.log(e.target.value);
+            },
+          })}
+          watch={watch}
+          aria-invalid={
+            isSubmitted ? (errors.userEmail ? true : false) : undefined
+          }
+        />
+        {errors.userEmail && (
+          <p>{errors.userEmail.message as React.ReactNode}</p>
+        )}
+        <LabelInput
+          type="password"
+          label="userPassword"
+          placeholder="비밀번호"
+          register={register("userPassword", {
+            required: { value: true, message: "필수 입력칸 입니다" },
+            onChange: (e: ChangeEvent<HTMLInputElement>) => {
+              console.log(e.target.value);
+            },
+            minLength: {
+              value: 8,
+              message: "8자리 이상 입력",
+            },
+          })}
+          watch={watch}
+          aria-invalid={
+            isSubmitted ? (errors.userEmail ? true : false) : undefined
+          }
+        />
+        {errors.userPassword && (
+          <p>{errors.userPassword.message as React.ReactNode}</p>
+        )}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "처리중" : "확인"}
+        </Button>
+      </form>
+    </>
   );
 };
