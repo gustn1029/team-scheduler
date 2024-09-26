@@ -1,25 +1,9 @@
 import React, { ChangeEvent } from "react";
-// import { useAuth } from "../../../hooks/useAuth";
 import { useForm } from "react-hook-form";
-// import LabelInput from "../../inputs/input/LabelInput";
 import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
 
 export const SignUp: React.FC = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const { signUp, isLoading, error } = useAuth();
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   signUp({ email, password });
-  // };
-
-  // const { register, handleSubmit } = useForm();
-  // const onSubmit = (data: any) => {
-  //   console.log(data);
-  // };
-
   const onSubmit = (data: any) => {
     console.log(data);
   };
