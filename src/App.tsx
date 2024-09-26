@@ -1,5 +1,5 @@
 import Login from "./components/pages/Login";
-import { SignUp } from "./components/pages/SignUp/SignUp";
+import { SignUp } from "./components/pages/signup/SignUp";
 import { useUserData } from "./hooks/useUserDataHook";
 
 function App() {
