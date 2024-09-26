@@ -1,4 +1,4 @@
-import React from "react";
+
 import LabelLayout from "../LabelLayout";
 import { LabelInputProps } from "../../../types";
 import styles from "./labelInput.module.scss";

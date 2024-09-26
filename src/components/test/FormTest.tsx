@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import { OptionList } from "../../types";
 import { FieldError, useForm } from "react-hook-form";
 import LabelTextarea from "../inputs/textarea/LabelTextarea";

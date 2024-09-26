@@ -1,4 +1,4 @@
-import React from "react";
+
 import styles from "./labelSelect.module.scss";
 import LabelLayout from "../LabelLayout";
 import { LabelSelectOptionsProps } from "../../../types";

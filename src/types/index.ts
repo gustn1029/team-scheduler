@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   FieldError,
   FieldErrors,
@@ -21,7 +21,7 @@ export interface LabelInputProps {
   placeholder?: string;
   register: UseFormRegisterReturn<string>;
   watch: UseFormWatch<any>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   type?: "text" | "number" | "date" | "password" | "file" | "email";
   error?: FieldErrors<FieldValues>;
   isLabelTextHidden?: boolean;
@@ -38,6 +38,6 @@ export interface OptionList {
   value: string | number;
 }
 
-export interface LabelOptionsProps extends LabelInputProps {
+export interface LabelSelectOptionsProps extends LabelInputProps {
   optionList: OptionList[];
 }

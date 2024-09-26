@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import styles from './modal.module.scss';
+// import styles from './modal.module.scss';
 
 interface ModalProps {
   children: React.ReactNode;
