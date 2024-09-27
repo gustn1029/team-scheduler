@@ -1,7 +1,9 @@
 .errorTooltip {
-    position: absolute;
-    left: 0; bottom: 0;
-    color: red;
-    transform: translateY(20px);
-    font-size: 0.8rem;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  color: red;
+  transform: translateY(-3px);
+  transform: translateX(15px);
+  font-size: 0.8rem;
 }
