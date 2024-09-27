@@ -122,7 +122,16 @@
      }
 }
 .eventsWrap {
+  width: 100%;
     .events {
+      width: 100%;
+      line-height: 20px;
+      height: 20px;
         font-size: 0.8rem;
+    }
+
+    .red{
+      background-color: #F5333F;
+      color: white;
     }
 }
