@@ -1,4 +1,3 @@
-
 import {
   FieldError,
   FieldErrors,
@@ -6,6 +5,7 @@ import {
   UseFormRegisterReturn,
   UseFormWatch,
 } from "react-hook-form";
+import { EventTypeEnum } from "./enum/EventTypeEnum";
 
 export interface UserData {
   token: string;
@@ -41,4 +41,31 @@ export interface OptionList {
 
 export interface LabelSelectOptionsProps extends LabelInputProps {
   optionList: OptionList[];
+}
+
+export interface EventsData {
+  title: string;
+  startDate: Date;
+  endDate: Date;
+  eventType: EventTypeEnum;
+  eventColor: string;
+  category: any[];
+  eventMemo: string;
+  todos: any[];
+  like: number;
+  comments: any[];
+  createDate: Date;
+}
+
+export interface Holiday {
+  dateKind: string;
+  dateName: string;
+  isHoliday: string;
+  locdate: number;
+  seq: number;
+}
+
+export interface EventsFetchProps {
+  year: number;
+  month: number
 }
