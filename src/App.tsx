@@ -3,6 +3,7 @@ import Home from "./components/pages/home/Home";
 // import { SignUp } from "./components/pages/SignUp/SignUp";
 import { useUserData } from "./hooks/useUserDataHook";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Profile from './components/pages/Profile';
 
 function App() {
   useUserData();
@@ -13,6 +14,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </>
