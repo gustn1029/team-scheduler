@@ -14,12 +14,20 @@ export const useDateStore = create<DateStore>((set) => ({
     set((state) => {
       const newDate = new Date(state.date);
       newDate.setMonth(newDate.getMonth() - 1);
+      sessionStorage.setItem(
+        "currentDate",
+        JSON.stringify({ date: newDate })
+      );
       return { date: newDate };
     }),
   nextMonth: () =>
     set((state) => {
       const newDate = new Date(state.date);
       newDate.setMonth(newDate.getMonth() + 1);
+      sessionStorage.setItem(
+        "currentDate",
+        JSON.stringify({ date: newDate })
+      );
       return { date: newDate };
     }),
 }));
