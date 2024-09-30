@@ -1,12 +1,12 @@
 .calendarWrap {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .calendar {
-    height: 100%;
-    flex-grow: 1;
+  height: 100%;
+  flex-grow: 1;
 
   :global(.react-calendar__viewContainer) {
     height: 100%;
@@ -15,12 +15,12 @@
   :global(.react-calendar__month-view) {
     height: 100%;
     > div {
+      height: 100%;
+      > div {
+        display: flex;
+        flex-direction: column;
         height: 100%;
-        > div {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+      }
     }
   }
   :global(.react-calendar__month-view__days) {
@@ -29,7 +29,7 @@
 
   :global(.react-calendar__month-view__weekdays) {
     text-align: center;
-    background-color: #F8F8F8;
+    background-color: #f8f8f8;
     font-size: 12px;
     padding: 6px 0;
     /* 토요일 스타일 */
@@ -49,6 +49,10 @@
 
   :global(.react-calendar__month-view__days__day--neighboringMonth) {
     color: #d9d9d9;
+
+    .events {
+      opacity: 0.5;
+    }
   }
 }
 
@@ -63,10 +67,11 @@
 }
 
 .currentDay {
-    abbr {
-        background-color: #263140;
-        color: white;
-    }
+  abbr {
+    background-color: #263140;
+    color: white;
+  }
+  background-color: #F2F7FD;
 }
 
 .navigation {
@@ -107,31 +112,89 @@
 }
 
 :global(.react-calendar__tile) {
-    display: flex;
-    padding: 5px 0;
-    flex-direction: column;
-    gap: 7px;
-    align-items: center;
+  display: flex;
+  padding: 5px 0;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
 
-    abbr {
-        display: block;
-        width: 24px; height: 24px;
-        line-height: 24px;
-        border-radius: 100%;
-        font-size: 12px;
-     }
+  abbr {
+    display: block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 100%;
+    font-size: 12px;
+  }
 }
 .eventsWrap {
   width: 100%;
-    .events {
-      width: 100%;
-      line-height: 20px;
-      height: 20px;
-        font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0.59;
+  gap: 5px;
+  position: relative;
+  overflow: hidden;
+
+  // .plus {
+  //   position: absolute;
+  //   right: 0; bottom: 2px;
+  //   display: block;
+  //   width: 15px; height: 15px;
+  //   background-color: white;
+  //   color: #222;
+  //   padding: 3px;
+  //   border-radius: 3px;
+  //   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+  //   z-index: 100;
+  //   font-size: 0.8rem;
+  // }
+
+  .events {
+    width: 100%;
+    font-size: 0.8rem;
+    height: 20px;
+    position: absolute;
+
+    p {
+      display: block;
+      padding: 3px 5px;
+      line-height: 14px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
-    .red{
-      background-color: #F5333F;
+    &:not(.yellow) {
       color: white;
     }
+  }
+
+  .red {
+    background-color: #f5333f;
+  }
+
+  .blue {
+    background-color: #3fa9f5;
+  }
+  .orange {
+    background-color: #ff9e18;
+  }
+  .gray {
+    background-color: #7ba0c4;
+  }
+  .pink {
+    background-color: #fb91a3;
+  }
+  .mint {
+    background-color: #00b392;
+  }
+  .yellow {
+    background-color: #ffd235;
+    color: #000;
+  }
+
+  .sections {
+    flex-grow: 0.4;
+  }
 }

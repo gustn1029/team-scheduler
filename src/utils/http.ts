@@ -9,7 +9,13 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { EventsData, EventsFetchProps, Holiday, UserData } from "../types";
+import {
+  EventPostData,
+  EventsData,
+  EventsFetchProps,
+  Holiday,
+  UserData,
+} from "../types";
 import { EventTypeEnum } from "../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
 
@@ -17,6 +23,21 @@ type CurrentUserData = Omit<UserData, "token">;
 
 // 통신 관련
 export const queryClient = new QueryClient();
+
+// event 최초 등록 시 필요한 기본 데이터
+const baseEventData: Omit<
+  EventsData,
+  "title" | "startDate" | "endDate" | "eventType"
+> = {
+  eventColor: "red",
+  category: [],
+  eventMemo: "",
+  todos: [],
+  like: 0,
+  comments: [],
+  createDate: new Date(),
+  updateDate: null,
+};
 
 // 로그인 정보 가져오기
 export const userDataFetch = async (
@@ -89,17 +110,6 @@ export const holidayFetch = async () => {
 export const formattedHolidayFetch = async () => {
   const res = await holidayFetch();
 
-  const baseHolidayData: Omit<EventsData, "title" | "startDate" | "endDate"> = {
-    eventType: EventTypeEnum.HOLIDAY,
-    eventColor: "red",
-    category: [],
-    eventMemo: "",
-    todos: [],
-    like: 0,
-    comments: [],
-    createDate: new Date(),
-  };
-
   const specialHolidays = {
     설날: [] as Date[],
     추석: [] as Date[],
@@ -123,7 +133,8 @@ export const formattedHolidayFetch = async () => {
           title: holiday.dateName,
           startDate: date,
           endDate: date,
-          ...baseHolidayData,
+          eventType: EventTypeEnum.HOLIDAY,
+          ...baseEventData,
         };
       })
       .filter((holiday: Holiday): holiday is Holiday => holiday !== null);
@@ -134,7 +145,8 @@ export const formattedHolidayFetch = async () => {
           title: name,
           startDate: dates[0],
           endDate: dates[dates.length - 1],
-          ...baseHolidayData,
+          eventType: EventTypeEnum.HOLIDAY,
+          ...baseEventData,
         });
       }
     });
@@ -154,20 +166,44 @@ export const formattedHolidayFetch = async () => {
 //   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 // };
 
+// events 불러오기
 export const eventsDataFetch = async ({
   year,
   month,
 }: EventsFetchProps): Promise<DocumentData[]> => {
-  const startOfMonth = new Date(year, month, 1);
-  const endOfMonth = new Date(year, month + 1, 0);
+  const monthStart = dayjs(new Date(year, month, 1)).startOf("month");
+  const monthEnd = monthStart.endOf("month");
+
+  const queryStartDate = monthStart.subtract(7, "day").toDate();
+  const queryEndDate = monthEnd.add(7, "day").toDate();
 
   const userCollection = collection(appFireStore, "events");
   const q = query(
     userCollection,
-    where("startDate", ">=", startOfMonth),
-    where("startDate", "<=", endOfMonth)
+    where("startDate", ">=", queryStartDate),
+    where("startDate", "<=", queryEndDate)
   );
   const querySnapshot = await getDocs(q);
 
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
+// events 등록
+export const addEventsFetch = async (data: EventPostData) => {
+  if (!appAuth.currentUser) return;
+
+  const eventCollection = collection(appFireStore, "events");
+
+  const newEvent: EventsData = {
+    ...data,
+    createDate: new Date(),
+    todos: [],
+    category: [],
+    comments: [],
+    like: 0,
+    updateDate: null,
+  };
+
+  const doc = await addDoc(eventCollection, newEvent);
+  return doc.id;
 };
