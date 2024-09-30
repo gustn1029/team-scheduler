@@ -1,43 +1,46 @@
 @font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard-Medium';
-  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-family: "Pretendard-Medium";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard-Bold';
-  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-family: "Pretendard-Bold";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard-Black';
-  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-family: "Pretendard-Black";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
   font-weight: 800;
   font-style: normal;
 }
 
 .fontMedium {
-  font-family: 'Pretendard-Medium';
+  font-family: "Pretendard-Medium";
 }
 
 .fontBold {
-  font-family: 'Pretendard-Bold';
+  font-family: "Pretendard-Bold";
 }
 
 .fontBlack {
-  font-family: 'Pretendard-Black';
+  font-family: "Pretendard-Black";
 }
-
 
 html {
   box-sizing: border-box;
@@ -65,9 +68,8 @@ ul {
 }
 
 body {
-  font-family: "Pretendard-Regular", "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Pretendard-Regular", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   line-height: 1.5;
   font-size: 16px;
 }
@@ -109,9 +111,13 @@ button {
 }
 
 .sOnly {
-  width: 0; height: 0;
-  line-height: 0; font-size: 0;
-  position: absolute; left: -9999px; top: -9999px;
+  width: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
   z-index: -10;
   overflow: hidden;
 }
@@ -120,5 +126,5 @@ button {
   margin: 0 auto;
   height: 100vh;
   max-width: 390px;
-  background-color: #FFFEEF;
+  background-color: #ffffff;
 }
