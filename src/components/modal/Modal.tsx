@@ -6,7 +6,7 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-const Modal = ({ children}: ModalProps) => {
+const Modal = ({ children }: ModalProps) => {
   const { isOpen, closeModal } = useModalStore();
   const dialog = useRef<HTMLDialogElement | null>(null);
 
@@ -17,6 +17,10 @@ const Modal = ({ children}: ModalProps) => {
     } else {
       modal?.close();
     }
+
+    return () => {
+      modal?.close();
+    };
   }, [isOpen]);
 
   if (!isOpen) {
