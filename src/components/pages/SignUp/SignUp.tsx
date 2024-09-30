@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { appAuth } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 import styles from "./signup.module.scss";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
+import { doc, setDoc } from "firebase/firestore";
 
 interface FormData {
   userNickName: string;
@@ -21,6 +22,9 @@ export const SignUp: React.FC = () => {
     watch,
     formState: { errors, isSubmitted, isSubmitting },
     reset,
+    getValues,
+    setError,
+    clearErrors,
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
@@ -30,12 +34,33 @@ export const SignUp: React.FC = () => {
         data.userEmail,
         data.userPassword
       );
+      const uId = userCredential.user.uid;
+      await setDoc(doc(appFireStore, "users", userCredential.user.uid), {
+        uid: uId,
+        email: data.userEmail,
+        nickname: data.userNickName,
+      });
       console.log("User signed up:", userCredential.user);
       reset();
     } catch (error) {
       console.error("Error signing up", error);
     }
   };
+
+  // 비밀번호 값 수정 시 비밀번호 확인 값도 유효성 체크
+  useEffect(() => {
+    if (
+      watch("userPassword") !== watch("userPasswordCheck") &&
+      watch("userPasswordCheck")
+    ) {
+      setError("userPasswordCheck", {
+        type: "password-mismatch",
+        message: "비밀번호가 일치하지 않습니다",
+      });
+    } else {
+      clearErrors("userPasswordCheck");
+    }
+  }, [clearErrors, setError, watch]);
 
   return (
     <main>
@@ -58,11 +83,6 @@ export const SignUp: React.FC = () => {
               placeholder="닉네임 설정"
               register={register("userNickName", {
                 required: { value: true, message: "필수 입력칸 입니다" },
-                pattern: {
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
-                  message:
-                    "(영어,숫자,_,-)@(영어,숫자,-).(2~4자리)영어 형식으로 작성",
-                },
               })}
               watch={watch}
               ariaInvalid={
@@ -81,6 +101,10 @@ export const SignUp: React.FC = () => {
               placeholder="이메일 주소"
               register={register("userEmail", {
                 required: { value: true, message: "필수 입력칸 입니다" },
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
+                  message: "이메일 형식에 맞춰 작성",
+                },
               })}
               watch={watch}
               ariaInvalid={
@@ -103,6 +127,10 @@ export const SignUp: React.FC = () => {
                   value: 8,
                   message: "8자리 이상 입력",
                 },
+                pattern: {
+                  value: /^[a-z0-9!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]+$/,
+                  message: "영어 소문자, 숫자, 특수문자 포함하여 입력",
+                },
               })}
               watch={watch}
               ariaInvalid={
@@ -121,9 +149,13 @@ export const SignUp: React.FC = () => {
               placeholder="비밀번호 확인"
               register={register("userPasswordCheck", {
                 required: { value: true, message: "필수 입력칸 입니다" },
-                minLength: {
-                  value: 8,
-                  message: "8자리 이상 입력",
+                validate: {
+                  matchPassword: (value) => {
+                    const { userPassword } = getValues();
+                    return (
+                      userPassword === value || "비밀번호가 일치하지 않습니다"
+                    );
+                  },
                 },
               })}
               watch={watch}
