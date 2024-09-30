@@ -149,7 +149,8 @@ export const SignUp: React.FC = () => {
                   message: "8자리 이상 입력",
                 },
                 pattern: {
-                  value: /^(?=.[a-z])(?=.\d)(?=.[@$!%#?&])[a-z\d@$!%*#?&]$/,
+                  value:
+                    /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]).*$/,
                   message: "영어 소문자, 숫자, 특수문자 포함하여 입력",
                 },
               })}
@@ -203,9 +204,6 @@ export const SignUp: React.FC = () => {
               isLabelTextHidden={true}
             />
           </div>
-          <p>비밀번호 8자 이상 입력</p>
-          <p>영어 소문자, 숫자, 특수문자 조합</p>
-          <p>비밀번호 일치</p>
           <div className={styles.buttonContainer}>
             <Button
               type="button"
