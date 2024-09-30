@@ -18,15 +18,15 @@ const Home = () => {
     error,
   } = useQuery({
     queryKey: ["events", date],
-    queryFn: () => eventsDataFetch({year: date.getFullYear(), month: date.getMonth()}),
+    queryFn: () =>
+      eventsDataFetch({ year: date.getFullYear(), month: date.getMonth() }),
   });
 
   console.log(events);
 
   const sortedEvents = useMemo(() => {
     if (!events) return [];
-
-    return events
+    const filterAndSortedEvents = events
       .filter((event) => event.startDate.seconds !== event.endDate.seconds)
       .sort((a, b) => {
         if (a.endDate.seconds === b.endDate.seconds) {
@@ -34,6 +34,15 @@ const Home = () => {
         }
         return b.endDate.seconds - a.endDate.seconds;
       });
+
+    const eventsMap = new Map();
+    [...filterAndSortedEvents, ...events].forEach((event) => {
+      eventsMap.set(event.id, event);
+    })
+
+    const sortedEvents = Array.from(eventsMap.values());
+
+    return sortedEvents;
   }, [events]);
 
   const tileClassName = ({
@@ -69,8 +78,8 @@ const Home = () => {
   };
 
   const getCenterDate = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
-    const diffDays = endDate.diff(startDate, 'day');
-    return startDate.add(Math.floor(diffDays / 2), 'day');
+    const diffDays = endDate.diff(startDate, "day");
+    return startDate.add(Math.floor(diffDays / 2), "day");
   };
 
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
@@ -80,8 +89,12 @@ const Home = () => {
     const eventsForDate = sortedEvents.filter((event) => {
       const startDate = dayjs.unix(event.startDate.seconds);
       const endDate = dayjs.unix(event.endDate.seconds);
-      return tileDate.isSame(startDate, 'day') || tileDate.isSame(endDate, 'day') || 
-             (tileDate.isAfter(startDate, 'day') && tileDate.isBefore(endDate, 'day'));
+      return (
+        tileDate.isSame(startDate, "day") ||
+        tileDate.isSame(endDate, "day") ||
+        (tileDate.isAfter(startDate, "day") &&
+          tileDate.isBefore(endDate, "day"))
+      );
     });
 
     if (eventsForDate.length === 0) return null;
@@ -92,16 +105,21 @@ const Home = () => {
           const startDate = dayjs.unix(event.startDate.seconds);
           const endDate = dayjs.unix(event.endDate.seconds);
           const centerDate = getCenterDate(startDate, endDate);
-          const isCenter = tileDate.isSame(centerDate, 'day');
+          const isCenter = tileDate.isSame(centerDate, "day");
 
           return (
-            <div key={event.id} className={`${styles.events} ${styles[event.eventColor]}`}>
-              {isCenter && <span className={styles.eventTitle}>{event.title}</span>}
+            <div
+              key={event.id}
+              className={`${styles.events} ${styles[event.eventColor]}`}
+            >
+              {isCenter && (
+                <span className={styles.eventTitle}>{event.title}</span>
+              )}
             </div>
           );
         })}
       </div>
-    )
+    );
   };
 
   if (isLoading) {
