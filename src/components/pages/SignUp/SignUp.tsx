@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form";
 import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { appAuth, appFireStore } from "../../../firebase/config";
+import { appAuth, appFireStore, appStorage } from "../../../firebase/config";
 import styles from "./signup.module.scss";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 
 interface FormData {
   userNickName: string;
@@ -27,6 +28,20 @@ export const SignUp: React.FC = () => {
     clearErrors,
   } = useForm<FormData>();
 
+  async function getImageUrl(): Promise<string> {
+    const imagePath =
+      "gs://timeflow-e3a51.appspot.com/profileImages/profile.png";
+    const imageRef = ref(appStorage, imagePath);
+
+    try {
+      const url = await getDownloadURL(imageRef);
+      return url;
+    } catch (error) {
+      console.error("Error getting download URL: ", error);
+      throw error;
+    }
+  }
+
   const onSubmit = async (data: FormData) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -34,11 +49,14 @@ export const SignUp: React.FC = () => {
         data.userEmail,
         data.userPassword
       );
-      const uId = userCredential.user.uid;
+      const userId = userCredential.user.uid;
+      const userProfileImg = await getImageUrl();
+
       await setDoc(doc(appFireStore, "users", userCredential.user.uid), {
-        uid: uId,
+        id: userId,
         email: data.userEmail,
         nickname: data.userNickName,
+        profileImg: userProfileImg,
       });
       console.log("User signed up:", userCredential.user);
       reset();
