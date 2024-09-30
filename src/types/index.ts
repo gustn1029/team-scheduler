@@ -44,9 +44,10 @@ export interface LabelSelectOptionsProps extends LabelInputProps {
 }
 
 export interface EventsData {
+  id?:string;
   title: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: any;
+  endDate: any;
   eventType: EventTypeEnum;
   eventColor: string;
   category: any[];
@@ -55,6 +56,7 @@ export interface EventsData {
   like: number;
   comments: any[];
   createDate: Date;
+  updateDate: Date | null
 }
 
 export interface Holiday {
@@ -69,3 +71,5 @@ export interface EventsFetchProps {
   year: number;
   month: number
 }
+
+export type EventPostData = Omit<EventsData, "category" | "todos" | "comments" | "like"| "createDate">
