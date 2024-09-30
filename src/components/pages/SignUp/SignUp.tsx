@@ -8,6 +8,7 @@ import styles from "./signup.module.scss";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   userNickName: string;
@@ -42,6 +43,8 @@ export const SignUp: React.FC = () => {
     }
   }
 
+  const navigate = useNavigate();
+
   const onSubmit = async (data: FormData) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -58,7 +61,7 @@ export const SignUp: React.FC = () => {
         nickname: data.userNickName,
         profileImg: userProfileImg,
       });
-      console.log("User signed up:", userCredential.user);
+      navigate("/");
       reset();
     } catch (error) {
       console.error("Error signing up", error);
