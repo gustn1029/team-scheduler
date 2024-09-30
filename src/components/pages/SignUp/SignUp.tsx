@@ -149,17 +149,31 @@ export const SignUp: React.FC = () => {
                   message: "8자리 이상 입력",
                 },
                 pattern: {
-                  value: /^[a-z0-9!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]+$/,
+                  value: /^(?=.[a-z])(?=.\d)(?=.[@$!%#?&])[a-z\d@$!%*#?&]$/,
                   message: "영어 소문자, 숫자, 특수문자 포함하여 입력",
                 },
               })}
               watch={watch}
               ariaInvalid={
-                isSubmitted ? (errors.userEmail ? true : false) : undefined
+                isSubmitted ? (errors.userPassword ? true : false) : undefined
               }
               children={undefined}
               error={errors}
-              errorView={errors.userPassword}
+              errorView={
+                errors.userPassword && (
+                  <ul>
+                    {errors.userPassword.type === "required" && (
+                      <li>{errors.userPassword.message}</li>
+                    )}
+                    {errors.userPassword.type === "minLength" && (
+                      <li>{errors.userPassword.message}</li>
+                    )}
+                    {errors.userPassword.type === "pattern" && (
+                      <li>{errors.userPassword.message}</li>
+                    )}
+                  </ul>
+                )
+              }
               isLabelTextHidden={true}
             />
           </div>
