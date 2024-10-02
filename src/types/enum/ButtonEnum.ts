@@ -4,4 +4,5 @@ export enum ButtonStyleEnum {
   Success = "success",
   Normal = "normal",
   Cancel = "cancel",
+  NormalWhite = "normalWhite",
 }
