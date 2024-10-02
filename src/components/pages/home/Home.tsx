@@ -5,12 +5,17 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useQuery } from "@tanstack/react-query";
 import { eventsDataFetch, queryClient } from "../../../utils/http";
-import { Fragment, useEffect, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { EventsData } from "../../../types";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-// import { FaPlus } from "react-icons/fa";
+import CreateModal from "../../createModal/CreateModal";
+import { useNavigate } from "react-router-dom";
+import { FaBars } from "react-icons/fa6";
+import IconButton from "../../button/iconButton/IconButton";
+import { useViewNavStore } from "../../../store/useViewNavStore";
+import Navigation from "../../navigation/Navigation";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -18,6 +23,9 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 
 const Home = () => {
+  const [clickEventDate, setClickEventDate] = useState<Date | null>(null);
+  const navigate = useNavigate();
+  const {isView, toggleIsView} = useViewNavStore();
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
   const {
     data: events,
@@ -62,11 +70,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 14).getTime() / 1000,
+            seconds: new Date(2024, 9, 14).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 16).getTime() / 1000,
+            seconds: new Date(2024, 9, 16).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -83,11 +91,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 16).getTime() / 1000,
+            seconds: new Date(2024, 9, 16).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 21).getTime() / 1000,
+            seconds: new Date(2024, 9, 21).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -104,11 +112,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 14).getTime() / 1000,
+            seconds: new Date(2024, 9, 14).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 14).getTime() / 1000,
+            seconds: new Date(2024, 9, 14).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -125,11 +133,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 19).getTime() / 1000,
+            seconds: new Date(2024, 9, 19).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 19).getTime() / 1000,
+            seconds: new Date(2024, 9, 19).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -146,11 +154,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 17).getTime() / 1000,
+            seconds: new Date(2024, 9, 17).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 17).getTime() / 1000,
+            seconds: new Date(2024, 9, 17).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -167,11 +175,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 18).getTime() / 1000,
+            seconds: new Date(2024, 9, 18).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 18).getTime() / 1000,
+            seconds: new Date(2024, 9, 18).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -188,11 +196,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 19).getTime() / 1000,
+            seconds: new Date(2024, 9, 19).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 19).getTime() / 1000,
+            seconds: new Date(2024, 9, 19).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -209,32 +217,11 @@ const Home = () => {
           eventType: EventTypeEnum.EVENTS,
           eventMemo: "",
           startDate: {
-            seconds: new Date(2024, 8, 15).getTime() / 1000,
+            seconds: new Date(2024, 9, 15).getTime() / 1000,
             nanoseconds: 0,
           },
           endDate: {
-            seconds: new Date(2024, 8, 15).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          todos: [],
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "10",
-          title: "event10",
-          eventColor: "yellow",
-          eventType: EventTypeEnum.SECTION,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 8, 17).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 8, 22).getTime() / 1000,
+            seconds: new Date(2024, 9, 15).getTime() / 1000,
             nanoseconds: 0,
           },
           createDate: new Date(),
@@ -246,8 +233,6 @@ const Home = () => {
         },
       ]
     : [];
-
-  console.log(DUMMY_DATA);
 
   useEffect(() => {
     const sessionSavedDate = sessionStorage.getItem("currentDate");
@@ -340,6 +325,10 @@ const Home = () => {
       return styles.sunday;
     }
 
+    if (tileDate.isSame(dayjs(clickEventDate))) {
+      return styles.clickedDay;
+    }
+
     return "";
   };
 
@@ -353,6 +342,53 @@ const Home = () => {
     return date.getDate().toString();
   };
 
+  const getCenterDate = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
+    const diffDays = endDate.diff(startDate, "day");
+    return startDate.add(Math.floor(diffDays / 2), "day");
+  };
+
+  const tileCheckDate = (tileDate: dayjs.Dayjs, event: EventsData) => {
+    const startDate = dayjs.unix(event.startDate.seconds);
+    const isStart = tileDate.isSame(startDate, "day");
+    const isSunday = tileDate.day() === 0;
+    const isFirstSunday =
+      isSunday &&
+      tileDate.isSameOrAfter(startDate, "day") &&
+      (tileDate.isSame(startDate, "day") || tileDate.day(0).isAfter(startDate));
+    const endDate = dayjs.unix(event.endDate.seconds);
+    const isEnd = tileDate.isSame(endDate, "day");
+    const centerDate = getCenterDate(startDate, endDate);
+    const isCenter = tileDate.isSame(centerDate, "day");
+
+    return {
+      startDate,
+      endDate,
+      centerDate,
+      isStart,
+      isEnd,
+      isSunday,
+      isFirstSunday,
+      isCenter,
+    };
+  };
+
+  const handleClickDate = (date: Date) => {
+    if (dayjs(date).isSame(dayjs(clickEventDate))) {
+      setClickEventDate(null);
+      console.log("same", date);
+    } else {
+      console.log("date", date);
+      console.log("clickEventDate", clickEventDate);
+      setClickEventDate(date);
+    }
+  };
+
+  const handleNavigateToDetail = (date: Date) => {
+    const seconds = Math.floor(date.getTime() / 1000);
+
+    return navigate(`/detail-list?date=${seconds}`);
+  };
+
   const TileContent = ({
     date,
     events,
@@ -360,21 +396,7 @@ const Home = () => {
     date: Date;
     events: EventsData[];
   }) => {
-    const filteredTypeEvents = events.filter(
-      (el) => el.eventType !== EventTypeEnum.SECTION
-    );
-    const assignedEvents = useMemo(
-      () => sortAndAssignRows(filteredTypeEvents),
-      [filteredTypeEvents]
-    );
-
-    // const filteredSectionEvents = events.filter(
-    //   (el) => el.eventType === EventTypeEnum.SECTION
-    // );
-    // const sectionEvents = useMemo(
-    //   () => sortAndAssignRows(filteredSectionEvents),
-    //   [filteredSectionEvents]
-    // );
+    const assignedEvents = useMemo(() => sortAndAssignRows(events), [events]);
 
     const tileDate = dayjs(date);
     const eventsForTile = assignedEvents.filter(
@@ -383,26 +405,31 @@ const Home = () => {
         tileDate.isSameOrBefore(dayjs.unix(event.endDate.seconds), "day")
     );
 
-    console.log(eventsForTile);
-
     return (
-      <>
+      <div
+        className={`${styles.contentWrap}`}
+        onClick={
+          eventsForTile.length === 0
+            ? () => handleClickDate(date)
+            : () => handleNavigateToDetail(date)
+        }
+      >
+        <span
+          className={`${styles.tileDate}`}
+          onClick={() => handleClickDate(date)}
+        >
+          {tileDate.date()}
+        </span>
         <div className={`${styles.eventsWrap}`}>
           {eventsForTile.map((event) => {
-            const startDate = dayjs.unix(event.startDate.seconds);
-            const isStart = tileDate.isSame(startDate, "day");
-            const isSunday = tileDate.day() === 0;
-            const isFirstSunday =
-              isSunday &&
-              tileDate.isSameOrAfter(startDate, "day") &&
-              (tileDate.isSame(startDate, "day") ||
-                tileDate.day(0).isAfter(startDate));
+            const { isStart, isFirstSunday } = tileCheckDate(tileDate, event);
             return (
               <Fragment key={event.id}>
                 <div
                   className={`${styles.events} ${styles[event.eventColor]}`}
                   style={{
                     top: `${event.row * 25}px`,
+                    display: `${event.row > 2 && "none"}`,
                     zIndex: 10 - event.row,
                   }}
                 >
@@ -414,13 +441,9 @@ const Home = () => {
               </Fragment>
             );
           })}
+          {dayjs(date).isSame(dayjs(clickEventDate)) && <CreateModal />}
         </div>
-        {/* <div>
-          {sectionEvents.map((el) => {
-            return <div key={`${el.title}_section`} className={`${styles.sections}`}>{el.title}</div>
-          })}
-        </div> */}
-      </>
+      </div>
     );
   };
 
@@ -434,29 +457,32 @@ const Home = () => {
 
   return (
     <div className={styles.calendarWrap}>
-      <div className={styles.navigation}>
-        <span className={styles.currentDate}>{formatDate(date)}</span>
-        <div className={styles.btnWrap}>
-          <button
-            className={`${styles.btn} ${styles.prevBtn}`}
-            onClick={prevMonth}
-          >
-            이전
-          </button>
-          <button
-            className={`${styles.btn} ${styles.nextBtn}`}
-            onClick={nextMonth}
-          >
-            다음
-          </button>
+      {isView && <Navigation />}
+      <section>
+        <div className={styles.navigation}>
+          <IconButton icon={<FaBars />} onClick={toggleIsView} />
+          <span className={styles.currentDate}>{formatDate(date)}</span>
+          <div className={styles.btnWrap}>
+            <button
+              className={`${styles.btn} ${styles.prevBtn}`}
+              onClick={prevMonth}
+            >
+              이전
+            </button>
+            <button
+              className={`${styles.btn} ${styles.nextBtn}`}
+              onClick={nextMonth}
+            >
+              다음
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
       <Calendar
         className={styles.calendar}
         next2Label={null}
         prev2Label={null}
-        value={date}
-        onChange={(newDate) => setDate(newDate as Date)}
+        activeStartDate={date}
         tileClassName={tileClassName}
         tileContent={({ date }) => (
           <TileContent date={date} events={DUMMY_DATA as EventsData[]} />

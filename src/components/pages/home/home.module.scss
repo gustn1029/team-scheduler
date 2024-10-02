@@ -7,6 +7,7 @@
 .calendar {
   height: 100%;
   flex-grow: 1;
+  font-size: 0.75rem;
 
   :global(.react-calendar__viewContainer) {
     height: 100%;
@@ -23,6 +24,7 @@
       }
     }
   }
+
   :global(.react-calendar__month-view__days) {
     flex-grow: 1;
   }
@@ -30,7 +32,6 @@
   :global(.react-calendar__month-view__weekdays) {
     text-align: center;
     background-color: #f8f8f8;
-    font-size: 12px;
     padding: 6px 0;
     /* 토요일 스타일 */
     :global(.react-calendar__month-view__weekdays__weekday:nth-child(7n)) {
@@ -50,6 +51,7 @@
   :global(.react-calendar__month-view__days__day--neighboringMonth) {
     color: #d9d9d9;
 
+    .tileDate,
     .events {
       opacity: 0.5;
     }
@@ -64,14 +66,18 @@
 /* 일요일 스타일 */
 .saturday {
   color: #3b82f6;
+
+  aside {
+    right: 0%;
+  }
 }
 
 .currentDay {
-  abbr {
+  .tileDate {
     background-color: #263140;
     color: white;
   }
-  background-color: #F2F7FD;
+  background-color: #f2f7fd;
 }
 
 .navigation {
@@ -117,24 +123,43 @@
   flex-direction: column;
   gap: 7px;
   align-items: center;
+  overflow: initial !important;
+
+  .contentWrap {
+    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+  }
 
   abbr {
+    display: none;
+  }
+  .tileDate {
     display: block;
     width: 24px;
     height: 24px;
     line-height: 24px;
     border-radius: 100%;
-    font-size: 12px;
+  }
+}
+
+:global(.react-calendar__tile--active) {
+  background-color: #f2f7fd;
+
+  .tileDate {
+    border: 1px solid #263140;
   }
 }
 .eventsWrap {
   width: 100%;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  flex-grow: 0.59;
   gap: 5px;
   position: relative;
-  overflow: hidden;
 
   // .plus {
   //   position: absolute;
@@ -193,8 +218,22 @@
     background-color: #ffd235;
     color: #000;
   }
+}
 
-  .sections {
-    flex-grow: 0.4;
+.sections {
+  width: 100%;
+  height: 25px;
+  overflow: hidden;
+  position: relative;
+
+  p {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+  }
+  .startSection {
+  }
+  .endSection {
   }
 }
