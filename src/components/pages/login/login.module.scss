@@ -1,0 +1,81 @@
+main {
+  width: 100%;
+}
+.logoContainer {
+  display: flex;
+  justify-content: center;
+}
+.logo {
+  margin-top: 125px;
+  margin-bottom: 8px;
+}
+.h1 {
+  font-weight: 800;
+  font-size: 36px;
+  color: #3fa9f5;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 21px;
+}
+.formContainer {
+  display: flex;
+  justify-content: center;
+  max-width: 300px;
+  margin: 0 auto;
+  border-radius: 10px;
+  background-color: #f8fcff;
+  box-shadow: 0px 2px 2px 0px #00000040;
+  .formGroup {
+    h2 {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      margin-top: 30px;
+    }
+    .inputContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      & input {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+        width: 240px;
+        height: 47px;
+        border-radius: 10px;
+      }
+    }
+    .buttonContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      & button {
+        border-radius: 10px;
+        font-weight: 400;
+        font-size: 14px;
+      }
+      .lostPw {
+        color: #333333;
+        font-weight: 400;
+        font-size: 12px;
+        margin-bottom: 20px;
+      }
+      :nth-child(3) {
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+      :nth-child(4) {
+        width: 39px;
+        height: 39px;
+        border: 1px solid #747775;
+        border-radius: 90px;
+        margin-left: 100px;
+        margin-bottom: 20px;
+        & img {
+          margin-top: 3px;
+        }
+      }
+    }
+  }
+}
