@@ -1,6 +1,5 @@
 export enum EventTypeEnum {
     EVENTS,
-    SECTION,
+    TODO,
     HOLIDAY,
-    TODO
 }
