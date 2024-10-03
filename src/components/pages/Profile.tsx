@@ -5,13 +5,21 @@ import React, { useState } from "react";
 import styles from "./Profile.module.scss";
 import { IoClose } from "react-icons/io5";
 
+
 const Profile = () => {
-    <IoClose />
-  const [isEditing, setIsEditing] = useState(false);
   
+  const [isEditing, setIsEditing] = useState(false);
+
   const user = {
-    data:{imageUrl:"https://images-ext-1.discordapp.net/external/uXFrIt1cuaVkVlmXVKhsSaGIlf5qekFS5QXO5tJBPPk/%3Frnd%3D20230712163021/https/image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?format=webp", nickname:"닉네임", email:"abc@abc.com", uid:"123456789", name:"David" }
-  }
+    data: {
+      imageUrl:
+        "https://images-ext-1.discordapp.net/external/uXFrIt1cuaVkVlmXVKhsSaGIlf5qekFS5QXO5tJBPPk/%3Frnd%3D20230712163021/https/image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?format=webp",
+      nickname: "닉네임",
+      email: "abc@abc.com",
+      uid: "123456789",
+      name: "David",
+    },
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -24,30 +32,15 @@ const Profile = () => {
   console.log(user.data);
   return (
     <div className={styles.profileContainer}>
-      <div className={styles.header}>
-        <h2 className={styles.headerTitle}>계정 관리</h2>
-        <button className={styles.deleteAccount}>회원 탈퇴</button>
-      </div>
-      <div className={styles.profileImage}>
-        <img src={user.data?.imageUrl} alt="Profile" />
-      </div>
-      <div className={styles.profileInfo}>
-        <p className={styles.nickname}>{user.data?.nickname}</p>
-        <p className={styles.email}>{user.data?.email}</p>
-      </div>
-      <button className={styles.editButton} onClick={handleEditClick}>
-        프로필 편집
-      </button>
-
-      {isEditing && (
-        <div className={styles.modal}>
+      {isEditing ? (
+        <div>
           <div className={styles.modalContent}>
             <span className={styles.close} onClick={handleCloseModal}>
               &times;
             </span>
-            <h3>프로필 편집</h3>
+            <h3 className={styles.editTitle}>프로필 편집</h3>
             <div className={styles.profileImage}>
-              <img src={user.data?.imageUrl} alt="Profile" />
+              <img src={user.data?.imageUrl} alt="프로필 사진" />
             </div>
             <form>
               <label>별명</label>
@@ -63,7 +56,25 @@ const Profile = () => {
             </form>
           </div>
         </div>
+      ) : (
+        <>
+          <div className={styles.header}>
+          <IoClose className = {styles.xButton} />
+            <h2 className={styles.headerTitle}>계정 관리</h2>
+            <button className={styles.deleteAccount}>회원탈퇴</button>
+          </div>
+          <div className={styles.profileImage}>
+            <img src={user.data?.imageUrl} alt="Profile" />
+          </div>
+          <div className={styles.profileInfo}>
+            <p className={styles.nickname}>{user.data?.nickname}</p>
+            <p className={styles.email}>{user.data?.email}</p>
+          </div>
+        </>
       )}
+      <button className={styles.editButton} onClick={handleEditClick}>
+        프로필 편집
+      </button>
     </div>
   );
 };
