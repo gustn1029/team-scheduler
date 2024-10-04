@@ -4,10 +4,13 @@ import { userDataFetch } from "../../utils/http";
 import React, { useState } from "react";
 import styles from "./Profile.module.scss";
 import { IoClose } from "react-icons/io5";
-
+import LabelInput from "../inputs/input/LabelInput";
+import { FieldError, useForm } from "react-hook-form";
+import Button from "../button/Button";
+import { ButtonStyleEnum } from "../../types/enum/ButtonEnum";
 
 const Profile = () => {
-  
+  const {register, watch, formState:{errors, isSubmitted}, handleSubmit} = useForm();
   const [isEditing, setIsEditing] = useState(false);
 
   const user = {
@@ -25,6 +28,10 @@ const Profile = () => {
     setIsEditing(true);
   };
 
+  const onSubmit = (data:any) => {
+    console.log(data)
+
+  };
   const handleCloseModal = () => {
     setIsEditing(false);
   };
@@ -35,23 +42,40 @@ const Profile = () => {
       {isEditing ? (
         <div>
           <div className={styles.modalContent}>
-            <span className={styles.close} onClick={handleCloseModal}>
-              &times;
-            </span>
-            <h3 className={styles.editTitle}>프로필 편집</h3>
+            <div className={styles.header}>
+            <IoClose className = {styles.xButton} onClick={handleCloseModal}>
+                  &times;
+                  </IoClose>
+                <h3 className={styles.editTitle}>프로필 편집</h3>
+            </div>
             <div className={styles.profileImage}>
               <img src={user.data?.imageUrl} alt="프로필 사진" />
             </div>
-            <form>
-              <label>별명</label>
-              <input type="text" defaultValue={user.data?.nickname} />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <LabelInput
+            labelClassName={styles.label}
+            type="text"
+            label="별명"
+            placeholder="별명을 입력하세요."
+            register={register("userNickName", {
+              required: { value: true, message: "별명을 입력하세요." },
+            })}
+            watch={watch}
+            ariaInvalid={
+              isSubmitted ? (errors.userNickName ? true : false) : undefined
+            }
+            error={errors}
+            errorView={errors.userNickName as FieldError}
+          />
               <label>이메일</label>
               <input type="email" defaultValue={user.data?.email} />
               <div className={styles.modalButtons}>
-                <button type="button" onClick={handleCloseModal}>
+                <Button type="button" buttonStyle={ButtonStyleEnum.Cancel} onClick={handleCloseModal}>
                   취소
-                </button>
-                <button type="submit">확인</button>
+                </Button>
+                <Button type="submit" buttonStyle={ButtonStyleEnum.Primary} onClick={handleEditClick}>
+                  확인
+                  </Button>
               </div>
             </form>
           </div>
@@ -70,11 +94,9 @@ const Profile = () => {
             <p className={styles.nickname}>{user.data?.nickname}</p>
             <p className={styles.email}>{user.data?.email}</p>
           </div>
+          <Button buttonStyle={ButtonStyleEnum.NormalWhite} onClick={handleEditClick}>프로필 편집</Button>
         </>
       )}
-      <button className={styles.editButton} onClick={handleEditClick}>
-        프로필 편집
-      </button>
     </div>
   );
 };
