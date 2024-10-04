@@ -6,12 +6,16 @@ import Profile from "./components/pages/Profile";
 import Create from "./components/pages/create/Create";
 import { SignUp } from "./components/pages/signup/SignUp";
 import FindPassword from "./components/pages/findpassword/FindPassword";
+import NotFound from "./components/pages/notFound/NotFound";
+import Loader from "./components/loader/Loader";
+import ToastProvider from "./components/toast/ToastProvider";
 
 function App() {
   useUserData();
   return (
     <>
       <BrowserRouter>
+        <Loader />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
@@ -19,7 +23,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/findpassword" element={<FindPassword />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
+        <ToastProvider />
       </BrowserRouter>
     </>
   );
