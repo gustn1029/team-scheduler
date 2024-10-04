@@ -15,7 +15,7 @@ main {
   color: #3fa9f5;
   display: flex;
   justify-content: center;
-  margin-bottom: 136px;
+  margin-bottom: 117px;
 }
 .formContainer {
   max-width: 300px;
@@ -45,6 +45,12 @@ main {
         border-radius: 10px;
       }
     }
+    .errorMessage {
+      color: #ff0000;
+      font-weight: 400;
+      font-size: 12px;
+      margin-left: 45px;
+    }
     .buttonContainer {
       display: flex;
       flex-direction: column;
@@ -54,23 +60,18 @@ main {
         font-weight: 400;
         font-size: 14px;
       }
-      .lostPw {
-        color: #333333;
-        font-weight: 400;
-        font-size: 12px;
-        margin-bottom: 20px;
-      }
-      :nth-child(2) {
+      :nth-child(1) {
         margin-left: 30px;
         margin-right: 30px;
+        margin-top: 20px;
       }
-      :nth-child(3) {
+      :nth-child(2) {
         margin-top: 10px;
         margin-bottom: 20px;
         margin-left: 30px;
         margin-right: 30px;
       }
-      :nth-child(4) {
+      :nth-child(3) {
         width: 39px;
         height: 39px;
         border: 1px solid #747775;
@@ -79,7 +80,16 @@ main {
         margin-bottom: 20px;
         & img {
           margin-top: 3px;
+          margin-left: 0;
+          margin-right: 0;
         }
+        margin-bottom: 15px;
+      }
+      .lostPw {
+        color: #333333;
+        font-weight: 400;
+        font-size: 12px;
+        margin-bottom: 20px;
       }
     }
   }

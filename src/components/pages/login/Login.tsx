@@ -6,9 +6,9 @@ import { useForm } from "react-hook-form";
 import Button from "../../button/Button";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { appAuth } from "../../../firebase/config";
 import { useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
+import { appAuth } from "../../../firebase/config";
 
 interface FormData {
   userEmail: string;
@@ -16,11 +16,13 @@ interface FormData {
 }
 
 const Login: React.FC = () => {
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const {
     handleSubmit,
     register,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting, isSubmitted },
   } = useForm<FormData>();
 
   const navigate = useNavigate();
@@ -33,11 +35,14 @@ const Login: React.FC = () => {
         data.userPassword
       );
       console.log("로그인 완료");
+      setLoginError(null);
       navigate("/");
     } catch (error) {
       console.error("로그인 실패:", error);
+      setLoginError("이메일/비밀번호가 일치하지 않습니다.");
     }
   };
+
   const googleLoginMutation = useMutation({
     mutationFn: googleAuthFetch,
     onSuccess: async () => {
@@ -97,7 +102,11 @@ const Login: React.FC = () => {
                 required: { value: true, message: "필수 입력칸 입니다" },
               })}
               watch={watch}
+              ariaInvalid={
+                isSubmitted ? (errors.userEmail ? true : false) : undefined
+              }
               error={errors}
+              errorView={errors.userEmail}
               isLabelTextHidden={true}
             />
             <LabelInput
@@ -108,20 +117,22 @@ const Login: React.FC = () => {
                 required: { value: true, message: "필수 입력칸 입니다" },
               })}
               watch={watch}
+              ariaInvalid={
+                isSubmitted ? (errors.userPassword ? true : false) : undefined
+              }
               error={errors}
+              errorView={errors.userPassword}
               isLabelTextHidden={true}
             />
           </div>
+          {loginError && <p className={styles.errorMessage}>{loginError}</p>}
           <div className={styles.buttonContainer}>
             <Button
-              onClick={handleNavigateToFindPassword}
-              type="button"
-              className={styles.lostPw}
+              type="submit"
+              buttonStyle={ButtonStyleEnum.Normal}
+              disabled={isSubmitting}
             >
-              비밀번호를 분실하셨나요?
-            </Button>
-            <Button type="submit" buttonStyle={ButtonStyleEnum.Normal}>
-              로그인
+              {isSubmitting ? "처리중" : "로그인"}
             </Button>
             <Button
               onClick={handleNavigateToSignUp}
@@ -133,6 +144,13 @@ const Login: React.FC = () => {
             <button onClick={handleGoogleSignIn}>
               <img src="/src/assets/images/googleLogo.svg" alt="구글 로그인" />
             </button>
+            <Button
+              onClick={handleNavigateToFindPassword}
+              type="button"
+              className={styles.lostPw}
+            >
+              비밀번호를 분실하셨나요?
+            </Button>
           </div>
         </form>
       </div>
