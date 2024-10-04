@@ -1,4 +1,4 @@
-import { QueryClient } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { appAuth, appFireStore } from "../firebase/config";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import {
@@ -18,11 +18,24 @@ import {
 } from "../types";
 import { EventTypeEnum } from "../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
+import { handleError } from "./ErrorHandler";
 
 type CurrentUserData = Omit<UserData, "token">;
 
 // 통신 관련
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: handleError,
+  }),
+  mutationCache: new MutationCache({
+    onError: handleError,
+  }),
+  defaultOptions: {
+    queries: {
+      retry: 1,
+    },
+  },
+});
 
 // event 최초 등록 시 필요한 기본 데이터
 const baseEventData: Omit<

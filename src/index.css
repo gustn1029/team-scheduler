@@ -72,6 +72,7 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   line-height: 1.5;
   font-size: 16px;
+  background-color: #f0f0f0;
 }
 
 ol,
@@ -127,4 +128,6 @@ button {
   height: 100vh;
   max-width: 390px;
   background-color: #ffffff;
+  overflow: hidden;
+  position: relative;
 }

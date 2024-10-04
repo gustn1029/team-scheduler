@@ -80,12 +80,49 @@
   background-color: #f2f7fd;
 }
 
-.navigation {
+.navWrap {
+  max-width: 100%;
+  width: 100%;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 1000;
+
+  &::before {
+    content: "";
+    position: absolute;
+    height: 100vh;
+    max-width: 390px;
+    width: 100%;
+    z-index: 900;
+  }
+
+  &.view {
+    transform: translateX(0);
+  }
+
+  &.hidden {
+    transform: translateX(-100%);
+  }
+}
+
+.header {
   display: flex;
-  margin: 0 0 10px;
   padding: 10px 10px 0;
+  margin: 0 0 10px;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  position: relative;
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .navBtn {
+    width: 24px;
+    height: 20px;
+  }
 
   .currentDate {
     display: block;
@@ -114,6 +151,10 @@
     .nextBtn {
       transform: rotate(180deg);
     }
+  }
+
+  .createBtn {
+    font-size: 28px;
   }
 }
 
@@ -217,23 +258,5 @@
   .yellow {
     background-color: #ffd235;
     color: #000;
-  }
-}
-
-.sections {
-  width: 100%;
-  height: 25px;
-  overflow: hidden;
-  position: relative;
-
-  p {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-  }
-  .startSection {
-  }
-  .endSection {
   }
 }

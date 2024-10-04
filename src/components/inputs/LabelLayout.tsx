@@ -11,7 +11,7 @@ const LabelLayout = ({
   return (
     <label
       htmlFor={label}
-      className={`${styles.labelLayout} ${labelClassName !== "" ? styles[labelClassName] : ""}`}
+      className={`${styles.labelLayout} ${labelClassName !== "" ? labelClassName : ""}`}
     >
       <span className={`${isLabelTextHidden ? "sOnly" : ""}`}>{label}</span>
       {children}
