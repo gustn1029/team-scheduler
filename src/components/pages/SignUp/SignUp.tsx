@@ -186,7 +186,11 @@ export const SignUp: React.FC = () => {
               })}
               watch={watch}
               ariaInvalid={
-                isSubmitted ? (errors.userEmail ? true : false) : undefined
+                isSubmitted
+                  ? errors.userPasswordCheck
+                    ? true
+                    : false
+                  : undefined
               }
               error={errors}
               errorView={errors.userPasswordCheck}
