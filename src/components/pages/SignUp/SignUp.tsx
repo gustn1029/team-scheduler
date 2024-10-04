@@ -93,10 +93,9 @@ export const SignUp: React.FC = () => {
         />
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
-
       <div className={styles.formContainer}>
+        <h2>회원가입</h2>
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formGroup}>
-          <h2>회원가입</h2>
           <div className={styles.inputContainer}>
             <LabelInput
               type="text"
@@ -114,8 +113,6 @@ export const SignUp: React.FC = () => {
               errorView={errors.userNickName}
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="email"
               label="userEmail"
@@ -136,8 +133,6 @@ export const SignUp: React.FC = () => {
               errorView={errors.userEmail}
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="password"
               label="userPassword"
@@ -177,8 +172,6 @@ export const SignUp: React.FC = () => {
               }
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="password"
               label="userPasswordCheck"
