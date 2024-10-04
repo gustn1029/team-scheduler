@@ -91,7 +91,10 @@ header {
     display: none;
   }
   &.view {
-    display: block;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 }
 .selectOption {
@@ -101,6 +104,7 @@ header {
   text-align: left;
   display: flex;
   align-items: center;
+  gap: 10px;
   cursor: pointer;
 }
 .selectOption:hover {
@@ -110,6 +114,27 @@ header {
   width: 18px;
   height: 12px;
   border-radius: 3px;
+  &.red {
+    background: #F5333F;
+  }
+  &.pink {
+    background: #FB91A3;
+  }
+  &.orange {
+    background: #FF9E18;
+  }
+  &.yellow {
+    background: #FFD235;
+  }
+  &.mint {
+    background: #00B392;
+  }
+  &.blue {
+    background: #3FA9F5;
+  }
+  &.gray {
+    background: #7BA0C4;
+  }
 }
 .selectName {
   margin-left: 10px;
@@ -161,10 +186,13 @@ header {
   display: flex;
   align-items: center;
   cursor: pointer;
-  &.colorClass {
+  &.colorBox {
     width: 18px;
     height: 12px;
     border-radius: 3px;
     background: #3FA9F5;
+  }
+  &.listName {
+    margin-left: 10px;
   }
 }

@@ -95,7 +95,7 @@ const Create: React.FC = () => {
           <div className={styles.colorFlex}>
             <span className={styles.colorTitle}>색상 선택</span>
             <button className={styles.val} type="button" onClick={toggleSelectBox}>
-              <div className={`${styles.colorBox} ${selectedColor}`}></div>
+              <div className={`${styles.colorBox} ${styles[selectedColor]}`}></div>
               <span className={styles.selectName}>{selectedText}</span>
               <i className={styles.selectIcon}>{isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}</i>
             </button>
@@ -104,8 +104,8 @@ const Create: React.FC = () => {
             <ul className={`${styles.colorList} ${isOpen ? styles.view : styles.hidden}`}>
               {colorOptions.map((option) => (
                 <li className={styles.selectOption} key={option.colorClass} onClick={() => handleColorSelect(option.colorClass, option.colorName)}>
-                  <div className={`colorBox ${option.colorClass}`}></div>
-                  <span>{option.colorName}</span>
+                  <div className={`${styles.colorBox} ${styles[option.colorClass]}`}></div>
+                  <span className={styles.listName}>{option.colorName}</span>
                 </li>
               ))}
             </ul>
