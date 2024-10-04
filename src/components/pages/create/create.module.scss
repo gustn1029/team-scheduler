@@ -64,51 +64,17 @@ header {
 }
 .colorSelect {
   width: 100%;
-  padding: 20px 15px;
+  padding: 15px;
   text-align: left;
   display: inline-block;
   position: relative;
+  border-bottom: 1px solid #d9d9d9;
 }
 .colorFlex {
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.colorList {
-  width: calc(100% - 230px);
-  height: auto;
-  position: absolute;
-  top: 65px;
-  right: 15px;
-  background: #fff;
-  border: 1px solid #d9d9d9;
-  border-radius: 3px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  z-index: 10;
-  &.hidden {
-    display: none;
-  }
-  &.view {
-    padding: 10px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-}
-.selectOption {
-  width: 100%;
-  padding-left: 15px;
-  position: relative;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-}
-.selectOption:hover {
-  background: #eee;
 }
 .colorBox {
   width: 18px;
@@ -136,13 +102,9 @@ header {
     background: #7BA0C4;
   }
 }
-.selectName {
-  margin-left: 10px;
-}
 .colorTitle {
   width: calc(100% - 18px);
   height: 40px;
-  padding: 0 10px;
   padding-right: 40px;
   display: inline-block;
   line-height: 40px;
@@ -170,6 +132,9 @@ header {
     background: #3FA9F5;
   }
 }
+.selectName {
+  margin-left: 10px;
+}
 .selectIcon {
   line-height: 36px;
   position: absolute;
@@ -177,9 +142,44 @@ header {
   top: 5px;
   cursor: pointer;
 }
-
+.colorList {
+  width: calc(100% - 230px);
+  height: auto;
+  position: absolute;
+  top: 65px;
+  right: 15px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 10;
+  &.hidden {
+    display: none;
+  }
+  &.view {
+    padding: 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
 .selectOption {
   width: 100%;
+  padding-left: 15px;
+  position: relative;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  &:hover {
+    background: #F8FCFF;
+  }
+}
+.selectOption {
+  width: 100%;
+  height: 40px;
   padding-left: 15px;
   position: relative;
   text-align: left;
@@ -195,4 +195,53 @@ header {
   &.listName {
     margin-left: 10px;
   }
+}
+
+.calendarArea {
+  width: 100%;
+  padding: 20px 15px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.toggleStyle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  &span {
+    display: inline-block;
+  }
+}
+
+[type="checkbox"] {
+  width: 44px;
+  height: 20px;
+  position: relative;
+  background-color: #D9D9D9;
+  border-radius: 20px;
+  appearance: none;
+}
+
+[type="checkbox"]::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 2px 0px 1.9px -1px rgba(0, 0, 0, 0.25);
+  transition: left 200ms linear;
+}
+
+[type="checkbox"]:checked::before {
+  left: 26px;
+  background-color: #fff;
+  box-shadow: -2px 0px 1.9px 1px rgba(0, 0, 0, 0.25);
+}
+[type="checkbox"]:checked {
+  background: #3FA9F5;
+  border: 0;
 }

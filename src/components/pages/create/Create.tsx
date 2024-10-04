@@ -56,6 +56,12 @@ const Create: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(event.target.checked);
+  };
+
   return (
     <main>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -77,7 +83,7 @@ const Create: React.FC = () => {
         <div className={styles.titleIpt}>
           <LabelInput
             type="text"
-            label="userNickName"
+            label="Title"
             placeholder="제목"
             register={register("title", {
               required: { value: true, message: "제목을 입력하세요." },
@@ -110,6 +116,15 @@ const Create: React.FC = () => {
               ))}
             </ul>
           )}
+        </div>
+        <div className={styles.calendarArea}>
+          <label className={styles.toggleStyle} htmlFor="toggleSwitch" role="switch">
+            <span>하루 종일</span>
+            <input id="toggleSwitch" type="checkbox" />
+          </label>
+        </div>
+        <div>
+          
         </div>
       </form>
     </main>
