@@ -9,6 +9,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { appAuth } from "../../../firebase/config";
+import LinkButton from "../../button/LinkButton";
 
 interface FormData {
   userEmail: string;
@@ -67,10 +68,6 @@ const Login: React.FC = () => {
   const handleGoogleSignIn = async () => {
     await googleLoginMutation.mutateAsync();
   };
-
-  const handleNavigateToSignUp = React.useCallback(() => {
-    navigate("/signup");
-  }, [navigate]);
 
   const handleNavigateToFindPassword = React.useCallback(() => {
     navigate("/findpassword");
@@ -134,13 +131,12 @@ const Login: React.FC = () => {
             >
               {isSubmitting ? "처리중" : "로그인"}
             </Button>
-            <Button
-              onClick={handleNavigateToSignUp}
-              type="button"
+            <LinkButton
+              href={"/signup"}
               buttonStyle={ButtonStyleEnum.NormalWhite}
             >
               회원가입
-            </Button>
+            </LinkButton>
             <button onClick={handleGoogleSignIn}>
               <img src="/src/assets/images/googleLogo.svg" alt="구글 로그인" />
             </button>
