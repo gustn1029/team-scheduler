@@ -20,7 +20,6 @@ const Login: React.FC = () => {
     handleSubmit,
     register,
     watch,
-    // setError,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -87,8 +86,8 @@ const Login: React.FC = () => {
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>
+        <h2>로그인</h2>
         <form className={styles.formGroup} onSubmit={handleSubmit(onSubmit)}>
-          <h2>로그인</h2>
           <div className={styles.inputContainer}>
             <LabelInput
               type="email"
@@ -98,12 +97,9 @@ const Login: React.FC = () => {
                 required: { value: true, message: "필수 입력칸 입니다" },
               })}
               watch={watch}
-              children={undefined}
               error={errors}
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="password"
               label="userPassword"
@@ -112,7 +108,6 @@ const Login: React.FC = () => {
                 required: { value: true, message: "필수 입력칸 입니다" },
               })}
               watch={watch}
-              children={undefined}
               error={errors}
               isLabelTextHidden={true}
             />
