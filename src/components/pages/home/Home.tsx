@@ -5,7 +5,14 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useQuery } from "@tanstack/react-query";
 import { eventsDataFetch, queryClient } from "../../../utils/http";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  MouseEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { EventsData } from "../../../types";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -16,6 +23,7 @@ import { FaBars } from "react-icons/fa6";
 import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
+import { AiFillPlusCircle } from "react-icons/ai";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -24,15 +32,12 @@ dayjs.extend(isBetween);
 
 const Home = () => {
   const [clickEventDate, setClickEventDate] = useState<Date | null>(null);
+  const [isCreate, setIsCreate] = useState<boolean>(false);
   const navigate = useNavigate();
-  const {isView, toggleIsView} = useViewNavStore();
+  const navRef = useRef<HTMLElement | null>(null);
+  const { isView, toggleIsView } = useViewNavStore();
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
-  const {
-    data: events,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data: events } = useQuery({
     queryKey: ["events", date.getFullYear(), date.getMonth()],
     queryFn: () =>
       eventsDataFetch({ year: date.getFullYear(), month: date.getMonth() }),
@@ -254,6 +259,7 @@ const Home = () => {
           year: date.getFullYear(),
           month: nextMonth.getMonth(),
         }),
+      staleTime: Infinity,
     });
 
     queryClient.prefetchQuery({
@@ -263,6 +269,7 @@ const Home = () => {
           year: date.getFullYear(),
           month: prevMonth.getMonth(),
         }),
+      staleTime: Infinity,
     });
   }, [date]);
 
@@ -372,23 +379,6 @@ const Home = () => {
     };
   };
 
-  const handleClickDate = (date: Date) => {
-    if (dayjs(date).isSame(dayjs(clickEventDate))) {
-      setClickEventDate(null);
-      console.log("same", date);
-    } else {
-      console.log("date", date);
-      console.log("clickEventDate", clickEventDate);
-      setClickEventDate(date);
-    }
-  };
-
-  const handleNavigateToDetail = (date: Date) => {
-    const seconds = Math.floor(date.getTime() / 1000);
-
-    return navigate(`/detail-list?date=${seconds}`);
-  };
-
   const TileContent = ({
     date,
     events,
@@ -447,20 +437,59 @@ const Home = () => {
     );
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handleClickDate = (date: Date) => {
+    if (isCreate) setIsCreate(false);
 
-  if (isError) {
-    return <div>{error.message}</div>;
-  }
+    if (dayjs(date).isSame(dayjs(clickEventDate))) {
+      setClickEventDate(null);
+    } else {
+      setClickEventDate(date);
+    }
+  };
+
+  const handleNavigateToDetail = (date: Date) => {
+    const seconds = Math.floor(date.getTime() / 1000);
+
+    return navigate(`/detail-list?date=${seconds}`);
+  };
+
+  const handleCreateBtn = () => {
+    if (clickEventDate) setClickEventDate(null);
+
+    setIsCreate((prevState) => !prevState);
+  };
+
+  const handleHideNav: MouseEventHandler<HTMLElement> = (e) => {
+    if (!navRef.current) return;
+
+    if (navRef.current === e.target) {
+      toggleIsView();
+    }
+  };
+
+  const handleViewNav = () => {
+    if (isCreate) {
+      setIsCreate(false);
+    }
+
+    toggleIsView();
+  };
 
   return (
     <div className={styles.calendarWrap}>
-      {isView && <Navigation />}
-      <section>
-        <div className={styles.navigation}>
-          <IconButton icon={<FaBars />} onClick={toggleIsView} />
+      <section
+        className={`${styles.navWrap} ${isView ? styles.view : styles.hidden}`}
+        onClick={handleHideNav}
+        ref={navRef}
+      >
+        <Navigation />
+      </section>
+      <section className={styles.header}>
+        <div>
+          <IconButton
+            icon={<FaBars className={styles.navBtn} />}
+            onClick={handleViewNav}
+          />
           <span className={styles.currentDate}>{formatDate(date)}</span>
           <div className={styles.btnWrap}>
             <button
@@ -477,6 +506,11 @@ const Home = () => {
             </button>
           </div>
         </div>
+        <IconButton
+          icon={<AiFillPlusCircle className={styles.createBtn} />}
+          onClick={handleCreateBtn}
+        />
+        {isCreate && <CreateModal bottom={-65} right={25} />}
       </section>
       <Calendar
         className={styles.calendar}
