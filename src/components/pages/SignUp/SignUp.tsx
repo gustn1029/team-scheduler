@@ -108,7 +108,6 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userNickName ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={errors.userNickName}
               isLabelTextHidden={true}
@@ -128,7 +127,6 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userEmail ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={errors.userEmail}
               isLabelTextHidden={true}
@@ -153,7 +151,6 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userPassword ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={
                 errors.userPassword && (
@@ -191,7 +188,6 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userEmail ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={errors.userPasswordCheck}
               isLabelTextHidden={true}
