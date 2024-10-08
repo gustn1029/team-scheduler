@@ -14,6 +14,7 @@ import {
   EventsData,
   EventsFetchProps,
   Holiday,
+  TodoData,
   UserData,
 } from "../types";
 import { EventTypeEnum } from "../types/enum/EventTypeEnum";
@@ -45,7 +46,6 @@ const baseEventData: Omit<
   eventColor: "red",
   category: [],
   eventMemo: "",
-  todos: [],
   like: 0,
   comments: [],
   createDate: new Date(),
@@ -210,7 +210,6 @@ export const addEventsFetch = async (data: EventPostData) => {
   const newEvent: EventsData = {
     ...data,
     createDate: new Date(),
-    todos: [],
     category: [],
     comments: [],
     like: 0,
@@ -220,3 +219,13 @@ export const addEventsFetch = async (data: EventPostData) => {
   const doc = await addDoc(eventCollection, newEvent);
   return doc.id;
 };
+
+
+// todo 등록
+export const addTodoFetch = async (data:TodoData) => {
+  const todoCollection = collection(appFireStore, "todos");
+
+  const doc = await addDoc(todoCollection, data);
+
+  return doc.id;
+}

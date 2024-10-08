@@ -64,7 +64,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -85,7 +84,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -106,7 +104,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -127,7 +124,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -148,7 +144,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -169,7 +164,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -190,7 +184,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -211,7 +204,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -232,7 +224,6 @@ const Home = () => {
             nanoseconds: 0,
           },
           createDate: new Date(),
-          todos: [],
           category: [],
           comments: [],
           like: 0,
@@ -484,7 +475,7 @@ const Home = () => {
   }
 
   return (
-    <div className={styles.calendarWrap}>
+    <main className={styles.calendarWrap}>
       <section
         className={`${styles.navWrap} ${isView ? styles.view : styles.hidden}`}
         onClick={handleHideNav}
@@ -534,7 +525,7 @@ const Home = () => {
         minDetail="month"
         showNavigation={false}
       />
-    </div>
+    </main>
   );
 };
 
