@@ -18,6 +18,7 @@
       .xButton {
       width: 22px;
       height: 22px;
+      cursor: pointer;
       }
 
       .headerTitle {
@@ -103,6 +104,7 @@
           .xButton {
             width: 22px;
             height: 22px;
+            cursor: pointer;
             }
       
         .close {
@@ -116,7 +118,7 @@
         h3 {
           font-size: 20px;
           color: #333;
-          margin: 0px 91px 0px 120px;
+          margin: 0px 110px 0px 100px;
         }
       }
         .profileImage {
@@ -152,10 +154,11 @@
             justify-content: space-between;
   
             button {
-              padding: 10px 20px;
+              padding: 10px 40px;
               font-size: 14px;
+              color: #333;
               border: 1px solid #333;
-              border-radius: 20px;
+              border-radius: 10px;
               cursor: pointer;
   
               &:first-child {
