@@ -431,7 +431,7 @@ const Home = () => {
               </Fragment>
             );
           })}
-          {dayjs(date).isSame(dayjs(clickEventDate)) && <CreateModal />}
+          {dayjs(date).isSame(dayjs(clickEventDate)) && <CreateModal params={`date=${dayjs(date).format("YYYY-MM-DD")}`} />}
         </div>
       </div>
     );
