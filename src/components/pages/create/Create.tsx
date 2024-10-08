@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RiCloseFill } from 'react-icons/ri';
 import { IoMdCheckmark } from 'react-icons/io';
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './create.module.scss';
@@ -23,7 +24,7 @@ const Create: React.FC = () => {
     enabled: !!appAuth.currentUser?.uid,
   });
 
-  console.log(authData);
+  // console.log(authData);
 
   const {
     handleSubmit,
@@ -36,44 +37,89 @@ const Create: React.FC = () => {
     console.log(data);
   };
 
+  // const handleClose = () => {
+  //   console.log('close');
+  // };
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState('blue');
+  const [selectedText, setSelectedText] = useState('Blue');
+
+  const colorOptions = [
+    { colorClass: 'red', colorName: 'Red' },
+    { colorClass: 'pink', colorName: 'Pink' },
+    { colorClass: 'orange', colorName: 'Orange' },
+    { colorClass: 'yellow', colorName: 'Yellow' },
+    { colorClass: 'mint', colorName: 'Mint' },
+    { colorClass: 'blue', colorName: 'Blue' },
+    { colorClass: 'gray', colorName: 'Gray' },
+  ];
+
+  useEffect(() => {
+    setSelectedColor('blue');
+    setSelectedText('Blue');
+  }, []);
+
+  const handleColorSelect = (colorClass: string, colorName: string) => {
+    setSelectedColor(colorClass);
+    setSelectedText(colorName);
+    setIsOpen(false);
+  };
+
+  const toggleSelectBox = () => {
+    setIsOpen(!isOpen);
+  };
+
   const [isChecked, setIsChecked] = useState(false);
+
+  // 현재 날짜와 시간을 명확하게 설정하는 부분
+  const initalTime = useState(() => {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0); // 시간을 12:00으로 설정
+    return date;
+  })[0]; // useState로 초기화
+
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
-
-  const initalTime = new Date();
-  initalTime.setHours(12, 0, 0, 0);
 
   const [startTime, setStartTime] = useState<Date | null>(initalTime);
   const [endTime, setEndTime] = useState<Date | null>(initalTime);
 
   const [openComponent, setOpenComponent] = useState<string | null>(null);
 
-  // 시간 동기화 함수
-  // const handleTimeSync = (start: Date | null, end: Date | null) => {
-  //   if (start && end && start > end) {
-  //     setEndTime(start); // 시작 시간이 종료 시간보다 이후인 경우, 종료 시간을 시작 시간으로 맞춤
-  //   }
-  // };
-
-  const handleStartTimeChange: React.Dispatch<React.SetStateAction<Date | null>> = (time) => {
+  // 시작 시간 변경 핸들러
+  const handleStartTimeChange = (time: Date | null) => {
     setStartTime(time);
-  };
-  
-  const handleEndTimeChange: React.Dispatch<React.SetStateAction<Date | null>> = (time) => {
-    setEndTime(time);
-  };
 
-  const handleStartDateChange = (date: Date | null) => {
-    setStartDate(date);
-    if (date && (!endDate || date > endDate)) {
-      setEndDate(date);
+    // 시작 시간이 종료 시간보다 늦을 경우, 종료 시간을 시작 시간과 동기화
+    if (time && endTime && time > endTime) {
+      setEndTime(time);
     }
   };
 
+  // 종료 시간 변경 핸들러
+  const handleEndTimeChange = (time: Date | null) => {
+    setEndTime(time);
+
+    // 종료 시간이 시작 시간보다 빠를 경우, 시작 시간을 종료 시간과 동기화
+    if (time && startTime && time < startTime) {
+      setStartTime(time);
+    }
+  };
+
+  // 시작 날짜 변경 핸들러
+  const handleStartDateChange = (date: Date | null) => {
+    setStartDate(date);
+    if (date && (!endDate || date > endDate)) {
+      setEndDate(date); // 시작 날짜가 변경되면 종료 날짜도 업데이트
+    }
+  };
+
+  // 종료 날짜 변경 핸들러
   const handleEndDateChange = (date: Date | null) => {
     setEndDate(date);
     if (date && startDate && date < startDate) {
-      setStartDate(date);
+      setStartDate(date); // 종료 날짜가 시작 날짜보다 이르면 시작 날짜도 변경
     }
   };
 
@@ -118,6 +164,27 @@ const Create: React.FC = () => {
           />
         </div>
 
+        <div className={`${styles.colorSelect} ${isOpen ? 'on' : ''}`}>
+            <div className={styles.colorFlex}>
+              <h3 className={styles.colorTitle}>색상 선택</h3>
+              <button className={styles.val} type="button" onClick={toggleSelectBox}>
+                <div className={`${styles.colorBox} ${styles[selectedColor]}`}></div>
+                <span className={styles.selectName}>{selectedText}</span>
+                <i className={styles.selectIcon}>{isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}</i>
+              </button>
+            </div>
+            {isOpen && (
+              <ul className={`${styles.colorList} ${isOpen ? styles.view : styles.hidden}`}>
+                {colorOptions.map((option) => (
+                  <li className={styles.selectOption} key={option.colorClass} onClick={() => handleColorSelect(option.colorClass, option.colorName)}>
+                    <div className={`${styles.colorBox} ${styles[option.colorClass]}`}></div>
+                    <span className={styles.listName}>{option.colorName}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
         <div className={styles.toggleArea}>
           <label className={styles.toggleStyle} htmlFor="toggleSwitch" role="switch">
             <h3>하루 종일</h3>
@@ -152,7 +219,7 @@ const Create: React.FC = () => {
               />
             )}
           </div>
-
+          
           <div className={styles.pickerGroup}>
             <DatePicker
               className={styles.datePicker}

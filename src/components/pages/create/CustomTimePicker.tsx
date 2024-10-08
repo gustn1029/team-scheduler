@@ -4,7 +4,7 @@ import styles from './create.module.scss';
 
 interface CustomTimePickerProps {
   selectedTime: Date | null;
-  onTimeChange: React.Dispatch<React.SetStateAction<Date | null>>;
+  onTimeChange: (time: Date | null) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
