@@ -24,6 +24,8 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { appAuth } from "../../../firebase/config";
+import Loader from "../../loader/Loader";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -431,7 +433,9 @@ const Home = () => {
               </Fragment>
             );
           })}
-          {dayjs(date).isSame(dayjs(clickEventDate)) && <CreateModal params={`date=${dayjs(date).format("YYYY-MM-DD")}`} />}
+          {dayjs(date).isSame(dayjs(clickEventDate)) && (
+            <CreateModal params={`date=${dayjs(date).format("YYYY-MM-DD")}`} />
+          )}
         </div>
       </div>
     );
@@ -450,7 +454,7 @@ const Home = () => {
   const handleNavigateToDetail = (date: Date) => {
     const seconds = Math.floor(date.getTime() / 1000);
 
-    return navigate(`/detail-list?date=${seconds}`);
+    return navigate(`/calendarList?date=${seconds}`);
   };
 
   const handleCreateBtn = () => {
@@ -474,6 +478,10 @@ const Home = () => {
 
     toggleIsView();
   };
+
+  if (!appAuth.currentUser) {
+    return <Loader />;
+  }
 
   return (
     <div className={styles.calendarWrap}>
