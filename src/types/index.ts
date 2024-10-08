@@ -43,8 +43,9 @@ export interface LabelSelectOptionsProps extends LabelInputProps {
   optionList: OptionList[];
 }
 
+// 이벤트 엔티티
 export interface EventsData {
-  id?:string;
+  id?: string;
   title: string;
   startDate: any;
   endDate: any;
@@ -52,11 +53,10 @@ export interface EventsData {
   eventColor: string;
   category: any[];
   eventMemo: string;
-  todos: any[];
   like: number;
   comments: any[];
   createDate: Date;
-  updateDate: Date | null
+  updateDate: Date | null;
 }
 
 export interface Holiday {
@@ -69,7 +69,19 @@ export interface Holiday {
 
 export interface EventsFetchProps {
   year: number;
-  month: number
+  month: number;
 }
 
-export type EventPostData = Omit<EventsData, "category" | "todos" | "comments" | "like"| "createDate">
+export type EventPostData = Omit<
+  EventsData,
+  "category" | "todos" | "comments" | "like" | "createDate"
+>;
+
+export interface TodoData {
+  id?: string;
+  title?: string;
+  isComplete?: boolean;
+  todoDate?: Date;
+  createDate?: Date;
+  updateDate?: Date | null;
+}
