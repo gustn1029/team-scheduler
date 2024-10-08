@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import styles from "./createModal.module.scss";
 
@@ -33,7 +32,10 @@ const CreateModal = ({
       >
         일정
       </Link>
-      <Link to="/todo" className={`${styles.link} ${styles.todoLink}`}>
+      <Link
+        to={`/todo-create${params !== "" ? `?${params}` : ""}`}
+        className={`${styles.link} ${styles.todoLink}`}
+      >
         Todo
       </Link>
     </aside>
