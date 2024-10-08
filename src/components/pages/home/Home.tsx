@@ -454,7 +454,7 @@ const Home = () => {
   const handleNavigateToDetail = (date: Date) => {
     const seconds = Math.floor(date.getTime() / 1000);
 
-    return navigate(`/detail-list?date=${seconds}`);
+    return navigate(`/calendarList?date=${seconds}`);
   };
 
   const handleCreateBtn = () => {
