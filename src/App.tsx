@@ -9,6 +9,7 @@ import FindPassword from "./components/pages/findpassword/FindPassword";
 import NotFound from "./components/pages/notFound/NotFound";
 import Loader from "./components/loader/Loader";
 import ToastProvider from "./components/toast/ToastProvider";
+import CalendarList from "./components/pages/calendarlist/CalendarList";
 
 function App() {
   useUserData();
@@ -24,6 +25,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/findpassword" element={<FindPassword />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/calendarlist" element={<CalendarList />} />
         </Routes>
         <ToastProvider />
       </BrowserRouter>

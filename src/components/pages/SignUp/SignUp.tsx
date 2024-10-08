@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
@@ -9,6 +9,7 @@ import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import LinkButton from "../../button/LinkButton";
 
 interface FormData {
   userNickName: string;
@@ -28,6 +29,19 @@ export const SignUp: React.FC = () => {
     setError,
     clearErrors,
   } = useForm<FormData>();
+
+  const [isFormFilled, setIsFormFilled] = useState(false);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      const { userNickName, userEmail, userPassword, userPasswordCheck } =
+        value;
+      setIsFormFilled(
+        !!userNickName && !!userEmail && !!userPassword && !!userPasswordCheck
+      );
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   async function getImageUrl(): Promise<string> {
     const imagePath =
@@ -61,7 +75,7 @@ export const SignUp: React.FC = () => {
         nickname: data.userNickName,
         profileImg: userProfileImg,
       });
-      navigate("/");
+      navigate("/login");
       reset();
     } catch (error) {
       console.error("Error signing up", error);
@@ -198,14 +212,16 @@ export const SignUp: React.FC = () => {
             />
           </div>
           <div className={styles.buttonContainer}>
-            <Button
-              type="button"
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={() => reset()}
-            >
+            <LinkButton href={"/login"} buttonStyle={ButtonStyleEnum.Cancel}>
               취소
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            </LinkButton>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              buttonStyle={
+                isFormFilled ? ButtonStyleEnum.Normal : ButtonStyleEnum.Primary
+              }
+            >
               {isSubmitting ? "처리중" : "확인"}
             </Button>
           </div>
