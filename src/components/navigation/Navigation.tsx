@@ -21,7 +21,7 @@ const Navigation = () => {
   const { data: authData } = useQuery({
     queryKey: ["auth", appAuth.currentUser?.uid],
     queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
-    // enabled: !!appAuth.currentUser?.uid,
+    enabled: !!appAuth.currentUser?.uid,
   });
 
   const logoutMutation = useMutation({
