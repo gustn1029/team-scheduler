@@ -1,31 +1,23 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { appAuth } from "../firebase/config";
 import { useEffect } from "react";
-import { UserInfo, useUserStore } from "../store/userStore";
 import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 
 export const useUserData = () => {
-  const { setUserData } = useUserStore();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(appAuth, (user) => {
       if (user) {
-        user.getIdToken().then((token) => {
-          const userData: UserInfo = {
-            token: token,
-            uid: user.uid,
-          };
-
-          setUserData(userData);
-        });
-        queryClient.invalidateQueries({ queryKey: [] });
+        queryClient.invalidateQueries({ queryKey: ["auth", appAuth.currentUser?.uid] });
       } else {
-        setUserData(null);
+        navigate("/login");
       }
     });
 
     return () => unsubscribe();
-  }, [queryClient, setUserData]);
+  }, [queryClient, navigate]);
 };
