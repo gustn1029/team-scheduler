@@ -7,9 +7,10 @@ import Button from "../../button/Button";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { appAuth } from "../../../firebase/config";
 import LinkButton from "../../button/LinkButton";
+import { useUserData } from "../../../hooks/useUserDataHook";
 
 interface FormData {
   userEmail: string;
@@ -27,6 +28,14 @@ const Login: React.FC = () => {
   } = useForm<FormData>();
 
   const navigate = useNavigate();
+  
+  const { user } = useUserData();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }, [user, navigate]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -37,7 +46,6 @@ const Login: React.FC = () => {
       );
       console.log("로그인 완료");
       setLoginError(null);
-      navigate("/");
     } catch (error) {
       console.error("로그인 실패:", error);
       setLoginError("이메일/비밀번호가 일치하지 않습니다.");
@@ -47,8 +55,9 @@ const Login: React.FC = () => {
   const googleLoginMutation = useMutation({
     mutationFn: googleAuthFetch,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-      navigate("/");
+      await queryClient.invalidateQueries({
+        queryKey: ["auth", appAuth.currentUser?.uid],
+      });
     },
     onError: (error) => {
       throw new Error(error.message);
