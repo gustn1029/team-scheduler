@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { appAuth } from "../../../firebase/config";
 import LinkButton from "../../button/LinkButton";
-import { useUserData } from "../../../hooks/useUserDataHook";
 
 interface FormData {
   userEmail: string;
@@ -29,11 +28,11 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
   
-  const { user } = useUserData();
+  const user = sessionStorage.getItem("user");
 
   useEffect(() => {
     if (user) {
-      navigate("/home");
+      navigate("/calendar");
     }
   }, [user, navigate]);
 
