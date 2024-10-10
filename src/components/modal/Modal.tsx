@@ -1,46 +1,31 @@
-import React, { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { useModalStore } from "../../store/useModalStore";
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   children: React.ReactNode;
+  onClose: () => void;
 }
 
-const Modal = ({ children }: ModalProps) => {
-  const { isOpen, closeModal } = useModalStore();
+export default function Modal({ children, onClose }: ModalProps) {
   const dialog = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
     const modal = dialog.current;
-    if (isOpen) {
-      modal?.showModal();
-    } else {
-      modal?.close();
+    if (modal) {
+      modal.showModal();
     }
 
     return () => {
-      modal?.close();
+      if (modal) {
+        modal.close();
+      }
     };
-  }, [isOpen]);
-
-  if (!isOpen) {
-    return null;
-  }
-
-  const modalEl =
-    document.getElementById("modal") || document.createElement("div");
-
-  if (!document.getElementById("modal")) {
-    modalEl.id = "modal";
-    document.body.appendChild(modalEl);
-  }
+  }, []);
 
   return createPortal(
-    <dialog ref={dialog} onClose={closeModal}>
+    <dialog className="modal" ref={dialog} onClose={onClose}>
       {children}
     </dialog>,
-    modalEl
+    document.getElementById('modal') as HTMLElement
   );
-};
-
-export default Modal;
+}
