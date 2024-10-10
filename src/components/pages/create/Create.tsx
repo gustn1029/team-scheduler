@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { RiCloseFill } from 'react-icons/ri';
-import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -12,6 +10,8 @@ import CustomTimePicker from './CustomTimePicker';
 import { useQuery } from '@tanstack/react-query';
 import { userDataFetch } from '../../../utils/http';
 import { appAuth } from '../../../firebase/config';
+import Header from '../../header/Header';
+
 
 interface FormInputs {
   title: string;
@@ -26,20 +26,27 @@ const Create: React.FC = () => {
 
   // console.log(authData);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCancel = () => {
+    console.log('취소 버튼 클릭');
+  };
+
   const {
     handleSubmit,
     register,
     watch,
-    formState: { errors, isSubmitted, isSubmitting },
+    formState: { errors, isSubmitted },
   } = useForm<FormInputs>();
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      console.log(data);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  // const handleClose = () => {
-  //   console.log('close');
-  // };
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState('blue');
@@ -132,13 +139,8 @@ const Create: React.FC = () => {
   return (
     <main>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <header>
-          <RiCloseFill className={styles.closeButton} />
-          <h2 className={styles.h2}>일정 추가</h2>
-          <button type="submit" className={styles.checkButton} disabled={isSubmitting}>
-            <IoMdCheckmark />
-          </button>
-        </header>
+        <Header title="일정 추가" onCancel={handleCancel} onConfirm={handleSubmit(onSubmit)} />
+        
         <div className={styles.sheduleWriter}>
           <h3>작성자</h3>
           <img
@@ -165,31 +167,32 @@ const Create: React.FC = () => {
         </div>
 
         <div className={`${styles.colorSelect} ${isOpen ? 'on' : ''}`}>
-            <div className={styles.colorFlex}>
-              <h3 className={styles.colorTitle}>색상 선택</h3>
-              <button className={styles.val} type="button" onClick={toggleSelectBox}>
-                <div className={`${styles.colorBox} ${styles[selectedColor]}`}></div>
-                <span className={styles.selectName}>{selectedText}</span>
-                <i className={styles.selectIcon}>{isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}</i>
-              </button>
-            </div>
-            {isOpen && (
-              <ul className={`${styles.colorList} ${isOpen ? styles.view : styles.hidden}`}>
-                {colorOptions.map((option) => (
-                  <li className={styles.selectOption} key={option.colorClass} onClick={() => handleColorSelect(option.colorClass, option.colorName)}>
-                    <div className={`${styles.colorBox} ${styles[option.colorClass]}`}></div>
-                    <span className={styles.listName}>{option.colorName}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className={styles.colorFlex}>
+            <h3 className={styles.colorTitle}>색상 선택</h3>
+            <button className={styles.val} type="button" onClick={toggleSelectBox}>
+              <div className={`${styles.colorBox} ${styles[selectedColor]}`}></div>
+              <span className={styles.selectName}>{selectedText}</span>
+              <i className={styles.selectIcon}>{isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}</i>
+            </button>
           </div>
+          {isOpen && (
+            <ul className={`${styles.colorList} ${isOpen ? styles.view : styles.hidden}`}>
+              {colorOptions.map((option) => (
+                <li className={styles.selectOption} key={option.colorClass} onClick={() => handleColorSelect(option.colorClass, option.colorName)}>
+                  <div className={`${styles.colorBox} ${styles[option.colorClass]}`}></div>
+                  <span className={styles.listName}>{option.colorName}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <div className={styles.toggleArea}>
           <label className={styles.toggleStyle} htmlFor="toggleSwitch" role="switch">
             <h3>하루 종일</h3>
             <input
               id="toggleSwitch"
+              className={styles.toggleBar}
               type="checkbox"
               checked={isChecked}
               onChange={(e) => setIsChecked(e.target.checked)}
