@@ -39,10 +39,10 @@ header {
     color: #000;
   }
   img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     margin-left: 10px;
-    background-image: url('../../assets/images/create/profileImg.png') no-repeat;
+    border-radius: 50%;
   }
 }
 .titleIpt {
@@ -54,6 +54,9 @@ header {
     font-size: 20px;
     border: 0;
     border-bottom: 1px solid #d9d9d9;
+  }
+  input:placeholder {
+    font-size: 20px;
   }
   p {
     padding: 5px 15px;
@@ -75,6 +78,9 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  h3 {
+    font-size: 16px;
+  }
 }
 .colorBox {
   width: 18px;
@@ -209,41 +215,39 @@ header {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  &h3 {
+  h3 {
     display: inline-block;
+    font-size: 16px;
   }
-}
-
-[type="checkbox"] {
-  width: 44px;
-  height: 20px;
-  position: relative;
-  background-color: #D9D9D9;
-  border-radius: 20px;
-  appearance: none;
-}
-
-[type="checkbox"]::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  background-color: #fff;
-  border-radius: 50%;
-  box-shadow: 2px 0px 1.9px -1px rgba(0, 0, 0, 0.25);
-  transition: left 200ms linear;
-}
-
-[type="checkbox"]:checked::before {
-  left: 26px;
-  background-color: #fff;
-  box-shadow: -2px 0px 1.9px 1px rgba(0, 0, 0, 0.25);
-}
-[type="checkbox"]:checked {
-  background: #3FA9F5;
-  border: 0;
+  .toggleBar {
+    width: 44px;
+    height: 20px;
+    position: relative;
+    background-color: #D9D9D9;
+    border-radius: 20px;
+    appearance: none;
+  }
+  .toggleBar::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 2px 0px 1.9px -1px rgba(0, 0, 0, 0.25);
+    transition: left 200ms linear;
+  }
+  .toggleBar:checked::before {
+    left: 26px;
+    background-color: #fff;
+    box-shadow: -2px 0px 1.9px 1px rgba(0, 0, 0, 0.25);
+  }
+  .toggleBar:checked {
+    background: #3FA9F5;
+    border: 0;
+  }
 }
 
 .calendar {
@@ -256,6 +260,7 @@ header {
   padding: 15px;
   border: 1px solid #d9d9d9;
   border-radius: 10px;
+  cursor: pointer;
 }
 .pickerGroup {
   display: flex;
@@ -265,16 +270,73 @@ header {
     margin-bottom: 15px;
   }
 }
-.timeInput {
-  height: 50px;
-  padding: 10px;
-  border: 1px solid #d9d9d9;
-  border-radius: 10px;
+// .timeInput {
+//   height: 50px;
+//   padding: 10px;
+//   border: 1px solid #d9d9d9;
+//   border-radius: 10px;
+// }
+
+.customDropdown {
+  width: 80px;
+  position: relative;
 }
+.selectedTime {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.arrowIcon {
+  height: 18px;
+  display: block;
+}
+.timeOptions {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  overflow-y: scroll;
+  z-index: 10;
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #3FA9F5;
+    // border: 2px solid #9b6a2f;
+    border-radius: 12px 12px 12px 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+}
+
+.timeOption {
+  height: 40px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+.timeOption:hover {
+  background-color: #f0f0f0;
+}
+
 .meMo {
   width: 100%;
   padding: 20px 15px;
   border-bottom: 1px solid #d9d9d9;
+  h3 {
+    font-size: 16px;
+  }
 }
 .textArea {
   width: 100%;

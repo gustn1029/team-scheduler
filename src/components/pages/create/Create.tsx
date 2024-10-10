@@ -1,33 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { RiCloseFill } from 'react-icons/ri';
-import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './create.module.scss';
 import { ko } from 'date-fns/locale/ko';
 import LabelInput from '../../inputs/input/LabelInput';
+import CustomTimePicker from './CustomTimePicker';
+import { useQuery } from '@tanstack/react-query';
+import { userDataFetch } from '../../../utils/http';
+import { appAuth } from '../../../firebase/config';
+import Header from '../../header/Header';
+
 
 interface FormInputs {
   title: string;
 }
 
 const Create: React.FC = () => {
+  const { data: authData } = useQuery({
+    queryKey: ["auth", appAuth.currentUser?.uid],
+    queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
+    enabled: !!appAuth.currentUser?.uid,
+  });
+
+  // console.log(authData);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCancel = () => {
+    console.log('취소 버튼 클릭');
+  };
+
   const {
     handleSubmit,
     register,
     watch,
-    formState: { errors, isSubmitted, isSubmitting },
-    reset,
+    formState: { errors, isSubmitted },
   } = useForm<FormInputs>();
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    console.log(data);
-  };
-
-  const handleClose = () => {
-    console.log('close');
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      console.log(data);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -60,81 +78,74 @@ const Create: React.FC = () => {
   };
 
   const [isChecked, setIsChecked] = useState(false);
+
+  // 현재 날짜와 시간을 명확하게 설정하는 부분
+  const initalTime = useState(() => {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0); // 시간을 12:00으로 설정
+    return date;
+  })[0]; // useState로 초기화
+
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
-
-  const initalTime = new Date();
-  initalTime.setHours(12, 0, 0, 0);
 
   const [startTime, setStartTime] = useState<Date | null>(initalTime);
   const [endTime, setEndTime] = useState<Date | null>(initalTime);
 
-  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked);
+  const [openComponent, setOpenComponent] = useState<string | null>(null);
+
+  // 시작 시간 변경 핸들러
+  const handleStartTimeChange = (time: Date | null) => {
+    setStartTime(time);
+
+    // 시작 시간이 종료 시간보다 늦을 경우, 종료 시간을 시작 시간과 동기화
+    if (time && endTime && time > endTime) {
+      setEndTime(time);
+    }
   };
 
+  // 종료 시간 변경 핸들러
+  const handleEndTimeChange = (time: Date | null) => {
+    setEndTime(time);
+
+    // 종료 시간이 시작 시간보다 빠를 경우, 시작 시간을 종료 시간과 동기화
+    if (time && startTime && time < startTime) {
+      setStartTime(time);
+    }
+  };
+
+  // 시작 날짜 변경 핸들러
   const handleStartDateChange = (date: Date | null) => {
-    if (date) {
-      setStartDate(date);
-      if (!endDate || date > endDate) {
-        setEndDate(date);
-      }
+    setStartDate(date);
+    if (date && (!endDate || date > endDate)) {
+      setEndDate(date); // 시작 날짜가 변경되면 종료 날짜도 업데이트
     }
   };
 
+  // 종료 날짜 변경 핸들러
   const handleEndDateChange = (date: Date | null) => {
-    if (date) {
-      if (startDate && date < startDate) {
-        setStartDate(date);
-      }
-      setEndDate(date);
+    setEndDate(date);
+    if (date && startDate && date < startDate) {
+      setStartDate(date); // 종료 날짜가 시작 날짜보다 이르면 시작 날짜도 변경
     }
   };
 
-  const CustomTimePicker: React.FC<{ selectedTime: Date | null, onTimeChange: React.Dispatch<React.SetStateAction<Date | null>> }> = ({ selectedTime, onTimeChange }) => {
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const time = event.target.value;
-      const [hours, minutes] = time.split(':').map(Number);
-
-      const updatedDate = new Date();
-      updatedDate.setHours(hours, minutes, 0, 0);
-
-      onTimeChange(updatedDate);
-    };
-
-    const getTimeValue = (date: Date | null) => {
-      if (!date) return '';
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
-    };
-
-    return (
-      <input
-        className={styles.timeInput}
-        type="time"
-        value={getTimeValue(selectedTime)}
-        onChange={handleChange}
-        step="900"
-      />
-    );
+  const handleToggleComponent = (component: string) => {
+    setOpenComponent(openComponent === component ? null : component);
   };
+
+  const profileImage = authData?.imageUrl || 'default-profile-image-url';
 
   return (
     <main>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <header>
-          <RiCloseFill className={styles.closeButton} />
-          <h2 className={styles.h2}>일정 추가</h2>
-          <button type="submit" className={styles.checkButton} disabled={isSubmitting}>
-            <IoMdCheckmark />
-          </button>
-        </header>
+        <Header title="일정 추가" onCancel={handleCancel} onConfirm={handleSubmit(onSubmit)} />
+        
         <div className={styles.sheduleWriter}>
           <h3>작성자</h3>
           <img
             className={styles.writerProfile}
-            src=""
+            src={profileImage}
             alt="writerProfile"
           />
         </div>
@@ -143,19 +154,18 @@ const Create: React.FC = () => {
             type="text"
             label="Title"
             placeholder="제목"
-            register={register("title", {
-              required: { value: true, message: "제목을 입력하세요." },
-              minLength: { value: 3, message: "제목은 최소 3자 이상 입력하세요." },
+            register={register('title', {
+              required: { value: true, message: '제목을 입력하세요.' },
+              minLength: { value: 3, message: '제목은 최소 3자 이상 입력하세요.' },
             })}
             watch={watch}
-            ariaInvalid={
-              isSubmitted ? (errors.title ? true : false) : undefined
-            }
+            ariaInvalid={isSubmitted ? (errors.title ? true : false) : undefined}
             error={errors}
             errorView={errors.title}
             isLabelTextHidden={true}
           />
         </div>
+
         <div className={`${styles.colorSelect} ${isOpen ? 'on' : ''}`}>
           <div className={styles.colorFlex}>
             <h3 className={styles.colorTitle}>색상 선택</h3>
@@ -176,58 +186,69 @@ const Create: React.FC = () => {
             </ul>
           )}
         </div>
+
         <div className={styles.toggleArea}>
           <label className={styles.toggleStyle} htmlFor="toggleSwitch" role="switch">
             <h3>하루 종일</h3>
             <input
               id="toggleSwitch"
+              className={styles.toggleBar}
               type="checkbox"
               checked={isChecked}
-              onChange={handleToggleChange}
+              onChange={(e) => setIsChecked(e.target.checked)}
             />
           </label>
         </div>
+
         <div className={styles.calendar}>
           <div className={styles.pickerGroup}>
             <DatePicker
               className={styles.datePicker}
               selected={startDate}
               onChange={handleStartDateChange}
-              dateFormat='yyyy년 MM월 dd일 (EEE)'
+              dateFormat="yyyy년 MM월 dd일 (EEE)"
               locale={ko}
               placeholderText="시작 날짜를 선택하세요"
+              open={openComponent === 'startDate'}
+              onInputClick={() => handleToggleComponent('startDate')}
+              onClickOutside={() => setOpenComponent(null)}
             />
             {!isChecked && (
-              <div className={styles.timePickerWrapper}>
-                <CustomTimePicker selectedTime={startTime} onTimeChange={setStartTime} />
-              </div>
+              <CustomTimePicker
+                selectedTime={startTime}
+                onTimeChange={handleStartTimeChange}
+                isOpen={openComponent === 'startTime'}
+                onToggle={() => handleToggleComponent('startTime')}
+              />
             )}
           </div>
+          
           <div className={styles.pickerGroup}>
             <DatePicker
               className={styles.datePicker}
               selected={endDate}
               onChange={handleEndDateChange}
-              dateFormat='yyyy년 MM월 dd일 (EEE)'
+              dateFormat="yyyy년 MM월 dd일 (EEE)"
               locale={ko}
               placeholderText="종료 날짜를 선택하세요"
+              open={openComponent === 'endDate'}
+              onInputClick={() => handleToggleComponent('endDate')}
+              onClickOutside={() => setOpenComponent(null)}
             />
             {!isChecked && (
-              <div className={styles.timePickerWrapper}>
-                <CustomTimePicker
-                  selectedTime={endTime}
-                  onTimeChange={setEndTime}
-                />
-              </div>
+              <CustomTimePicker
+                selectedTime={endTime}
+                onTimeChange={handleEndTimeChange}
+                isOpen={openComponent === 'endTime'}
+                onToggle={() => handleToggleComponent('endTime')}
+              />
             )}
           </div>
         </div>
+
         <div className={styles.meMo}>
           <h3>메모</h3>
-          <textarea
-            className={styles.textArea}
-            placeholder="메모를 입력하세요">
-          </textarea>
+          <textarea className={styles.textArea} placeholder="메모를 입력하세요"></textarea>
         </div>
       </form>
     </main>

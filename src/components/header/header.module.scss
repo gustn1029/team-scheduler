@@ -1,0 +1,25 @@
+.header {
+  width: 100%;
+  padding: 20px 15px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  box-sizing: border-box;
+  .closeButton {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+  }
+  .confirmButton {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+}

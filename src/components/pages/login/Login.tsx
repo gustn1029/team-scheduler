@@ -108,7 +108,13 @@ const Login: React.FC = () => {
               })}
               watch={watch}
               ariaInvalid={
-                isSubmitted ? (errors.userEmail ? true : false) : undefined
+                isSubmitted
+                  ? errors.userEmail
+                    ? true
+                    : loginError
+                    ? true
+                    : undefined
+                  : undefined
               }
               error={errors}
               errorView={errors.userEmail}
@@ -123,7 +129,13 @@ const Login: React.FC = () => {
               })}
               watch={watch}
               ariaInvalid={
-                isSubmitted ? (errors.userPassword ? true : false) : undefined
+                isSubmitted
+                  ? errors.userPassword
+                    ? true
+                    : loginError
+                    ? true
+                    : undefined
+                  : undefined
               }
               error={errors}
               errorView={errors.userPassword}
