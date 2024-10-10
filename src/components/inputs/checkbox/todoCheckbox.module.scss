@@ -1,0 +1,29 @@
+
+.customCheckbox {flex-grow: 1;}
+.customCheckbox input[type="checkbox"] {
+    width: 0;
+    height: 0;
+    position: absolute;
+    opacity: 0;
+}
+
+.customCheckbox span{
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #333333;
+    cursor: pointer;
+}
+
+.customCheckbox span::before {
+    content: "";
+    display: block;
+    width: 16px; height: 16px;
+    background: url(../../../assets/images/utils/check1.svg) no-repeat center center;
+}
+
+
+.customCheckbox input[type="checkbox"]:checked + span::before {
+    background: url(../../../assets/images/utils/check1-checked.svg) no-repeat center center;
+}
