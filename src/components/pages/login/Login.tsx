@@ -30,15 +30,15 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   useUserData();
-  
+
   const user = sessionStorage.getItem("user");
 
   console.log(user);
-  useEffect(() => {
-    if (user) {
-      navigate("/calendar");
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/calendar");
+  //   }
+  // }, [user, navigate]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -47,7 +47,11 @@ const Login: React.FC = () => {
         data.userEmail,
         data.userPassword
       );
+      await queryClient.invalidateQueries({
+        queryKey: ["auth", appAuth.currentUser?.uid],
+      });
       console.log("로그인 완료");
+      navigate("/calendar");
       setLoginError(null);
     } catch (error) {
       console.error("로그인 실패:", error);
@@ -61,6 +65,8 @@ const Login: React.FC = () => {
       await queryClient.invalidateQueries({
         queryKey: ["auth", appAuth.currentUser?.uid],
       });
+
+      navigate("/calendar");
     },
     onError: (error) => {
       throw new Error(error.message);
