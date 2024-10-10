@@ -7,22 +7,20 @@ export const useUserData = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const userData = sessionStorage.getItem("user");
     const unsubscribe = onAuthStateChanged(appAuth, (currentUser) => {
-      
       if (currentUser) {
         queryClient.invalidateQueries({
           queryKey: ["auth", currentUser.uid],
         });
-      }
-      
-      const userSession = {
-        email: currentUser?.email,
-        displayName: currentUser?.displayName
-      }
 
-      if(userData === null) {
+        const userSession = {
+          email: currentUser?.email,
+          displayName: currentUser?.displayName,
+        };
+
         sessionStorage.setItem("user", JSON.stringify(userSession));
+      } else {
+        sessionStorage.removeItem("user");
       }
     });
 
