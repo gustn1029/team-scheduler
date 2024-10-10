@@ -5,27 +5,28 @@ import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
 
 interface TodoFormProps {
-    date: Date;
+  date: Date;
 }
 
-const TodoForm = ({date}: TodoFormProps) => {
+const TodoForm = ({ date }: TodoFormProps) => {
   const {
     register,
     watch,
+    setValue,
     formState: { errors, isSubmitted },
     handleSubmit,
   } = useForm<TodoData>();
   const { addTodo } = useTodoStore();
 
   const onSubmit = (data: TodoData) => {
-    const newTodo:TodoData = {
-        todo: data.todo,
-        isComplete: data.isComplete || false,
-        createDate: new Date(),
-        todoDate: date
-
-    }
+    const newTodo: TodoData = {
+      todo: data.todo,
+      isComplete: data.isComplete || false,
+      createDate: new Date(),
+      todoDate: date,
+    };
     addTodo(newTodo);
+    setValue("todo", "");
   };
 
   return (
@@ -45,6 +46,7 @@ const TodoForm = ({date}: TodoFormProps) => {
           placeholder="+ 항목 추가"
           isLabelTextHidden
           inputClassName={styles.todoInput}
+          ariaInvalid={isSubmitted ? (errors.todo ? true : undefined) : undefined}
         />
       </form>
     </>

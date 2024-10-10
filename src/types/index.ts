@@ -85,3 +85,9 @@ export interface TodoData {
   createDate?: Date;
   updateDate?: Date | null;
 }
+
+export interface TodoItem {
+  id?: string;
+  isComplete?: boolean;
+  todo?: string;
+}
