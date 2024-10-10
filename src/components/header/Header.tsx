@@ -6,11 +6,12 @@ import styles from './header.module.scss';
 
 interface HeaderProps {
   title: string;
-  onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, onCancel, onConfirm }) => {
+const Header: React.FC<HeaderProps> = ({ title, onConfirm, onEdit, onDelete }) => {
   const navigate = useNavigate();
 
   const handleCancel = () => {
@@ -18,14 +19,26 @@ const Header: React.FC<HeaderProps> = ({ title, onCancel, onConfirm }) => {
   };
 
   return (
-    <div className={styles.header}>
+    <div className={styles.headerComponent}>
       <button onClick={handleCancel} className={styles.closeButton}>
         <RiCloseFill size="22" />
       </button>
       <h2 className={styles.title}>{title}</h2>
-      <button onClick={onConfirm} className={styles.confirmButton}>
+      {onEdit && (
+        <button onClick={onEdit} className={styles.editButton}>
+          수정
+        </button>
+      )}
+      {onDelete && (
+        <button onClick={onDelete} className={styles.deleteButton}>
+          삭제
+        </button>
+      )}
+      {onConfirm && (
+        <button onClick={onConfirm} className={styles.confirmButton}>
         <IoMdCheckmark size="22" />
-      </button>
+        </button>
+      )}
     </div>
   );
 };
