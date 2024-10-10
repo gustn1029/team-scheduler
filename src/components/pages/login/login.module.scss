@@ -55,7 +55,8 @@ main {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      & button {
+      & button,
+      & a {
         border-radius: 10px;
         font-weight: 400;
         font-size: 14px;
