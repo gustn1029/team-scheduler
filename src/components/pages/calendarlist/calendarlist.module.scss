@@ -1,5 +1,52 @@
-.closeButton {
-  width: 22px;
-  height: 22px;
-  cursor: pointer;
+.calendarListHeader {
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-bottom: 20px;
+  .closeButton {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+  p {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .createBtn {
+    font-size: 28px;
+  }
+}
+.calendarListMain {
+  & li {
+    display: flex;
+    .timeContainer {
+      margin-left: 15px;
+      font-weight: 400;
+      font-size: 12px;
+      .allDay {
+        margin-top: 8px;
+      }
+    }
+    .listColor {
+      width: 2px;
+      height: 30px;
+      background-color: #f5333f;
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-top: 3px;
+    }
+    .scheduleContainer {
+      display: flex;
+      align-items: center;
+      & p {
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+  }
 }
