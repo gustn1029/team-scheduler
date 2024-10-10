@@ -13,16 +13,22 @@ const Profile = () => {
   const {register, watch, formState:{errors, isSubmitted}, handleSubmit} = useForm();
   const [isEditing, setIsEditing] = useState(false);
 
-  const user = {
-    data: {
-      imageUrl:
-        "https://images-ext-1.discordapp.net/external/uXFrIt1cuaVkVlmXVKhsSaGIlf5qekFS5QXO5tJBPPk/%3Frnd%3D20230712163021/https/image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?format=webp",
-      nickname: "닉네임",
-      email: "abc@abc.com",
-      uid: "123456789",
-      name: "David",
-    },
-  };
+  // const user = {
+  //   data: {
+  //     imageUrl:
+  //       "https://images-ext-1.discordapp.net/external/uXFrIt1cuaVkVlmXVKhsSaGIlf5qekFS5QXO5tJBPPk/%3Frnd%3D20230712163021/https/image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?format=webp",
+  //     nickname: "닉네임",
+  //     email: "abc@abc.com",
+  //     uid: "123456789",
+  //     name: "David",
+  //   },
+  // };
+
+  const user = useQuery({
+    queryKey: ["user"],
+    queryFn: () => userDataFetch(appAuth!.currentUser!.uid),
+  });
+
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -68,7 +74,7 @@ const Profile = () => {
             errorView={errors.userNickName as FieldError}
           />
               <label>이메일</label>
-              <input type="email" defaultValue={user.data?.email} />
+              <p className={styles.email}>{user.data?.email}</p>
               <div className={styles.modalButtons}>
                 <Button type="button" buttonStyle={ButtonStyleEnum.Cancel} onClick={handleCloseModal}>
                   취소
