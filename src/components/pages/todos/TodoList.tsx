@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
 import { TodoData } from "../../../types";
-import IconButton from "../../button/iconButton/IconButton";
-import { MdCancel } from "react-icons/md";
+import TodoListItem from "./TodoListItem";
 
 const TodoList = () => {
   const { todos } = useTodoStore();
@@ -21,42 +20,42 @@ const TodoList = () => {
   }, [todos]);
 
   return (
-    <>
+    <div className={styles.todoListWrap}>
       <section className={`${styles.sectionWrap}`}>
         <h3 className={`${styles.notComplete} ${styles.title}`}>미완료</h3>
-        <ul>
-          {notCompleteTodos.map((el, idx) => {
-            return (
-              <li
-                key={`${el.id ? el.id : idx}`}
-                className={`${styles.listItem} ${styles.notCompelteListItem}`}
-              >
-                <label htmlFor="">
-                  <input type="checkbox" name="" id="" />
-                  <span>{el.todo}</span>
-                </label>
-                <IconButton icon={<MdCancel />} />
-              </li>
-            );
-          })}
-        </ul>
+        {notCompleteTodos.length !== 0 && (
+          <ul>
+            {notCompleteTodos.map((el) => {
+              return (
+                <TodoListItem
+                  key={el.id}
+                  id={el.id}
+                  isComplete={el.isComplete}
+                  todo={el.todo}
+                />
+              );
+            })}
+          </ul>
+        )}
       </section>
       <section className={`${styles.sectionWrap}`}>
         <h3 className={`${styles.complete} ${styles.title}`}>완료</h3>
-        <ul>
-          {completeTodos.map((el, idx) => {
-            return (
-              <li
-                key={`${el.id ? el.id : idx}`}
-                className={`${styles.listItem} ${styles.compelteListItem}`}
-              >
-                {el.todo}
-              </li>
-            );
-          })}
-        </ul>
+        {completeTodos.length !== 0 && (
+          <ul>
+            {completeTodos.map((el) => {
+              return (
+                <TodoListItem
+                  key={el.id}
+                  id={el.id}
+                  isComplete={el.isComplete}
+                  todo={el.todo}
+                />
+              );
+            })}
+          </ul>
+        )}
       </section>
-    </>
+    </div>
   );
 };
 
