@@ -70,7 +70,7 @@ export const SignUp: React.FC = () => {
       const userProfileImg = await getImageUrl();
 
       await setDoc(doc(appFireStore, "users", userCredential.user.uid), {
-        id: userId,
+        uid: userId,
         email: data.userEmail,
         nickname: data.userNickName,
         profileImg: userProfileImg,
