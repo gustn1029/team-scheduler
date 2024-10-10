@@ -1,5 +1,5 @@
 import Calendar from "react-calendar";
-import styles from "./home.module.scss";
+import styles from "./calendar.module.scss";
 import { useDateStore } from "../../../store/useDateStore";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -32,7 +32,7 @@ dayjs.extend(isSameOrBefore);
 
 dayjs.extend(isBetween);
 
-const Home = () => {
+const CalendarComponent = () => {
   const [clickEventDate, setClickEventDate] = useState<Date | null>(null);
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -529,4 +529,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default CalendarComponent;
