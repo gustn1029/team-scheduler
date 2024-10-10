@@ -1,4 +1,4 @@
-import Home from "./components/pages/home/Home";
+import CalendarComponent from "./components/pages/calendar/Calendar";
 import Login from "./components/pages/login/Login";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Profile from "./components/pages/Profile";
@@ -10,21 +10,17 @@ import Loader from "./components/loader/Loader";
 import ToastProvider from "./components/toast/ToastProvider";
 import CalendarList from "./components/pages/calendarlist/CalendarList";
 import RootLayout from "./components/layouts/RootLayout";
-import TodosCreate from "./components/pages/todo/create/TodosCreate";
-import TodoList from "./components/pages/todo/list/TodoList";
-import TodosEdit from "./components/pages/todo/edit/TodosEdit";
-
+import Todos from "./components/pages/todos/Todos";
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
         <Loader />
         <RootLayout>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
+            <Route path="/" element={<Navigate to={"/calendar"} replace />} />
+            <Route path="/calendar" element={<CalendarComponent />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/create" element={<Create />} />
             <Route path="/login" element={<Login />} />
@@ -32,9 +28,7 @@ function App() {
             <Route path="/findpassword" element={<FindPassword />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/calendarlist" element={<CalendarList />} />
-            <Route path="/todo-create" element={<TodosCreate />} />
-            <Route path="/todo-list" element={<TodoList />} />
-            <Route path="/todo-edit" element={<TodosEdit />} />
+            <Route path="/todo" element={<Todos />} />
           </Routes>
         </RootLayout>
         <ToastProvider />

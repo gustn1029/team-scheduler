@@ -1,6 +1,6 @@
 .labelInput {
   &:focus {
-    border: inherit;
+    outline: none;
   }
   &[aria-invalid="true"] {
     border: 1px solid #f5333f;

@@ -79,7 +79,7 @@ export type EventPostData = Omit<
 
 export interface TodoData {
   id?: string;
-  title?: string;
+  todo?: string;
   isComplete?: boolean;
   todoDate?: Date;
   createDate?: Date;

@@ -1,0 +1,38 @@
+.title {
+    font-size: 0.875rem;
+}
+
+.todoInput {
+    width: 100%;
+    padding: 14px;
+    line-height: 20px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+}
+
+.notComplete {
+    color: #8F8F8F;
+}
+.complete {
+    color: #00C56F;
+}
+
+.sectionWrap {
+    padding: 20px 15px;
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.listItem {
+    display: flex;
+    padding: 12px 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+}
+
+.notCompleteListItem {
+    background-color: #fafafa;
+}
+.completeListItem {
+    background-color: #D9FEE1;
+}

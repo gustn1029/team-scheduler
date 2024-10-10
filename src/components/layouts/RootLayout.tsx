@@ -7,9 +7,10 @@ interface RootLayoutProps {
 }
 
 const RootLayout = ({ children }: RootLayoutProps) => {
-  const { user } = useUserData();
+  useUserData();
   const navigate = useNavigate();
   const location = useLocation();
+  const user = sessionStorage.getItem("user");
 
   useEffect(() => {
     const publicPaths = ["/login", "/signup", "/findpassword"];
