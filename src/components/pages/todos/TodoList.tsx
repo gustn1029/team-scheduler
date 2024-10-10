@@ -24,7 +24,7 @@ const TodoList = () => {
       <section className={`${styles.sectionWrap}`}>
         <h3 className={`${styles.notComplete} ${styles.title}`}>미완료</h3>
         {notCompleteTodos.length !== 0 && (
-          <ul>
+          <ul className={styles.todoList}>
             {notCompleteTodos.map((el) => {
               return (
                 <TodoListItem
@@ -41,7 +41,7 @@ const TodoList = () => {
       <section className={`${styles.sectionWrap}`}>
         <h3 className={`${styles.complete} ${styles.title}`}>완료</h3>
         {completeTodos.length !== 0 && (
-          <ul>
+          <ul className={styles.todoList}>
             {completeTodos.map((el) => {
               return (
                 <TodoListItem
