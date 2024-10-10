@@ -16,6 +16,7 @@ const CreateModal = ({
   bottom,
   params = "",
 }: CreateModalProps) => {
+
   return (
     <aside
       className={styles.createModal}
@@ -33,8 +34,8 @@ const CreateModal = ({
         일정
       </Link>
       <Link
-        to={`/todo-create${params !== "" ? `?${params}` : ""}`}
         className={`${styles.link} ${styles.todoLink}`}
+        to={`/todo${params !== "" ? `?${params}` : ""}`}
       >
         Todo
       </Link>
