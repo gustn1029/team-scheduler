@@ -24,8 +24,6 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { appAuth } from "../../../firebase/config";
-import Loader from "../../loader/Loader";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -470,9 +468,9 @@ const CalendarComponent = () => {
     toggleIsView();
   };
 
-  if (!appAuth.currentUser) {
-    return <Loader />;
-  }
+  // if (!appAuth.currentUser) {
+  //   return <Loader />;
+  // }
 
   return (
     <main className={styles.calendarWrap}>

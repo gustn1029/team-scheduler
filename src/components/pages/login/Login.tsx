@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { appAuth } from "../../../firebase/config";
 import LinkButton from "../../button/LinkButton";
+import { useUserData } from "../../../hooks/useUserDataHook";
 
 interface FormData {
   userEmail: string;
@@ -27,9 +28,12 @@ const Login: React.FC = () => {
   } = useForm<FormData>();
 
   const navigate = useNavigate();
+
+  useUserData();
   
   const user = sessionStorage.getItem("user");
 
+  console.log(user);
   useEffect(() => {
     if (user) {
       navigate("/calendar");

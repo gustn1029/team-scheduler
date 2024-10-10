@@ -29,6 +29,7 @@ const Navigation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] });
       toggleIsView();
+      sessionStorage.removeItem("user");
       navigate("/login");
     },
     onError: (error) => {
