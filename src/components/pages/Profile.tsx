@@ -22,7 +22,6 @@ const Profile = () => {
     queryFn: () => userDataFetch(appAuth!.currentUser!.uid),
   });
 
-
   const handleEditClick = () => {
     setIsEditing(true);
   };
