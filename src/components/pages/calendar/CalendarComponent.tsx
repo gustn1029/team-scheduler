@@ -4,7 +4,11 @@ import { useDateStore } from "../../../store/useDateStore";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useQuery } from "@tanstack/react-query";
-import { eventsDataFetch, queryClient } from "../../../utils/http";
+import {
+  calendarTodosFetch,
+  eventsDataFetch,
+  queryClient,
+} from "../../../utils/http";
 import {
   Fragment,
   MouseEventHandler,
@@ -13,8 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { EventsData } from "../../../types";
-import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
+import { CalendarTodos, EventsData } from "../../../types";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import CreateModal from "../../createModal/CreateModal";
@@ -24,6 +27,7 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { appAuth } from "../../../firebase/config";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -38,197 +42,224 @@ const CalendarComponent = () => {
   const { isView, toggleIsView } = useViewNavStore();
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
   const { data: events } = useQuery({
-    queryKey: ["events", date.getFullYear(), date.getMonth()],
+    queryKey: [
+      "events",
+      appAuth.currentUser?.uid,
+      date.getFullYear(),
+      date.getMonth(),
+    ],
     queryFn: () =>
-      eventsDataFetch({ year: date.getFullYear(), month: date.getMonth() }),
+      eventsDataFetch({
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        uid: appAuth.currentUser!.uid,
+      }),
     staleTime: 5 * 60 * 1000,
+    enabled: !!appAuth.currentUser?.uid
   });
 
-  const DUMMY_DATA: EventsData[] = events
-    ? [
-        ...(events as EventsData[]),
-        {
-          id: "1",
-          title: "event1",
-          eventColor: "red",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 8, 14).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 8, 20).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "2",
-          title: "event2",
-          eventColor: "orange",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 14).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 16).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "13",
-          title: "event3",
-          eventColor: "blue",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 16).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 21).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "4",
-          title: "event4",
-          eventColor: "gray",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 14).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 14).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "5",
-          title: "event5",
-          eventColor: "pink",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 19).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 19).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "6",
-          title: "event6",
-          eventColor: "yellow",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 17).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 17).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "7",
-          title: "event7",
-          eventColor: "orange",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 18).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 18).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "8",
-          title: "event8",
-          eventColor: "pink",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 19).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 19).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-        {
-          id: "9",
-          title: "event9",
-          eventColor: "mint",
-          eventType: EventTypeEnum.EVENTS,
-          eventMemo: "",
-          startDate: {
-            seconds: new Date(2024, 9, 15).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          endDate: {
-            seconds: new Date(2024, 9, 15).getTime() / 1000,
-            nanoseconds: 0,
-          },
-          createDate: new Date(),
-          category: [],
-          comments: [],
-          like: 0,
-          updateDate: null,
-        },
-      ]
-    : [];
+  const { data: todos } = useQuery({
+    queryKey: [
+      "todos",
+      date.getFullYear(),
+      date.getMonth(),
+      appAuth.currentUser?.uid,
+    ],
+    queryFn: () =>
+      calendarTodosFetch({
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        uid: appAuth.currentUser!.uid,
+      }),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!appAuth.currentUser?.uid
+  });
+
+  // const DUMMY_DATA: EventsData[] = events
+  //   ? [
+  //       ...(events as EventsData[]),
+  //       {
+  //         id: "1",
+  //         title: "event1",
+  //         eventColor: "red",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 8, 14).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 8, 20).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "2",
+  //         title: "event2",
+  //         eventColor: "orange",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 14).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 16).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "13",
+  //         title: "event3",
+  //         eventColor: "blue",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 16).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 21).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "4",
+  //         title: "event4",
+  //         eventColor: "gray",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 14).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 14).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "5",
+  //         title: "event5",
+  //         eventColor: "pink",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "6",
+  //         title: "event6",
+  //         eventColor: "yellow",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 17).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 17).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "7",
+  //         title: "event7",
+  //         eventColor: "orange",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 18).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 18).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "8",
+  //         title: "event8",
+  //         eventColor: "pink",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //       {
+  //         id: "9",
+  //         title: "event9",
+  //         eventColor: "mint",
+  //         eventType: EventTypeEnum.EVENTS,
+  //         eventMemo: "",
+  //         startDate: {
+  //           seconds: new Date(2024, 9, 15).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         endDate: {
+  //           seconds: new Date(2024, 9, 15).getTime() / 1000,
+  //           nanoseconds: 0,
+  //         },
+  //         createDate: new Date(),
+  //         category: [],
+  //         comments: [],
+  //         like: 0,
+  //         updateDate: null,
+  //       },
+  //     ]
+  //   : [];
 
   useEffect(() => {
     const sessionSavedDate = sessionStorage.getItem("currentDate");
@@ -244,21 +275,55 @@ const CalendarComponent = () => {
     const prevMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
 
     queryClient.prefetchQuery({
-      queryKey: ["events", date.getFullYear(), nextMonth.getMonth()],
+      queryKey: [
+        "events",
+        date.getFullYear(),
+        nextMonth.getMonth(),
+        appAuth.currentUser!.uid,
+      ],
       queryFn: () =>
         eventsDataFetch({
           year: date.getFullYear(),
           month: nextMonth.getMonth(),
+          uid: appAuth.currentUser!.uid,
         }),
       staleTime: Infinity,
     });
 
     queryClient.prefetchQuery({
-      queryKey: ["events", date.getFullYear(), prevMonth.getMonth()],
+      queryKey: ["events", date.getFullYear(), prevMonth.getMonth(), appAuth.currentUser?.uid],
       queryFn: () =>
         eventsDataFetch({
           year: date.getFullYear(),
           month: prevMonth.getMonth(),
+          uid: appAuth.currentUser!.uid,
+        }),
+      staleTime: Infinity,
+    });
+
+    queryClient.prefetchQuery({
+      queryKey: [
+        "todos",
+        date.getFullYear(),
+        nextMonth.getMonth(),
+        appAuth.currentUser!.uid,
+      ],
+      queryFn: () =>
+        calendarTodosFetch({
+          year: date.getFullYear(),
+          month: nextMonth.getMonth(),
+          uid: appAuth.currentUser!.uid,
+        }),
+      staleTime: Infinity,
+    });
+
+    queryClient.prefetchQuery({
+      queryKey: ["todos", date.getFullYear(), prevMonth.getMonth(), appAuth.currentUser?.uid],
+      queryFn: () =>
+        calendarTodosFetch({
+          year: date.getFullYear(),
+          month: prevMonth.getMonth(),
+          uid: appAuth.currentUser!.uid,
         }),
       staleTime: Infinity,
     });
@@ -373,9 +438,11 @@ const CalendarComponent = () => {
   const TileContent = ({
     date,
     events,
+    todos,
   }: {
     date: Date;
     events: EventsData[];
+    todos: CalendarTodos[]
   }) => {
     const assignedEvents = useMemo(() => sortAndAssignRows(events), [events]);
 
@@ -384,6 +451,10 @@ const CalendarComponent = () => {
       (event) =>
         tileDate.isSameOrAfter(dayjs.unix(event.startDate.seconds), "day") &&
         tileDate.isSameOrBefore(dayjs.unix(event.endDate.seconds), "day")
+    );
+
+    const todosForTile = todos.filter(
+      (todo) => tileDate.isSame(dayjs(todo.todoDate), "day")
     );
 
     return (
@@ -426,6 +497,7 @@ const CalendarComponent = () => {
             <CreateModal params={`date=${dayjs(date).format("YYYY-MM-DD")}`} />
           )}
         </div>
+        <div>{todosForTile.map((el) => <Fragment key={el.id}>{'todo'}</Fragment>)}</div>
       </div>
     );
   };
@@ -516,7 +588,7 @@ const CalendarComponent = () => {
         activeStartDate={date}
         tileClassName={tileClassName}
         tileContent={({ date }) => (
-          <TileContent date={date} events={DUMMY_DATA as EventsData[]} />
+          <TileContent date={date} events={events as EventsData[] || []} todos={todos as CalendarTodos[] || []} />
         )}
         formatDay={formatDay}
         calendarType="gregory"
