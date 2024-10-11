@@ -7,10 +7,9 @@ import Button from "../../button/Button";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { appAuth } from "../../../firebase/config";
 import LinkButton from "../../button/LinkButton";
-import { useUserData } from "../../../hooks/useUserDataHook";
 
 interface FormData {
   userEmail: string;
@@ -29,17 +28,6 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
-  useUserData();
-
-  const user = sessionStorage.getItem("user");
-
-  console.log(user);
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate("/calendar");
-  //   }
-  // }, [user, navigate]);
-
   const onSubmit = async (data: FormData) => {
     try {
       await signInWithEmailAndPassword(
@@ -51,6 +39,7 @@ const Login: React.FC = () => {
         queryKey: ["auth", appAuth.currentUser?.uid],
       });
       console.log("로그인 완료");
+      sessionStorage.setItem("user","true");
       navigate("/calendar");
       setLoginError(null);
     } catch (error) {
@@ -65,7 +54,7 @@ const Login: React.FC = () => {
       await queryClient.invalidateQueries({
         queryKey: ["auth", appAuth.currentUser?.uid],
       });
-
+      sessionStorage.setItem("user","true");
       navigate("/calendar");
     },
     onError: (error) => {

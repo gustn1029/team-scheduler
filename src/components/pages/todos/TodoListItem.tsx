@@ -6,12 +6,14 @@ import { useTodoStore } from "../../../store/useTodoStore";
 
 import styles from "./todos.module.scss";
 
-const TodoListItem = ({ id, isComplete, todo }: TodoItem) => {
+const TodoListItem = ({ id, isComplete, todo}: TodoItem) => {
   const { deleteTodo } = useTodoStore();
   return (
     <li
-      key={`${id}`}
-      className={`${styles.listItem} ${isComplete ? styles.completeListItem : styles.notCompleteListItem}`}
+      id={id}
+      className={`${styles.listItem} ${
+        isComplete ? styles.completeListItem : styles.notCompleteListItem
+      }`}
     >
       <TodoCheckbox id={id} isComplete={isComplete} todo={todo} />
       <IconButton
