@@ -68,7 +68,7 @@ const Navigation = () => {
         <li className={styles.navItem}>
           <div className={styles.profileWrap}>
             <img
-              src={authData ? `${authData?.imageUrl}` : thumbnailImage}
+              src={authData ? `${authData?.profileImg}` : thumbnailImage}
               alt={authData ? authData.nickname : "profile thumbnail"}
               className={authData ? styles.authProfile : styles.basicProfile}
             />
