@@ -8,7 +8,7 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
-import { appAuth, appFireStore } from "../../../firebase/config";
+import { appFireStore } from "../../../firebase/config";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillPlusCircle } from "react-icons/ai";
@@ -19,22 +19,20 @@ import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
 
 interface Event extends DocumentData {
-  uid?: string;
+  uid: string;
   startDate: Timestamp;
   endDate: Timestamp;
   title: string;
   eventColor: string;
 }
 
+interface UserData {
+  imageUrl: string;
+}
+
 function CalendarList() {
   const [clickEventDate, setClickEventDate] = useState<Date | null>(null);
   const [isCreate, setIsCreate] = useState<boolean>(false);
-
-  const { data: authData } = useQuery({
-    queryKey: ["auth", appAuth.currentUser?.uid],
-    queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
-    enabled: !!appAuth.currentUser?.uid,
-  });
 
   const eventsOfDayFetch = async (date: Date): Promise<Event[]> => {
     const startOfDay = new Date(
@@ -66,7 +64,7 @@ function CalendarList() {
 
     const querySnapshot = await getDocs(q);
     const events = querySnapshot.docs.map((doc) => ({
-      uid: doc.uid,
+      uid: doc.id,
       ...doc.data(),
     })) as Event[];
     return events;
@@ -75,6 +73,31 @@ function CalendarList() {
   const dateParam = params.get("date");
   const date = new Date(Number(dateParam) * 1000);
   console.log(date);
+
+  const { data: events, isLoading: eventsLoading } = useQuery<Event[]>({
+    queryKey: ["events", dateParam],
+    queryFn: () => eventsOfDayFetch(date),
+    enabled: !!dateParam,
+  });
+
+  // 모든 고유한 uid에 대한 사용자 데이터를 가져오는 쿼리
+  const { data: usersData } = useQuery<Record<string, UserData>>({
+    queryKey: ["users", events],
+    queryFn: async () => {
+      if (!events) return {};
+      const uniqueUids = [
+        ...new Set(events.map((event) => event.uid).filter(Boolean)),
+      ];
+      const userData = await Promise.all(
+        uniqueUids.map(async (uid) => {
+          const data = await userDataFetch(uid);
+          return [uid, data];
+        })
+      );
+      return Object.fromEntries(userData);
+    },
+    enabled: !!events && events.length > 0,
+  });
 
   const { data } = useQuery<Event[]>({
     queryKey: ["events", dateParam],
@@ -91,7 +114,7 @@ function CalendarList() {
     setIsCreate((prevState) => !prevState);
   };
 
-  const profileImage = authData?.imageUrl || "default-profile-image-url";
+  // const profileImage = authData?.imageUrl || "default-profile-image-url";
 
   return (
     <>
@@ -111,58 +134,63 @@ function CalendarList() {
       </header>
       <main className={styles.calendarListMain}>
         <ul>
-          {Array.isArray(data) && data.length > 0 ? (
-            data.map((event, index) => (
+          {eventsLoading ? (
+            <li key="loading">데이터를 불러오는 중...</li>
+          ) : Array.isArray(events) && events.length > 0 ? (
+            events.map((event, index) => (
               <li key={`${event.uid || "event"}-${index}`}>
-                <div className={styles.timeContainerIf}>
-                  {new Date(event.startDate.seconds * 1000).getHours() === 0 &&
-                  new Date(event.startDate.seconds * 1000).getMinutes() === 0 &&
-                  new Date(event.endDate.seconds * 1000).getHours() === 23 &&
-                  new Date(event.endDate.seconds * 1000).getMinutes() === 59 ? (
-                    <p className={styles.allDay}>종일</p>
-                  ) : (
-                    <div className={styles.timeContainer}>
-                      <p>
-                        {new Date(
-                          event.startDate.seconds * 1000
-                        ).toLocaleTimeString("ko-KR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: false,
-                        })}
-                      </p>
-                      <p>
-                        {new Date(
-                          event.endDate.seconds * 1000
-                        ).toLocaleTimeString("ko-KR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: false,
-                        })}
-                      </p>
-                    </div>
-                  )}
+                <div className="liContainer">
+                  <div className={styles.timeContainerIf}>
+                    {new Date(event.startDate.seconds * 1000).getHours() ===
+                      0 &&
+                    new Date(event.startDate.seconds * 1000).getMinutes() ===
+                      0 &&
+                    new Date(event.endDate.seconds * 1000).getHours() === 23 &&
+                    new Date(event.endDate.seconds * 1000).getMinutes() ===
+                      59 ? (
+                      <p className={styles.allDay}>종일</p>
+                    ) : (
+                      <div className={styles.timeContainer}>
+                        <p>
+                          {new Date(
+                            event.startDate.seconds * 1000
+                          ).toLocaleTimeString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })}
+                        </p>
+                        <p>
+                          {new Date(
+                            event.endDate.seconds * 1000
+                          ).toLocaleTimeString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={styles.listColor}
+                    style={{ backgroundColor: event.eventColor }}
+                  ></div>
+                  <div className={styles.scheduleContainer}>
+                    <p>{event.title}</p>
+                  </div>
                 </div>
-                <div
-                  className={styles.listColor}
-                  style={{ backgroundColor: event.eventColor }}
-                ></div>
-                <div className={styles.scheduleContainer}>
-                  <p>{event.title}</p>
-                </div>
-                {event.uid ? (
+                {event.uid && usersData && usersData[event.uid] ? (
                   <img
                     className={styles.writerProfile}
-                    src={profileImage}
-                    alt="writerProfile"
+                    src={usersData[event.uid].imageUrl}
+                    alt="작성자"
                   />
-                ) : (
-                  ""
-                )}
+                ) : null}
               </li>
             ))
           ) : (
-            <li></li>
+            <li key="no-events">일정이 없습니다.</li>
           )}
         </ul>
       </main>
