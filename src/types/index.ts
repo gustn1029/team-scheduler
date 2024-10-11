@@ -46,6 +46,9 @@ export interface LabelSelectOptionsProps extends LabelInputProps {
 // 이벤트 엔티티
 export interface EventsData {
   id?: string;
+  uid?: string;
+  imageUrl?: string;
+  nickname?: string;
   title: string;
   startDate: any;
   endDate: any;
