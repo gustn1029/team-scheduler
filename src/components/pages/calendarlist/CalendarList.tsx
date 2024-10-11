@@ -80,7 +80,6 @@ function CalendarList() {
     enabled: !!dateParam,
   });
 
-  // 모든 고유한 uid에 대한 사용자 데이터를 가져오는 쿼리
   const { data: usersData } = useQuery<Record<string, UserData>>({
     queryKey: ["users", events],
     queryFn: async () => {
@@ -142,43 +141,47 @@ function CalendarList() {
                 key={`${event.uid || "event"}-${index}`}
                 className={styles.liContainer}
               >
-                <div className={styles.timeContainerIf}>
-                  {new Date(event.startDate.seconds * 1000).getHours() === 0 &&
-                  new Date(event.startDate.seconds * 1000).getMinutes() === 0 &&
-                  new Date(event.endDate.seconds * 1000).getHours() === 23 &&
-                  new Date(event.endDate.seconds * 1000).getMinutes() === 59 ? (
-                    <p className={styles.allDay}>종일</p>
-                  ) : (
-                    <div className={styles.timeContainer}>
-                      <p>
-                        {new Date(
-                          event.startDate.seconds * 1000
-                        ).toLocaleTimeString("ko-KR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: false,
-                        })}
-                      </p>
-                      <p>
-                        {new Date(
-                          event.endDate.seconds * 1000
-                        ).toLocaleTimeString("ko-KR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: false,
-                        })}
-                      </p>
-                    </div>
-                  )}
+                <div className={styles.textContainer}>
+                  <div className={styles.timeContainerIf}>
+                    {new Date(event.startDate.seconds * 1000).getHours() ===
+                      0 &&
+                    new Date(event.startDate.seconds * 1000).getMinutes() ===
+                      0 &&
+                    new Date(event.endDate.seconds * 1000).getHours() === 23 &&
+                    new Date(event.endDate.seconds * 1000).getMinutes() ===
+                      59 ? (
+                      <p className={styles.allDay}>종일</p>
+                    ) : (
+                      <div className={styles.timeContainer}>
+                        <p>
+                          {new Date(
+                            event.startDate.seconds * 1000
+                          ).toLocaleTimeString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })}
+                        </p>
+                        <p>
+                          {new Date(
+                            event.endDate.seconds * 1000
+                          ).toLocaleTimeString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={styles.listColor}
+                    style={{ backgroundColor: event.eventColor }}
+                  ></div>
+                  <div className={styles.scheduleContainer}>
+                    <p>{event.title}</p>
+                  </div>
                 </div>
-                <div
-                  className={styles.listColor}
-                  style={{ backgroundColor: event.eventColor }}
-                ></div>
-                <div className={styles.scheduleContainer}>
-                  <p>{event.title}</p>
-                </div>
-
                 {event.uid && usersData && usersData[event.uid] ? (
                   <img
                     className={styles.writerProfile}
@@ -189,7 +192,7 @@ function CalendarList() {
               </li>
             ))
           ) : (
-            <li key="no-events">일정이 없습니다.</li>
+            <li></li>
           )}
         </ul>
       </main>
