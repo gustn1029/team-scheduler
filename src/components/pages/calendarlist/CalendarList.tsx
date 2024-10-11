@@ -2,19 +2,41 @@ import { RiCloseFill } from "react-icons/ri";
 import styles from "./calendarlist.module.scss";
 import {
   collection,
+  DocumentData,
   getDocs,
   query,
   Timestamp,
   where,
 } from "firebase/firestore";
-import { appFireStore } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillPlusCircle } from "react-icons/ai";
 import IconLinkButton from "../../button/iconButton/IconLinkButton";
+import IconButton from "../../button/iconButton/IconButton";
+import { useState } from "react";
+import CreateModal from "../../createModal/CreateModal";
+import { userDataFetch } from "../../../utils/http";
+
+interface Event extends DocumentData {
+  uid?: string;
+  startDate: Timestamp;
+  endDate: Timestamp;
+  title: string;
+  eventColor: string;
+}
 
 function CalendarList() {
-  const eventsOfDayFetch = async (date: Date) => {
+  const [clickEventDate, setClickEventDate] = useState<Date | null>(null);
+  const [isCreate, setIsCreate] = useState<boolean>(false);
+
+  const { data: authData } = useQuery({
+    queryKey: ["auth", appAuth.currentUser?.uid],
+    queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
+    enabled: !!appAuth.currentUser?.uid,
+  });
+
+  const eventsOfDayFetch = async (date: Date): Promise<Event[]> => {
     const startOfDay = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -44,9 +66,9 @@ function CalendarList() {
 
     const querySnapshot = await getDocs(q);
     const events = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      uid: doc.uid,
       ...doc.data(),
-    }));
+    })) as Event[];
     return events;
   };
   const [params] = useSearchParams();
@@ -54,7 +76,7 @@ function CalendarList() {
   const date = new Date(Number(dateParam) * 1000);
   console.log(date);
 
-  const { data } = useQuery({
+  const { data } = useQuery<Event[]>({
     queryKey: ["events", dateParam],
     queryFn: () => eventsOfDayFetch(date),
     enabled: !!dateParam,
@@ -63,6 +85,13 @@ function CalendarList() {
   console.log(data);
 
   const weekDay = ["일", "월", "화", "수", "목", "금", "토"];
+
+  const handleCreateBtn = () => {
+    if (clickEventDate) setClickEventDate(null);
+    setIsCreate((prevState) => !prevState);
+  };
+
+  const profileImage = authData?.imageUrl || "default-profile-image-url";
 
   return (
     <>
@@ -74,46 +103,62 @@ function CalendarList() {
         <p>{`${date.getMonth() + 1}월 ${date.getDate()}일 ${
           weekDay[date.getDay()]
         }요일`}</p>
-        <IconLinkButton
+        <IconButton
           icon={<AiFillPlusCircle className={styles.createBtn} />}
-          href={"/create"}
+          onClick={handleCreateBtn}
         />
+        {isCreate && <CreateModal top={40} left={210} />}
       </header>
       <main className={styles.calendarListMain}>
         <ul>
-          {Array.isArray(data) ? (
-            data.map((event) => (
-              <li key={event.id}>
-                <div className={styles.timeContainer}>
+          {Array.isArray(data) && data.length > 0 ? (
+            data.map((event, index) => (
+              <li key={`${event.uid || "event"}-${index}`}>
+                <div className={styles.timeContainerIf}>
                   {new Date(event.startDate.seconds * 1000).getHours() === 0 &&
                   new Date(event.startDate.seconds * 1000).getMinutes() === 0 &&
                   new Date(event.endDate.seconds * 1000).getHours() === 23 &&
                   new Date(event.endDate.seconds * 1000).getMinutes() === 59 ? (
                     <p className={styles.allDay}>종일</p>
                   ) : (
-                    <p>
-                      {new Date(
-                        event.startDate.seconds * 1000
-                      ).toLocaleTimeString("ko-KR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      })}
-                      <br />
-                      {new Date(
-                        event.endDate.seconds * 1000
-                      ).toLocaleTimeString("ko-KR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      })}
-                    </p>
+                    <div className={styles.timeContainer}>
+                      <p>
+                        {new Date(
+                          event.startDate.seconds * 1000
+                        ).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        })}
+                      </p>
+                      <p>
+                        {new Date(
+                          event.endDate.seconds * 1000
+                        ).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        })}
+                      </p>
+                    </div>
                   )}
                 </div>
-                <div className={styles.listColor}></div>
+                <div
+                  className={styles.listColor}
+                  style={{ backgroundColor: event.eventColor }}
+                ></div>
                 <div className={styles.scheduleContainer}>
                   <p>{event.title}</p>
                 </div>
+                {event.uid ? (
+                  <img
+                    className={styles.writerProfile}
+                    src={profileImage}
+                    alt="writerProfile"
+                  />
+                ) : (
+                  ""
+                )}
               </li>
             ))
           ) : (

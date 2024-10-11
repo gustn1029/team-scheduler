@@ -22,18 +22,19 @@
 .calendarListMain {
   & li {
     display: flex;
-    .timeContainer {
+    margin-bottom: 10px;
+    .timeContainerIf {
       margin-left: 15px;
       font-weight: 400;
       font-size: 12px;
       .allDay {
         margin-top: 8px;
+        padding-left: 10px;
       }
     }
     .listColor {
       width: 2px;
       height: 30px;
-      background-color: #f5333f;
       display: flex;
       align-items: center;
       margin-left: 10px;
