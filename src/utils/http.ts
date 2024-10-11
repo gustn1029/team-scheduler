@@ -4,17 +4,25 @@ import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import {
   addDoc,
   collection,
-  DocumentData,
+  deleteDoc,
+  doc,
   getDocs,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {
+  CalendarTodos,
+  DeleteFetchProps,
   EventPostData,
   EventsData,
   EventsFetchProps,
+  GetTodosFetchProps,
   Holiday,
+  HolidayDataFetchProps,
+  TodoAddFetchProps,
   TodoData,
+  TodoUpdateFetchProps,
   UserData,
 } from "../types";
 import { EventTypeEnum } from "../types/enum/EventTypeEnum";
@@ -22,6 +30,9 @@ import dayjs from "dayjs";
 import { handleError } from "./ErrorHandler";
 
 type CurrentUserData = Omit<UserData, "token">;
+
+// 통신 성공했을 때 보여주는 메시지 초기화
+let message = "";
 
 // 통신 관련
 export const queryClient = new QueryClient({
@@ -89,7 +100,7 @@ export const googleAuthFetch = async () => {
       nickname: user.displayName,
       name: user.displayName,
       email: user.email,
-      imageUrl: user.photoURL,
+      profileImg: user.photoURL,
     });
   }
 
@@ -169,21 +180,11 @@ export const formattedHolidayFetch = async () => {
   return [];
 };
 
-// 일정 불러오기
-// export const eventsDataFetch = async (
-//   constraints: QueryConstraint[] = []
-// ): Promise<DocumentData[]> => {
-//   const eventsRef = collection(appFireStore, "events");
-//   const q = query(eventsRef, ...constraints);
-//   const querySnapshot = await getDocs(q);
-//   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-// };
-
-// events 불러오기
-export const eventsDataFetch = async ({
+// 공휴일 불러오기
+export const holidayDataFetch = async ({
   year,
   month,
-}: EventsFetchProps): Promise<DocumentData[]> => {
+}: HolidayDataFetchProps) => {
   const monthStart = dayjs(new Date(year, month, 1)).startOf("month");
   const monthEnd = monthStart.endOf("month");
 
@@ -199,6 +200,34 @@ export const eventsDataFetch = async ({
   const querySnapshot = await getDocs(q);
 
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
+// events 불러오기
+export const eventsDataFetch = async ({
+  year,
+  month,
+  uid,
+}: EventsFetchProps): Promise<EventsData[]> => {
+  const monthStart = dayjs(new Date(year, month, 1)).startOf("month");
+  const monthEnd = monthStart.endOf("month");
+
+  const queryStartDate = monthStart.subtract(7, "day").toDate();
+  const queryEndDate = monthEnd.add(7, "day").toDate();
+
+  const userCollection = collection(appFireStore, "events");
+  const q = query(
+    userCollection,
+    where("uid", "==", uid),
+    where("startDate", ">=", queryStartDate),
+    where("startDate", "<=", queryEndDate)
+  );
+  const querySnapshot = await getDocs(q);
+
+  const holidays = await holidayDataFetch({year, month});
+
+  const events = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+  return [...events, ...holidays] as EventsData[];
 };
 
 // events 등록
@@ -220,12 +249,95 @@ export const addEventsFetch = async (data: EventPostData) => {
   return doc.id;
 };
 
+// calendar todo 불러오기
+export const calendarTodosFetch = async ({
+  year,
+  month,
+  uid,
+}: EventsFetchProps): Promise<CalendarTodos[]> => {
+  const monthStart = dayjs(new Date(year, month, 1)).startOf("month");
+  const monthEnd = monthStart.endOf("month");
+
+  const queryStartDate = monthStart.subtract(7, "day").toDate();
+  const queryEndDate = monthEnd.add(7, "day").toDate();
+
+  const userCollection = collection(appFireStore, "todos");
+  const q = query(
+    userCollection,
+    where("uid", "==", uid),
+    where("todoDate", ">=", queryStartDate),
+    where("todoDate", "<=", queryEndDate)
+  );
+  const querySnapshot = await getDocs(q);
+
+  const todos = querySnapshot.docs.map((doc) => ({ id: doc.id, todoDate: doc.data().todoDate.toDate()}));
+
+  return todos as CalendarTodos[];
+};
 
 // todo 등록
-export const addTodoFetch = async (data:TodoData) => {
+export const addTodoFetch = async ({ data, uid, date }: TodoAddFetchProps) => {
   const todoCollection = collection(appFireStore, "todos");
 
-  const doc = await addDoc(todoCollection, data);
+  const q = query(
+    todoCollection,
+    where("todoDate", "==", date),
+    where("uid", "==", uid)
+  );
 
-  return doc.id;
-}
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    const doc = await addDoc(todoCollection, data);
+    return doc.id;
+  } else {
+    const docId = snapshot.docs[0].id;
+    await updateTodosFetch({ data: data.todos, uid: docId });
+
+    return docId;
+  }
+};
+
+// todo 불러오기
+export const getTodosFetch = async ({
+  date,
+  uid,
+}: GetTodosFetchProps): Promise<TodoData[]> => {
+  const todosCollection = collection(appFireStore, "todos");
+  const q = query(
+    todosCollection,
+    where("todoDate", "==", date),
+    where("uid", "==", uid)
+  );
+
+  const todosSnapshot = await getDocs(q);
+
+  return todosSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+    todoDate: doc.data().todoDate.toDate(),
+  })) as TodoData[];
+};
+
+export const updateTodosFetch = async ({ data, uid }: TodoUpdateFetchProps) => {
+  const docRef = doc(appFireStore, "todos", uid);
+
+  await updateDoc(docRef, {
+    todos: data,
+    updateDate: new Date(),
+  });
+
+  return true;
+};
+
+export const deleteTodoFetch = async ({
+  collectionName,
+  uid,
+}: DeleteFetchProps) => {
+  const docRef = doc(appFireStore, collectionName, uid);
+  await deleteDoc(docRef);
+  message = `${
+    collectionName === "events" ? "일정을" : "할일을"
+  } 성공적으로 삭제했습니다.`;
+  return message;
+};
