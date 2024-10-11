@@ -135,51 +135,50 @@ function CalendarList() {
       <main className={styles.calendarListMain}>
         <ul>
           {eventsLoading ? (
-            <li key="loading">데이터를 불러오는 중...</li>
+            ""
           ) : Array.isArray(events) && events.length > 0 ? (
             events.map((event, index) => (
-              <li key={`${event.uid || "event"}-${index}`}>
-                <div className="liContainer">
-                  <div className={styles.timeContainerIf}>
-                    {new Date(event.startDate.seconds * 1000).getHours() ===
-                      0 &&
-                    new Date(event.startDate.seconds * 1000).getMinutes() ===
-                      0 &&
-                    new Date(event.endDate.seconds * 1000).getHours() === 23 &&
-                    new Date(event.endDate.seconds * 1000).getMinutes() ===
-                      59 ? (
-                      <p className={styles.allDay}>종일</p>
-                    ) : (
-                      <div className={styles.timeContainer}>
-                        <p>
-                          {new Date(
-                            event.startDate.seconds * 1000
-                          ).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
-                        <p>
-                          {new Date(
-                            event.endDate.seconds * 1000
-                          ).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className={styles.listColor}
-                    style={{ backgroundColor: event.eventColor }}
-                  ></div>
-                  <div className={styles.scheduleContainer}>
-                    <p>{event.title}</p>
-                  </div>
+              <li
+                key={`${event.uid || "event"}-${index}`}
+                className={styles.liContainer}
+              >
+                <div className={styles.timeContainerIf}>
+                  {new Date(event.startDate.seconds * 1000).getHours() === 0 &&
+                  new Date(event.startDate.seconds * 1000).getMinutes() === 0 &&
+                  new Date(event.endDate.seconds * 1000).getHours() === 23 &&
+                  new Date(event.endDate.seconds * 1000).getMinutes() === 59 ? (
+                    <p className={styles.allDay}>종일</p>
+                  ) : (
+                    <div className={styles.timeContainer}>
+                      <p>
+                        {new Date(
+                          event.startDate.seconds * 1000
+                        ).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        })}
+                      </p>
+                      <p>
+                        {new Date(
+                          event.endDate.seconds * 1000
+                        ).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        })}
+                      </p>
+                    </div>
+                  )}
                 </div>
+                <div
+                  className={styles.listColor}
+                  style={{ backgroundColor: event.eventColor }}
+                ></div>
+                <div className={styles.scheduleContainer}>
+                  <p>{event.title}</p>
+                </div>
+
                 {event.uid && usersData && usersData[event.uid] ? (
                   <img
                     className={styles.writerProfile}
