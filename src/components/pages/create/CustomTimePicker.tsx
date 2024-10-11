@@ -3,13 +3,13 @@ import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import styles from './create.module.scss';
 
 interface CustomTimePickerProps {
-  selectedTime: Date | null;
+  selectedDate: Date;
   onTimeChange: (time: Date | null) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
 
-const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedTime, onTimeChange, isOpen, onToggle }) => {
+const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedDate, onTimeChange, isOpen, onToggle }) => {
   const pickerRef = useRef<HTMLDivElement>(null);
   
   const generateTimeOptions = () => {
@@ -34,7 +34,7 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedTime, onTim
   const handleSelectTime = (time: string) => {
     try {
       const [hours, minutes] = time.split(':').map(Number);
-      const updatedDate = new Date();
+      const updatedDate = selectedDate;
       updatedDate.setHours(hours, minutes, 0, 0);
       onTimeChange(updatedDate);
       onToggle(); // 선택 후 드롭다운 닫기
@@ -67,7 +67,7 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedTime, onTim
   return (
     <div className={styles.customDropdown} ref={pickerRef}>
       <div className={styles.selectedTime} onClick={onToggle}>
-        <span>{selectedTime ? getTimeValue(selectedTime) : '시간 선택'}</span>
+        <span>{selectedDate ? getTimeValue(selectedDate) : '시간 선택'}</span>
         <i className={styles.arrowIcon}>
           {isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
         </i>
