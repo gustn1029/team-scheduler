@@ -1,21 +1,25 @@
 import { create } from "zustand";
-import { TodoData } from "../types";
+import { TodoItem } from "../types";
+import { nanoid } from "nanoid";
 
 interface TodoStore {
-  todos: TodoData[];
-  addTodo: (todo: TodoData) => void;
+  todos: TodoItem[];
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+  setTodos: (todos: TodoItem[]) => void;
+  addTodo: (todo: TodoItem) => void;
   deleteTodo: (id: string) => void;
   updateTodoState: (id: string, isComplete: boolean) => void;
 }
 
 export const useTodoStore = create<TodoStore>((set) => ({
   todos: [],
+  selectedDate: new Date(),
+  setSelectedDate: (date) => set({ selectedDate: date }),
+  setTodos: (todos) => set({ todos: todos }),
   addTodo: (todo) =>
     set((state) => {
-      const newId =
-        state.todos.length === 0
-          ? "1"
-          : String(Number(state.todos[state.todos.length - 1]?.id || "0") + 1);
+      const newId = nanoid();
 
       return {
         todos: [
@@ -23,6 +27,7 @@ export const useTodoStore = create<TodoStore>((set) => ({
           {
             ...todo,
             id: newId,
+            createDate: new Date(),
           },
         ],
       };
