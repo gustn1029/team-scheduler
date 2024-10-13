@@ -11,7 +11,7 @@ export interface UserData {
   token: string;
   uid: string;
   email: string;
-  imageUrl: string;
+  profileImg: string;
   name: string;
   nickname: string;
 }
