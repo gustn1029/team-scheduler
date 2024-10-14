@@ -9,11 +9,12 @@ import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "./CustomTimePicker";
 import { useQuery } from "@tanstack/react-query";
 import { userDataFetch } from "../../../utils/http";
-import { appAuth } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
 
 const Create: React.FC = () => {
   const { data: authData } = useQuery({
@@ -22,25 +23,14 @@ const Create: React.FC = () => {
     enabled: !!appAuth.currentUser?.uid,
   });
 
+  console.log(authData);
+
   const [params] = useSearchParams();
   const dateParam = params.get("date");
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedText, setSelectedText] = useState("Blue");
-
-  // 날짜와 시간 핸들러
-  // const [startDate, setStartDate] = useState<Date>(() => {
-  //   const date = new Date();
-  //   date.setHours(12, 0, 0, 0);
-  //   return date;
-  // });
-
-  // const [endDate, setEndDate] = useState<Date>(() => {
-  //   const date = new Date();
-  //   date.setHours(12, 0, 0, 0);
-  //   return date;
-  // });
 
   const parseDate = (dateString: string | null) => {
     if (dateString) {
@@ -66,23 +56,27 @@ const Create: React.FC = () => {
     formState: { errors, isSubmitted },
   } = useForm<EventsData>();
 
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
+
     let newEventStartDate = startDate;
     let newEventEndDate = endDate;
     if(isChecked) {
       newEventStartDate = new Date(startDate?.setHours(0, 0, 0, 0));
       newEventEndDate = new Date(endDate?.setHours(23, 59, 59, 999));
     }
-    
+  
     const newEvent: EventsData = {
       ...data,
       uid: authData?.uid,
-      imageUrl: authData?.imageUrl || 'default-image-url',
+      imageUrl: authData?.profileImg || 'default-image-url',
       nickname: authData?.nickname || 'anonymous',
       startDate: newEventStartDate,
       endDate: newEventEndDate,
       createDate: new Date(),
       updateDate: null,
+      eventColor: selectedColor,
       eventType: EventTypeEnum.EVENTS,
       like: 0,
       comments: [],
@@ -91,15 +85,25 @@ const Create: React.FC = () => {
 
     console.log(newEvent);
 
-    reset({
-      title: "",
-      eventColor: "blue",
-      eventMemo: "",
-      startDate: new Date(),
-      endDate: new Date(),
-    })
+    try {
+      const eventCollection = collection(appFireStore, "events");
+      await addDoc(eventCollection, newEvent);
 
-    setMemoCount(0);
+      navigate("/calendar");
+
+      reset({
+        title: "",
+        eventColor: "blue",
+        eventMemo: "",
+        startDate: new Date(),
+        endDate: new Date(),
+      })
+
+      setMemoCount(0);
+    } catch (error) {
+      console.error("데이터 등록 중 오류 발생:", error);
+      alert("데이터 등록에 실패했습니다.");
+    }
   };
 
   const colorOptions = [
@@ -113,8 +117,6 @@ const Create: React.FC = () => {
   ];
 
   useEffect(() => {
-    setSelectedColor("blue");
-    setSelectedText("Blue");
     setMemoCount(0);
   }, [setValue]);
 
@@ -196,13 +198,13 @@ const Create: React.FC = () => {
   return (
     <main className={styles.createMain}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
+        <Header title="일정 추가" />
 
         <div className={styles.sheduleWriter}>
           <h3 className={styles.writer}>작성자</h3>
           <img
             className={styles.writerProfile}
-            src={`${authData?.imageUrl}` || "default-profile-image-url"}
+            src={`${authData?.profileImg}` || "default-profile-image-url"}
             alt="writerProfile"
           />
           <span className={styles.writerName}>{`${authData?.nickname}`}</span>
