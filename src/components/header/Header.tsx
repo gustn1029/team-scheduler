@@ -36,9 +36,11 @@ const Header: React.FC<HeaderProps> = ({ title, onConfirm, onEdit, onDelete, onD
           <MdDelete size="22" />
         </button>
       )}
-        <button type="submit" className={styles.confirmButton}>
+      {onConfirm && (
+        <button type="submit" onClick={onConfirm} className={styles.confirmButton}>
           <IoMdCheckmark size="22" />
         </button>
+      )}
       {/* 이 부분은 오른쪽에 아이콘이 없을때 기본값으로 사용하는 빈값입니다. */}
       {onDefault && (
         <button onClick={onDefault}></button>
