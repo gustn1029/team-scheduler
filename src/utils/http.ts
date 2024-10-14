@@ -337,9 +337,9 @@ export const updateTodosFetch = async ({ data, uid }: TodoUpdateFetchProps) => {
 
 export const deleteTodoFetch = async ({
   collectionName,
-  uid,
+  id,
 }: DeleteFetchProps) => {
-  const docRef = doc(appFireStore, collectionName, uid);
+  const docRef = doc(appFireStore, collectionName, id);
   await deleteDoc(docRef);
   message = `${
     collectionName === "events" ? "일정을" : "할일을"
