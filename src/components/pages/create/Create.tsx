@@ -8,7 +8,7 @@ import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "./CustomTimePicker";
 import { useQuery } from "@tanstack/react-query";
-import { userDataFetch } from "../../../utils/http";
+import { queryClient, userDataFetch } from "../../../utils/http";
 import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
@@ -47,6 +47,8 @@ const Create: React.FC = () => {
   const [memoCount, setMemoCount] = useState(0);
   const maxLength = 100;
 
+  const [openComponent, setOpenComponent] = useState<string | null>(null);
+
   const {
     handleSubmit,
     register,
@@ -59,9 +61,9 @@ const Create: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
-
     let newEventStartDate = startDate;
     let newEventEndDate = endDate;
+
     if(isChecked) {
       newEventStartDate = new Date(startDate?.setHours(0, 0, 0, 0));
       newEventEndDate = new Date(endDate?.setHours(23, 59, 59, 999));
@@ -100,11 +102,29 @@ const Create: React.FC = () => {
       })
 
       setMemoCount(0);
+
+      let date: Date;
+      if (dateParam) {
+        const dateSplit = dateParam?.split("-").map(Number);
+        date = new Date(dateSplit![0], dateSplit![1] - 1, dateSplit![2]);
+      } else {
+        date = new Date();
+      }
+      
+      queryClient.invalidateQueries({queryKey: [
+        "events",
+        appAuth.currentUser?.uid,
+        date.getFullYear(),
+        date.getMonth(),
+      ]});
+
     } catch (error) {
       console.error("데이터 등록 중 오류 발생:", error);
       alert("데이터 등록에 실패했습니다.");
     }
   };
+
+  // console.log(dateParam);
 
   const colorOptions = [
     { colorClass: "red", colorName: "Red" },
@@ -185,8 +205,6 @@ const Create: React.FC = () => {
     }
   };
 
-  const [openComponent, setOpenComponent] = useState<string | null>(null);
-
   const handleToggleComponent = (component: string) => {
     setOpenComponent(openComponent === component ? null : component);
   };
@@ -198,7 +216,7 @@ const Create: React.FC = () => {
   return (
     <main className={styles.createMain}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Header title="일정 추가" />
+        <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
 
         <div className={styles.sheduleWriter}>
           <h3 className={styles.writer}>작성자</h3>
