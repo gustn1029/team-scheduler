@@ -17,6 +17,10 @@ const CreateModal = ({
   params = "",
 }: CreateModalProps) => {
 
+  const handleLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <aside
       className={styles.createModal}
@@ -30,12 +34,14 @@ const CreateModal = ({
       <Link
         to={`/create${params !== "" ? `?${params}` : ""}`}
         className={`${styles.link} ${styles.createLink}`}
+        onClick={handleLinkClick}
       >
         일정
       </Link>
       <Link
         className={`${styles.link} ${styles.todoLink}`}
         to={`/todo${params !== "" ? `?${params}` : ""}`}
+        onClick={handleLinkClick}
       >
         Todo
       </Link>
