@@ -14,7 +14,7 @@ import {
 } from "../../../utils/http";
 import { appAuth } from "../../../firebase/config";
 import { useTodoStore } from "../../../store/useTodoStore";
-import { TodoData, TodoItem } from "../../../types";
+import { TodoData } from "../../../types";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import Modal from "../../modal/Modal";
@@ -36,6 +36,7 @@ const Todos = () => {
     ],
     queryFn: () =>
       getTodosFetch({ date: selectedDate, uid: appAuth.currentUser!.uid }),
+    enabled:!!appAuth.currentUser?.uid
   });
 
   useEffect(() => {
@@ -142,14 +143,16 @@ const Todos = () => {
     navigate("../");
   };
 
+  console.log(todoData);
   if(isLoading) {
     return <Loader />
   }
+
   return (
     <main className={styles.todosWrap}>
       <Header title="TODO" onDelete={handleShowDeleteModal} />
       <TodoForm date={selectedDate} />
-      <TodoList todosData={todoData ? (todoData[0].todos as TodoItem[]) : []} />
+      <TodoList todosData={(todoData && todoData.length !== 0) ? todoData[0].todos : []} />
       <section className={styles.todoBtnWrap}>
         <Button
           buttonClassName={styles.todoBtn}

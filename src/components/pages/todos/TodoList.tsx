@@ -4,30 +4,38 @@ import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
 import { TodoItem } from "../../../types";
 import TodoListItem from "./TodoListItem";
+import Loader from "../../loader/Loader";
 
 interface TodoListProps {
-  todosData: TodoItem[]
+  todosData: TodoItem[];
 }
-const TodoList = ({todosData}:TodoListProps) => {
+const TodoList = ({ todosData }: TodoListProps) => {
   const { todos, setTodos } = useTodoStore();
   const [notCompleteTodos, setNotCompleteTodos] = useState<TodoItem[]>([]);
   const [completeTodos, setCompleteTodos] = useState<TodoItem[]>([]);
+  const [isMount, setIsMount] = useState<boolean>(false);
 
   useEffect(() => {
-    if (todosData && todosData.length > 0) {
+    console.log(todosData);
+    
+    if (todosData !== undefined && todosData.length !== 0) {
       setTodos(todosData);
-    } else {
-      setTodos([]);
     }
-  }, [todosData, setTodos]);
 
-  useEffect(() => {
     const notComplete = todos.filter((el) => el?.isComplete === false);
     const complete = todos.filter((el) => el.isComplete === true);
 
     setNotCompleteTodos(notComplete);
     setCompleteTodos(complete);
-  }, [todos]);
+  }, [todosData, todos, setTodos]);
+
+  useEffect(() => {
+    setIsMount(true);
+  }, []);
+
+  if (!isMount) {
+    return <Loader />;
+  }
 
   return (
     <div className={styles.todoListWrap}>
