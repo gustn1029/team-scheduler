@@ -19,6 +19,7 @@ import { useState } from "react";
 import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
 import { getAuth } from "firebase/auth";
+import dayjs from "dayjs";
 
 type EventColor =
   | "red"
@@ -196,7 +197,13 @@ function CalendarList() {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && <CreateModal top={40} left={260} />}
+        {isCreate && (
+          <CreateModal
+            params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
+            top={40}
+            left={260}
+          />
+        )}
       </header>
       <main className={styles.calendarListMain}>
         <ul>
