@@ -45,7 +45,7 @@ export interface LabelSelectOptionsProps extends LabelInputProps {
 
 export interface DeleteFetchProps {
   collectionName: string;
-  uid: string;
+  id: string;
 }
 
 // 이벤트 엔티티

@@ -30,6 +30,8 @@ import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { appAuth } from "../../../firebase/config";
 
+import { FaPlus } from "react-icons/fa6";
+
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -42,6 +44,8 @@ const CalendarComponent = () => {
   const navRef = useRef<HTMLElement | null>(null);
   const { isView, toggleIsView } = useViewNavStore();
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
+  const eventsRef = useRef<HTMLSpanElement | null>(null);
+
   const { data: events } = useQuery({
     queryKey: [
       "events",
@@ -49,13 +53,13 @@ const CalendarComponent = () => {
       date.getFullYear(),
       date.getMonth(),
     ],
+
     queryFn: () =>
       eventsDataFetch({
         year: date.getFullYear(),
         month: date.getMonth(),
         uid: appAuth.currentUser!.uid,
       }),
-    staleTime: 5 * 60 * 1000,
     enabled: !!appAuth.currentUser?.uid,
   });
 
@@ -72,195 +76,8 @@ const CalendarComponent = () => {
         month: date.getMonth(),
         uid: appAuth.currentUser!.uid,
       }),
-    staleTime: 5 * 60 * 1000,
     enabled: !!appAuth.currentUser?.uid,
   });
-
-  // const DUMMY_DATA: EventsData[] = events
-  //   ? [
-  //       ...(events as EventsData[]),
-  //       {
-  //         id: "1",
-  //         title: "event1",
-  //         eventColor: "red",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 8, 14).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 8, 20).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "2",
-  //         title: "event2",
-  //         eventColor: "orange",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 14).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 16).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "13",
-  //         title: "event3",
-  //         eventColor: "blue",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 16).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 21).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "4",
-  //         title: "event4",
-  //         eventColor: "gray",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 14).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 14).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "5",
-  //         title: "event5",
-  //         eventColor: "pink",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "6",
-  //         title: "event6",
-  //         eventColor: "yellow",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 17).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 17).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "7",
-  //         title: "event7",
-  //         eventColor: "orange",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 18).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 18).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "8",
-  //         title: "event8",
-  //         eventColor: "pink",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 19).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //       {
-  //         id: "9",
-  //         title: "event9",
-  //         eventColor: "mint",
-  //         eventType: EventTypeEnum.EVENTS,
-  //         eventMemo: "",
-  //         startDate: {
-  //           seconds: new Date(2024, 9, 15).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         endDate: {
-  //           seconds: new Date(2024, 9, 15).getTime() / 1000,
-  //           nanoseconds: 0,
-  //         },
-  //         createDate: new Date(),
-  //         category: [],
-  //         comments: [],
-  //         like: 0,
-  //         updateDate: null,
-  //       },
-  //     ]
-  //   : [];
 
   useEffect(() => {
     const sessionSavedDate = sessionStorage.getItem("currentDate");
@@ -468,6 +285,21 @@ const CalendarComponent = () => {
       tileDate.isSame(dayjs(todo.todoDate), "day")
     );
 
+    console.log(eventsForTile);
+
+    let isMore = false;
+    let eventsWrapHeight = 0;
+    let index = 0;
+    if (eventsRef.current) {
+      eventsWrapHeight = eventsRef.current.clientHeight;
+      console.log(eventsWrapHeight);
+      if (eventsForTile.length * 25 >= eventsWrapHeight) {
+        isMore = true;
+      }
+
+      index = Math.floor(eventsWrapHeight / 25);
+    }
+
     return (
       <>
         <span
@@ -476,6 +308,7 @@ const CalendarComponent = () => {
             eventsForTile.length === 0
               ? (e: MouseEvent) => handleClickDate(e, date)
               : () => handleNavigateToDetail(date)
+              : (e: MouseEvent) => handleNavigateToDetail(e, date)
           }
         >
           <span
@@ -487,15 +320,21 @@ const CalendarComponent = () => {
             {tileDate.date()}
           </span>
           <span className={`${styles.eventsWrap}`}>
+          <span ref={eventsRef} className={`${styles.eventsWrap}`}>
             {eventsForTile.map((event) => {
               const { isStart, isFirstSunday } = tileCheckDate(tileDate, event);
               return (
                 <Fragment key={event.id}>
                   <span
-                    className={`${styles.events} ${styles[event.eventColor]}`}
+
+                    className={`${styles.events} ${styles[event.eventColor]} ${
+                      index === event.row + 1 ? styles.more : ""
+                    }`}
                     style={{
                       top: `${event.row * 25}px`,
-                      display: `${event.row > 2 && "none"}`,
+                      display: `${
+                        (event.row + 1) * 25 >= eventsWrapHeight && "none"
+                      }`,
                       zIndex: 10 - event.row,
                     }}
                   >
@@ -504,8 +343,8 @@ const CalendarComponent = () => {
                     >
                       {event.title}
                     </span>
+                    {isMore && <FaPlus className={styles.plus} />}
                   </span>
-                  {/* {i > 2 && <FaPlus className={styles.plus} />} */}
                 </Fragment>
               );
             })}
@@ -543,7 +382,7 @@ const CalendarComponent = () => {
       navigate(`/todo?date=${dayjs(date).format("YYYY-MM-DD")}`);
     } else {
       if (eventsForTile?.length !== 0) {
-        handleNavigateToDetail(date);
+        handleNavigateToDetail(e, date);
       } else {
         handleClickDate(e, date);
       }
@@ -561,7 +400,8 @@ const CalendarComponent = () => {
     }
   };
 
-  const handleNavigateToDetail = (date: Date) => {
+  const handleNavigateToDetail = (e: MouseEvent, date: Date) => {
+    e.stopPropagation();
     const seconds = Math.floor(date.getTime() / 1000);
 
     return navigate(`/calendarList?date=${seconds}`);

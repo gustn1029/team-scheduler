@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { TodoData } from "../../../types";
+import { TodoItem } from "../../../types";
 import LabelInput from "../../inputs/input/LabelInput";
 import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
@@ -15,15 +15,14 @@ const TodoForm = ({ date }: TodoFormProps) => {
     setValue,
     formState: { errors, isSubmitted },
     handleSubmit,
-  } = useForm<TodoData>();
+  } = useForm<TodoItem>();
   const { addTodo } = useTodoStore();
 
-  const onSubmit = (data: TodoData) => {
-    const newTodo: TodoData = {
+  const onSubmit = (data: TodoItem) => {
+    const newTodo: TodoItem = {
       todo: data.todo,
       isComplete: data.isComplete || false,
       createDate: new Date(),
-      todoDate: date,
     };
     addTodo(newTodo);
     setValue("todo", "");
