@@ -6,8 +6,9 @@ import { useTodoStore } from "../../../store/useTodoStore";
 
 import styles from "./todos.module.scss";
 
-const TodoListItem = ({ id, isComplete, todo}: TodoItem) => {
+const TodoListItem = ({ id, isComplete, todo }: TodoItem) => {
   const { deleteTodo } = useTodoStore();
+
   return (
     <li
       id={id}

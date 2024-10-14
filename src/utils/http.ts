@@ -289,13 +289,17 @@ export const addTodoFetch = async ({ data, uid, date }: TodoAddFetchProps) => {
   const snapshot = await getDocs(q);
 
   if (snapshot.empty) {
-    const doc = await addDoc(todoCollection, data);
-    return doc.id;
+    await addDoc(todoCollection, data);
+    
+    message = "할일을 정상적으로 저장했습니다.";
+
+    return message;
   } else {
     const docId = snapshot.docs[0].id;
     await updateTodosFetch({ data: data.todos, uid: docId });
 
-    return docId;
+    message = "할일을 정상적으로 업데이트 했습니다.";
+    return message;
   }
 };
 

@@ -25,6 +25,8 @@ const TodoList = () => {
       getTodosFetch({ date: selectedDate, uid: appAuth.currentUser!.uid }),
   });
 
+  console.log(todoData);
+
   useEffect(() => {
     if (todoData && todoData.length > 0) {
       setTodos(todoData[0]?.todos);
