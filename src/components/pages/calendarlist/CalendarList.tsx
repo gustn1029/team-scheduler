@@ -196,7 +196,7 @@ function CalendarList() {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && <CreateModal top={40} left={210} />}
+        {isCreate && <CreateModal top={40} left={260} />}
       </header>
       <main className={styles.calendarListMain}>
         <ul>
