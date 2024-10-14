@@ -4,6 +4,7 @@ import {
   collection,
   DocumentData,
   getDocs,
+  orderBy,
   query,
   Timestamp,
   where,
@@ -17,6 +18,8 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useState } from "react";
 import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
+import { getAuth } from "firebase/auth";
+
 type EventColor =
   | "red"
   | "pink"
@@ -62,15 +65,21 @@ function CalendarList() {
 
     const startTimestamp = Timestamp.fromDate(startOfDay);
     const endTimestamp = Timestamp.fromDate(endOfDay);
+    const auth = getAuth();
+    const uid = auth.currentUser?.uid;
 
     const eventsRef = collection(appFireStore, "events");
+
     const q = query(
       eventsRef,
+      where("uid", "==", uid),
       where("startDate", "<=", endTimestamp),
-      where("endDate", ">=", startTimestamp)
+      where("endDate", ">=", startTimestamp),
+      orderBy("startDate")
     );
 
     const querySnapshot = await getDocs(q);
+
     const events = querySnapshot.docs.map((doc) => ({
       uid: doc.id,
       ...doc.data(),
