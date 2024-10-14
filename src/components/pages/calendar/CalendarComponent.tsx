@@ -11,6 +11,7 @@ import {
 } from "../../../utils/http";
 import {
   Fragment,
+  MouseEvent,
   MouseEventHandler,
   useEffect,
   useMemo,
@@ -55,7 +56,7 @@ const CalendarComponent = () => {
         uid: appAuth.currentUser!.uid,
       }),
     staleTime: 5 * 60 * 1000,
-    enabled: !!appAuth.currentUser?.uid
+    enabled: !!appAuth.currentUser?.uid,
   });
 
   const { data: todos } = useQuery({
@@ -72,7 +73,7 @@ const CalendarComponent = () => {
         uid: appAuth.currentUser!.uid,
       }),
     staleTime: 5 * 60 * 1000,
-    enabled: !!appAuth.currentUser?.uid
+    enabled: !!appAuth.currentUser?.uid,
   });
 
   // const DUMMY_DATA: EventsData[] = events
@@ -291,7 +292,12 @@ const CalendarComponent = () => {
     });
 
     queryClient.prefetchQuery({
-      queryKey: ["events", date.getFullYear(), prevMonth.getMonth(), appAuth.currentUser?.uid],
+      queryKey: [
+        "events",
+        date.getFullYear(),
+        prevMonth.getMonth(),
+        appAuth.currentUser?.uid,
+      ],
       queryFn: () =>
         eventsDataFetch({
           year: date.getFullYear(),
@@ -318,7 +324,12 @@ const CalendarComponent = () => {
     });
 
     queryClient.prefetchQuery({
-      queryKey: ["todos", date.getFullYear(), prevMonth.getMonth(), appAuth.currentUser?.uid],
+      queryKey: [
+        "todos",
+        date.getFullYear(),
+        prevMonth.getMonth(),
+        appAuth.currentUser?.uid,
+      ],
       queryFn: () =>
         calendarTodosFetch({
           year: date.getFullYear(),
@@ -442,7 +453,7 @@ const CalendarComponent = () => {
   }: {
     date: Date;
     events: EventsData[];
-    todos: CalendarTodos[]
+    todos: CalendarTodos[];
   }) => {
     const assignedEvents = useMemo(() => sortAndAssignRows(events), [events]);
 
@@ -453,56 +464,94 @@ const CalendarComponent = () => {
         tileDate.isSameOrBefore(dayjs.unix(event.endDate.seconds), "day")
     );
 
-    const todosForTile = todos.filter(
-      (todo) => tileDate.isSame(dayjs(todo.todoDate), "day")
+    const todosForTile = todos.filter((todo) =>
+      tileDate.isSame(dayjs(todo.todoDate), "day")
     );
 
     return (
-      <div
-        className={`${styles.contentWrap}`}
-        onClick={
-          eventsForTile.length === 0
-            ? () => handleClickDate(date)
-            : () => handleNavigateToDetail(date)
-        }
-      >
+      <>
         <span
-          className={`${styles.tileDate}`}
-          onClick={() => handleClickDate(date)}
+          className={`${styles.contentWrap}`}
+          onClick={
+            eventsForTile.length === 0
+              ? (e: MouseEvent) => handleClickDate(e, date)
+              : () => handleNavigateToDetail(date)
+          }
         >
-          {tileDate.date()}
+          <span
+            className={`${styles.tileDate}`}
+            onClick={(e: MouseEvent<HTMLSpanElement>) =>
+              handleClickDate(e, date)
+            }
+          >
+            {tileDate.date()}
+          </span>
+          <span className={`${styles.eventsWrap}`}>
+            {eventsForTile.map((event) => {
+              const { isStart, isFirstSunday } = tileCheckDate(tileDate, event);
+              return (
+                <Fragment key={event.id}>
+                  <span
+                    className={`${styles.events} ${styles[event.eventColor]}`}
+                    style={{
+                      top: `${event.row * 25}px`,
+                      display: `${event.row > 2 && "none"}`,
+                      zIndex: 10 - event.row,
+                    }}
+                  >
+                    <span
+                      className={`${isFirstSunday || isStart ? "" : "sOnly"}`}
+                    >
+                      {event.title}
+                    </span>
+                  </span>
+                  {/* {i > 2 && <FaPlus className={styles.plus} />} */}
+                </Fragment>
+              );
+            })}
+            {dayjs(date).isSame(dayjs(clickEventDate)) && (
+              <CreateModal
+                params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
+              />
+            )}
+          </span>
         </span>
-        <div className={`${styles.eventsWrap}`}>
-          {eventsForTile.map((event) => {
-            const { isStart, isFirstSunday } = tileCheckDate(tileDate, event);
-            return (
-              <Fragment key={event.id}>
-                <div
-                  className={`${styles.events} ${styles[event.eventColor]}`}
-                  style={{
-                    top: `${event.row * 25}px`,
-                    display: `${event.row > 2 && "none"}`,
-                    zIndex: 10 - event.row,
-                  }}
-                >
-                  <p className={`${isFirstSunday || isStart ? "" : "sOnly"}`}>
-                    {event.title}
-                  </p>
-                </div>
-                {/* {i > 2 && <FaPlus className={styles.plus} />} */}
-              </Fragment>
-            );
-          })}
-          {dayjs(date).isSame(dayjs(clickEventDate)) && (
-            <CreateModal params={`date=${dayjs(date).format("YYYY-MM-DD")}`} />
-          )}
-        </div>
-        <div>{todosForTile.map((el) => <Fragment key={el.id}>{'todo'}</Fragment>)}</div>
-      </div>
+        <span
+          className={styles.todoWrap}
+          onClick={(e: MouseEvent<HTMLSpanElement>) =>
+            handleClickTodo(e, date, eventsForTile, todosForTile)
+          }
+        >
+          {todosForTile.map((el) => (
+            <span key={el.id} className={styles.todo}>
+              {"Todo"}
+            </span>
+          ))}
+        </span>
+      </>
     );
   };
 
-  const handleClickDate = (date: Date) => {
+  const handleClickTodo = (
+    e: MouseEvent<HTMLSpanElement>,
+    date: Date,
+    eventsForTile: EventsData[],
+    todosForTile: CalendarTodos[]
+  ) => {
+    e.preventDefault();
+    if (todosForTile?.length !== 0) {
+      navigate(`/todo?date=${dayjs(date).format("YYYY-MM-DD")}`);
+    } else {
+      if (eventsForTile?.length !== 0) {
+        handleNavigateToDetail(date);
+      } else {
+        handleClickDate(e, date);
+      }
+    }
+  };
+
+  const handleClickDate = (e: MouseEvent, date: Date) => {
+    e.stopPropagation();
     if (isCreate) setIsCreate(false);
 
     if (dayjs(date).isSame(dayjs(clickEventDate))) {
@@ -588,7 +637,11 @@ const CalendarComponent = () => {
         activeStartDate={date}
         tileClassName={tileClassName}
         tileContent={({ date }) => (
-          <TileContent date={date} events={events as EventsData[] || []} todos={todos as CalendarTodos[] || []} />
+          <TileContent
+            date={date}
+            events={(events as EventsData[]) || []}
+            todos={(todos as CalendarTodos[]) || []}
+          />
         )}
         formatDay={formatDay}
         calendarType="gregory"

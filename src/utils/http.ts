@@ -195,7 +195,8 @@ export const holidayDataFetch = async ({
   const q = query(
     userCollection,
     where("startDate", ">=", queryStartDate),
-    where("startDate", "<=", queryEndDate)
+    where("startDate", "<=", queryEndDate),
+    where("eventType", "==", EventTypeEnum.HOLIDAY),
   );
   const querySnapshot = await getDocs(q);
 

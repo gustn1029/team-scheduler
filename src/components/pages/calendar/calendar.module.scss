@@ -77,6 +77,14 @@
     background-color: #263140;
     color: white;
   }
+  
+  background-color: #f2f7fd;
+}
+
+.clickedDay {
+  .tileDate {
+    border: 1px soild #263140;
+  }
   background-color: #f2f7fd;
 }
 
@@ -222,7 +230,7 @@
     height: 20px;
     position: absolute;
 
-    p {
+    span {
       display: block;
       padding: 3px 5px;
       line-height: 14px;
@@ -258,5 +266,22 @@
   .yellow {
     background-color: #ffd235;
     color: #000;
+  }
+}
+
+.todoWrap {
+  width: 100%;
+  min-height: 30px;
+
+  .todo {
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    background-color: #3b82f6;
+    color: white;
+    line-height: 14px;
+    font-size: 0.75rem;
+    padding:3px 0;
+    border-radius: 10px;
   }
 }
