@@ -21,12 +21,14 @@ import Modal from "../../modal/Modal";
 import Header from "../../header/Header";
 import Loader from "../../loader/Loader";
 
+
 const Todos = () => {
   const [params] = useSearchParams();
   const [isShowCancelModal, setIsShowCancelModal] = useState<boolean>(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { todos, selectedDate, setTodos, setSelectedDate } = useTodoStore();
   const navigate = useNavigate();
+
 
   const { data: todoData, isLoading } = useQuery({
     queryKey: [

@@ -53,6 +53,7 @@ const CalendarComponent = () => {
       date.getFullYear(),
       date.getMonth(),
     ],
+
     queryFn: () =>
       eventsDataFetch({
         year: date.getFullYear(),
@@ -306,6 +307,7 @@ const CalendarComponent = () => {
           onClick={
             eventsForTile.length === 0
               ? (e: MouseEvent) => handleClickDate(e, date)
+              : () => handleNavigateToDetail(date)
               : (e: MouseEvent) => handleNavigateToDetail(e, date)
           }
         >
@@ -317,12 +319,14 @@ const CalendarComponent = () => {
           >
             {tileDate.date()}
           </span>
+          <span className={`${styles.eventsWrap}`}>
           <span ref={eventsRef} className={`${styles.eventsWrap}`}>
             {eventsForTile.map((event) => {
               const { isStart, isFirstSunday } = tileCheckDate(tileDate, event);
               return (
                 <Fragment key={event.id}>
                   <span
+
                     className={`${styles.events} ${styles[event.eventColor]} ${
                       index === event.row + 1 ? styles.more : ""
                     }`}

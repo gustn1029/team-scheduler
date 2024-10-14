@@ -4,12 +4,13 @@ import {
   collection,
   DocumentData,
   getDocs,
+  orderBy,
   query,
   Timestamp,
   where,
 } from "firebase/firestore";
 import { appFireStore } from "../../../firebase/config";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillPlusCircle } from "react-icons/ai";
 import IconLinkButton from "../../button/iconButton/IconLinkButton";
@@ -17,17 +18,28 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useState } from "react";
 import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
+import { getAuth } from "firebase/auth";
+import dayjs from "dayjs";
+
+type EventColor =
+  | "red"
+  | "pink"
+  | "orange"
+  | "yellow"
+  | "mint"
+  | "blue"
+  | "gray";
 
 interface Event extends DocumentData {
   uid: string;
   startDate: Timestamp;
   endDate: Timestamp;
   title: string;
-  eventColor: string;
+  eventColor: EventColor | string;
 }
 
 interface UserData {
-  imageUrl: string;
+  profileImg: string | undefined;
 }
 
 function CalendarList() {
@@ -54,15 +66,21 @@ function CalendarList() {
 
     const startTimestamp = Timestamp.fromDate(startOfDay);
     const endTimestamp = Timestamp.fromDate(endOfDay);
+    const auth = getAuth();
+    const uid = auth.currentUser?.uid;
 
     const eventsRef = collection(appFireStore, "events");
+
     const q = query(
       eventsRef,
+      where("uid", "==", uid),
       where("startDate", "<=", endTimestamp),
-      where("endDate", ">=", startTimestamp)
+      where("endDate", ">=", startTimestamp),
+      orderBy("startDate")
     );
 
     const querySnapshot = await getDocs(q);
+
     const events = querySnapshot.docs.map((doc) => ({
       uid: doc.id,
       ...doc.data(),
@@ -113,8 +131,56 @@ function CalendarList() {
     setIsCreate((prevState) => !prevState);
   };
 
-  // const profileImage = authData?.imageUrl || "default-profile-image-url";
+  const navigate = useNavigate();
 
+  const handleEventClick = () => {
+    navigate("*");
+  };
+
+  const isAllDayEvent = (event: Event, selectedDate: Date) => {
+    const startDate = new Date(event.startDate.seconds * 1000);
+    const endDate = new Date(event.endDate.seconds * 1000);
+    const selectedDateStart = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate()
+    );
+    const selectedDateEnd = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      23,
+      59,
+      59
+    );
+
+    const isFullDay =
+      startDate.getHours() === 0 &&
+      startDate.getMinutes() === 0 &&
+      endDate.getHours() === 23 &&
+      endDate.getMinutes() === 59;
+
+    const isMultiDayEvent =
+      startDate < selectedDateStart && endDate > selectedDateEnd;
+
+    return isFullDay || isMultiDayEvent;
+  };
+
+  const colorMap: Record<EventColor, string> = {
+    red: "#F5333F",
+    pink: "#FB91A3",
+    orange: "#FF9E18",
+    yellow: "#FFD235",
+    mint: "#00B392",
+    blue: "#3FA9F5",
+    gray: "#7BA0C4",
+  };
+
+  const getEventColor = (colorName: EventColor | string): string => {
+    return colorName in colorMap
+      ? colorMap[colorName as EventColor]
+      : colorName;
+  };
   return (
     <>
       <header className={styles.calendarListHeader}>
@@ -129,27 +195,32 @@ function CalendarList() {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && <CreateModal top={40} left={210} />}
+        {isCreate && (
+          <CreateModal
+            params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
+            top={40}
+            left={260}
+          />
+        )}
       </header>
       <main className={styles.calendarListMain}>
         <ul>
           {eventsLoading ? (
-            ""
+            <li>Loading...</li>
           ) : Array.isArray(events) && events.length > 0 ? (
             events.map((event, index) => (
               <li
                 key={`${event.uid || "event"}-${index}`}
                 className={styles.liContainer}
               >
-                <div className={styles.textContainer}>
+                <div
+                  className={styles.textContainer}
+                  onClick={() => handleEventClick()}
+                  role="button"
+                  tabIndex={0}
+                >
                   <div className={styles.timeContainerIf}>
-                    {new Date(event.startDate.seconds * 1000).getHours() ===
-                      0 &&
-                    new Date(event.startDate.seconds * 1000).getMinutes() ===
-                      0 &&
-                    new Date(event.endDate.seconds * 1000).getHours() === 23 &&
-                    new Date(event.endDate.seconds * 1000).getMinutes() ===
-                      59 ? (
+                    {isAllDayEvent(event, date) ? (
                       <p className={styles.allDay}>종일</p>
                     ) : (
                       <div className={styles.timeContainer}>
@@ -176,7 +247,7 @@ function CalendarList() {
                   </div>
                   <div
                     className={styles.listColor}
-                    style={{ backgroundColor: event.eventColor }}
+                    style={{ backgroundColor: getEventColor(event.eventColor) }}
                   ></div>
                   <div className={styles.scheduleContainer}>
                     <p>{event.title}</p>
@@ -185,14 +256,14 @@ function CalendarList() {
                 {event.uid && usersData && usersData[event.uid] ? (
                   <img
                     className={styles.writerProfile}
-                    src={usersData[event.uid].imageUrl}
+                    src={usersData[event.uid].profileImg}
                     alt="작성자"
                   />
                 ) : null}
               </li>
             ))
           ) : (
-            <li></li>
+            <li>No events found</li>
           )}
         </ul>
       </main>
