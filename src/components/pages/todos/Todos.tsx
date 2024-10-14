@@ -6,17 +6,19 @@ import styles from "./todos.module.scss";
 import Button from "../../button/Button";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { useMutation } from "@tanstack/react-query";
-import { addTodoFetch, queryClient } from "../../../utils/http";
+import { addTodoFetch, deleteTodoFetch, queryClient } from "../../../utils/http";
 import { appAuth } from "../../../firebase/config";
 import { useTodoStore } from "../../../store/useTodoStore";
 import { TodoData } from "../../../types";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import Modal from "../../modal/Modal";
+import Header from "../../header/Header";
 
 const Todos = () => {
   const [params] = useSearchParams();
   const [isShowCancelModal, setIsShowCancelModal] = useState<boolean>(false);
+  const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { todos, selectedDate, setTodos, setSelectedDate } = useTodoStore();
   const navigate = useNavigate();
 
@@ -36,7 +38,7 @@ const Todos = () => {
 
   const addTodoMutation = useMutation({
     mutationFn: addTodoFetch,
-    onSuccess: () => {
+    onSuccess: (message) => {
       queryClient.invalidateQueries({
         queryKey: [
           "todos",
@@ -44,11 +46,26 @@ const Todos = () => {
           selectedDate.toISOString().split("T")[0],
         ],
       });
-      toast.success("할일을 정상적으로 저장했습니다.")
+      toast.success(message)
       navigate("../");
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteTodoFetch,
+    onSuccess: (message) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "todos",
+          appAuth.currentUser?.uid,
+          selectedDate.toISOString().split("T")[0],
+        ],
+      });
+      toast.success(message);
+      navigate("../");
+    },
+  });
+  
   const handleAddTodos = async () => {
     if (todos.length === 0) {
       toast.error("할일을 추가해 주세요.");
@@ -74,6 +91,18 @@ const Todos = () => {
     }
   };
 
+  const handleShowDeleteModal = () => {
+    setIsDeleteModal(true);
+  }
+
+  const handleDeleteTodo = async () => {
+    console.log("delete");
+    await deleteMutation.mutateAsync({
+      collectionName: "todos",
+      uid: "z9uZsqxY0hJeUnV6aSrD",
+    });
+  };
+
   const handleShowModal = () => {
     if (todos.length !== 0) {
       setIsShowCancelModal(true);
@@ -82,8 +111,12 @@ const Todos = () => {
     }
   };
 
-  const handleHideModal = () => {
+  const handleHideCancelModal = () => {
     setIsShowCancelModal(false);
+  };
+
+  const handleHideDeleteModal = () => {
+    setIsDeleteModal(false);
   };
 
   const handleCancel = () => {
@@ -92,6 +125,7 @@ const Todos = () => {
   };
   return (
     <main className={styles.todosWrap}>
+      <Header title="TODO" onDelete={handleShowDeleteModal} />
       <TodoForm date={selectedDate} />
       <TodoList />
       <section className={styles.todoBtnWrap}>
@@ -111,7 +145,7 @@ const Todos = () => {
         </Button>
       </section>
       {isShowCancelModal && (
-        <Modal isOpen={isShowCancelModal} onClose={handleHideModal}>
+        <Modal isOpen={isShowCancelModal} onClose={handleHideCancelModal}>
           <strong className={styles.todoModalTitle}>
             저장되지 않은 할일은 삭제됩니다.<br />취소하시겠습니까?
           </strong>
@@ -119,7 +153,7 @@ const Todos = () => {
             <Button
               buttonClassName={styles.todoModalBtn}
               buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleHideModal}
+              onClick={handleHideCancelModal}
             >
               취소
             </Button>
@@ -129,6 +163,29 @@ const Todos = () => {
               buttonStyle={ButtonStyleEnum.Normal}
             >
               확인
+            </Button>
+          </section>
+        </Modal>
+      )}
+      {isDeleteModal && (
+        <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
+          <strong className={styles.todoModalTitle}>
+            저장되지 않은 할일은 삭제됩니다.<br />취소하시겠습니까?
+          </strong>
+          <section className={styles.todoBtnWrap}>
+            <Button
+              buttonClassName={styles.todoModalBtn}
+              buttonStyle={ButtonStyleEnum.Cancel}
+              onClick={handleHideDeleteModal}
+            >
+              취소
+            </Button>
+            <Button
+              onClick={handleDeleteTodo}
+              buttonClassName={styles.todoModalBtn}
+              buttonStyle={ButtonStyleEnum.Normal}
+            >
+              삭제
             </Button>
           </section>
         </Modal>
