@@ -131,8 +131,6 @@ function CalendarList() {
     setIsCreate((prevState) => !prevState);
   };
 
-  // const profileImage = authData?.imageUrl || "default-profile-image-url";
-
   const navigate = useNavigate();
 
   const handleEventClick = () => {
