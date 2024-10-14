@@ -11,6 +11,7 @@ import ToastProvider from "./components/toast/ToastProvider";
 import CalendarList from "./components/pages/calendarlist/CalendarList";
 import Todos from "./components/pages/todos/Todos";
 import RouteLayout from "./components/layouts/RouteLayout";
+import Edit from "./components/pages/edit/Edit";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "create",
         element: <Create />,
+      },
+      {
+        path: "calendarlist/:id/edit",
+        element: <Edit />,
       },
       {
         path: "calendarlist",
