@@ -4,36 +4,22 @@ import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
 import { TodoItem } from "../../../types";
 import TodoListItem from "./TodoListItem";
-import { useQuery } from "@tanstack/react-query";
-import { getTodosFetch } from "../../../utils/http";
-import { appAuth } from "../../../firebase/config";
 
-const TodoList = () => {
-  const { selectedDate, todos, setTodos } = useTodoStore();
+interface TodoListProps {
+  todosData: TodoItem[]
+}
+const TodoList = ({todosData}:TodoListProps) => {
+  const { todos, setTodos } = useTodoStore();
   const [notCompleteTodos, setNotCompleteTodos] = useState<TodoItem[]>([]);
   const [completeTodos, setCompleteTodos] = useState<TodoItem[]>([]);
 
-  const {
-    data: todoData,
-  } = useQuery({
-    queryKey: [
-      "todos",
-      appAuth.currentUser?.uid,
-      selectedDate.toISOString().split("T")[0],
-    ],
-    queryFn: () =>
-      getTodosFetch({ date: selectedDate, uid: appAuth.currentUser!.uid }),
-  });
-
-  console.log(todoData);
-
   useEffect(() => {
-    if (todoData && todoData.length > 0) {
-      setTodos(todoData[0]?.todos);
+    if (todosData && todosData.length > 0) {
+      setTodos(todosData);
     } else {
       setTodos([]);
     }
-  }, [todoData, setTodos]);
+  }, [todosData, setTodos]);
 
   useEffect(() => {
     const notComplete = todos.filter((el) => el?.isComplete === false);

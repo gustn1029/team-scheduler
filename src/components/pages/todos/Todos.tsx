@@ -5,15 +5,21 @@ import TodoList from "./TodoList";
 import styles from "./todos.module.scss";
 import Button from "../../button/Button";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
-import { useMutation } from "@tanstack/react-query";
-import { addTodoFetch, deleteTodoFetch, queryClient } from "../../../utils/http";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  addTodoFetch,
+  deleteTodoFetch,
+  getTodosFetch,
+  queryClient,
+} from "../../../utils/http";
 import { appAuth } from "../../../firebase/config";
 import { useTodoStore } from "../../../store/useTodoStore";
-import { TodoData } from "../../../types";
+import { TodoData, TodoItem } from "../../../types";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import Modal from "../../modal/Modal";
 import Header from "../../header/Header";
+import Loader from "../../loader/Loader";
 
 const Todos = () => {
   const [params] = useSearchParams();
@@ -21,6 +27,16 @@ const Todos = () => {
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { todos, selectedDate, setTodos, setSelectedDate } = useTodoStore();
   const navigate = useNavigate();
+
+  const { data: todoData, isLoading } = useQuery({
+    queryKey: [
+      "todos",
+      appAuth.currentUser?.uid,
+      selectedDate.toISOString().split("T")[0],
+    ],
+    queryFn: () =>
+      getTodosFetch({ date: selectedDate, uid: appAuth.currentUser!.uid }),
+  });
 
   useEffect(() => {
     const dateParam = params
@@ -46,7 +62,7 @@ const Todos = () => {
           selectedDate.toISOString().split("T")[0],
         ],
       });
-      toast.success(message)
+      toast.success(message);
       navigate("../");
     },
   });
@@ -65,7 +81,7 @@ const Todos = () => {
       navigate("../");
     },
   });
-  
+
   const handleAddTodos = async () => {
     if (todos.length === 0) {
       toast.error("할일을 추가해 주세요.");
@@ -93,14 +109,16 @@ const Todos = () => {
 
   const handleShowDeleteModal = () => {
     setIsDeleteModal(true);
-  }
+  };
 
   const handleDeleteTodo = async () => {
     console.log("delete");
-    await deleteMutation.mutateAsync({
-      collectionName: "todos",
-      uid: "z9uZsqxY0hJeUnV6aSrD",
-    });
+    if(todoData && todoData[0].id) {
+      await deleteMutation.mutateAsync({
+        collectionName: "todos",
+        id: todoData[0].id,
+      });
+    }
   };
 
   const handleShowModal = () => {
@@ -123,11 +141,15 @@ const Todos = () => {
     setTodos([]);
     navigate("../");
   };
+
+  if(isLoading) {
+    return <Loader />
+  }
   return (
     <main className={styles.todosWrap}>
       <Header title="TODO" onDelete={handleShowDeleteModal} />
       <TodoForm date={selectedDate} />
-      <TodoList />
+      <TodoList todosData={todoData ? (todoData[0].todos as TodoItem[]) : []} />
       <section className={styles.todoBtnWrap}>
         <Button
           buttonClassName={styles.todoBtn}
@@ -147,7 +169,9 @@ const Todos = () => {
       {isShowCancelModal && (
         <Modal isOpen={isShowCancelModal} onClose={handleHideCancelModal}>
           <strong className={styles.todoModalTitle}>
-            저장되지 않은 할일은 삭제됩니다.<br />취소하시겠습니까?
+            저장되지 않은 할일은 삭제됩니다.
+            <br />
+            취소하시겠습니까?
           </strong>
           <section className={styles.todoBtnWrap}>
             <Button
@@ -170,7 +194,9 @@ const Todos = () => {
       {isDeleteModal && (
         <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
           <strong className={styles.todoModalTitle}>
-            저장되지 않은 할일은 삭제됩니다.<br />취소하시겠습니까?
+            저장되지 않은 할일은 삭제됩니다.
+            <br />
+            취소하시겠습니까?
           </strong>
           <section className={styles.todoBtnWrap}>
             <Button
