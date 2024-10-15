@@ -146,7 +146,7 @@ const FormTest = () => {
         모달 보기
       </button>
       {isOpen && (
-        <Modal>
+        <Modal isOpen={isOpen} onClose={closeModal}>
           <p>모달입니다.</p>
           <button onClick={closeModal}>취소</button>
           <button onClick={() => console.log("확인")}>확인</button>
