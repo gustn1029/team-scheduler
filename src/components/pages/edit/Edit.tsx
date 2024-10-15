@@ -86,7 +86,6 @@ const Edit: React.FC = () => {
       
       // setValue를 통한 폼 초기값 설정
       setValue("title", eventData.title);
-      setValue("eventColor", eventData.eventColor);
       setValue("eventMemo", eventData.eventMemo);
       
       // 선택된 색상 및 메모 카운트 초기화
@@ -94,7 +93,7 @@ const Edit: React.FC = () => {
       setSelectedText(eventData.eventColor || "Blue");
       setMemoCount(eventData.eventMemo.length);
     }
-  }, [eventData, setValue]);
+  }, [eventData]);
 
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
     let newEventStartDate = startDate;
@@ -110,6 +109,7 @@ const Edit: React.FC = () => {
       await updateDoc(eventDoc, {
         ...eventData,
         ...data,
+        eventColor: selectedColor,
         startDate: newEventStartDate,
         endDate: newEventEndDate,
         updateDate: new Date(),
