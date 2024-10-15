@@ -71,7 +71,7 @@ const Profile = () => {
       });
 
       // 쿼리 무효화 및 재요청
-      queryClient.invalidateQueries(["user"]);
+      queryClient.invalidateQueries({queryKey: ["auth"]});
 
       console.log("프로필이 성공적으로 업데이트되었습니다.", user.data);
       setIsEditing(false);
