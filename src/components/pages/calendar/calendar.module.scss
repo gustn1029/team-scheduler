@@ -77,12 +77,14 @@
     background-color: #263140;
     color: white;
   }
-  background-color: #f2f7fd;
+  &.currentDayBg {
+    background-color: #f2f7fd;
+  }
 }
 
 .clickedDay {
   .tileDate {
-    border: 1px soild #263140;
+    border: 1px solid #263140;
   }
   background-color: #f2f7fd;
 }

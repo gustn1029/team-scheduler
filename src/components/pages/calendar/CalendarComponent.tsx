@@ -237,15 +237,20 @@ const CalendarComponent = () => {
     const tileDate = dayjs(date);
 
     if (tileDate.isSame(today, "day")) {
-      return styles.currentDay;
+      return !clickEventDate
+        ? `${styles.currentDay} ${styles.currentDayBg}`
+        : styles.currentDay;
     }
     if (tileDate.day() === 6) {
-      return styles.saturday;
+      return tileDate.isSame(clickEventDate)
+        ? `${styles.clickedDay} ${styles.saturday}`
+        : styles.saturday;
     }
     if (tileDate.day() === 0) {
-      return styles.sunday;
+      return tileDate.isSame(clickEventDate)
+        ? `${styles.clickedDay} ${styles.sunday}`
+        : styles.sunday;
     }
-
     if (tileDate.isSame(dayjs(clickEventDate))) {
       return styles.clickedDay;
     }
