@@ -47,6 +47,7 @@ const CalendarComponent = () => {
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
   const eventsRef = useRef<HTMLSpanElement | null>(null);
 
+  // 현재 월의 이벤트 데이터를 가져오는 쿼리
   const { data: events } = useQuery({
     queryKey: [
       "events",
@@ -63,6 +64,7 @@ const CalendarComponent = () => {
     enabled: !!appAuth.currentUser?.uid,
   });
 
+  // 현재 월의 할 일 데이터를 가져오는 쿼리
   const { data: todos } = useQuery({
     queryKey: [
       "todos",
@@ -79,19 +81,21 @@ const CalendarComponent = () => {
     enabled: !!appAuth.currentUser?.uid,
   });
 
+  // 세션 스토리지에서 저장된 날짜 정보를 불러와 상태를 설정
   useEffect(() => {
     const sessionSavedDate = sessionStorage.getItem("currentDate");
     if (sessionSavedDate) {
       const currentDate = JSON.parse(sessionSavedDate);
-      console.log(currentDate);
       setDate(new Date(currentDate.date));
     }
   }, [setDate]);
 
+  // 이전 달과 다음 달의 이벤트와 할 일 데이터를 미리 가져오기
   useEffect(() => {
     const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
     const prevMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
 
+    // 다음 달 이벤트 prefetch
     queryClient.prefetchQuery({
       queryKey: [
         "events",
@@ -108,6 +112,7 @@ const CalendarComponent = () => {
       staleTime: Infinity,
     });
 
+    // 이전 달 이벤트 prefetch
     queryClient.prefetchQuery({
       queryKey: [
         "events",
@@ -124,6 +129,7 @@ const CalendarComponent = () => {
       staleTime: Infinity,
     });
 
+    // 다음 달 할 일 prefetch
     queryClient.prefetchQuery({
       queryKey: [
         "todos",
@@ -140,6 +146,7 @@ const CalendarComponent = () => {
       staleTime: Infinity,
     });
 
+    // 이전 달 할 일 prefetch
     queryClient.prefetchQuery({
       queryKey: [
         "todos",
@@ -157,11 +164,16 @@ const CalendarComponent = () => {
     });
   }, [date]);
 
-  // 타입 가드
+  /**
+   * 주어진 날짜가 Timestamp 타입인지 확인하는 타입 가드 함수
+   */
   function isTimestamp(date: Date | Timestamp): date is Timestamp {
     return (date as Timestamp).seconds !== undefined;
   }
 
+  /**
+   * Date 또는 Timestamp를 dayjs 객체로 변환하는 함수
+   */
   function toDayjs(date: Date | Timestamp): dayjs.Dayjs {
     if (isTimestamp(date)) {
       return dayjs.unix(date.seconds);
@@ -169,6 +181,9 @@ const CalendarComponent = () => {
     return dayjs(date);
   }
 
+  /**
+   * 이벤트를 정렬하고 행을 할당하는 함수
+   */
   const sortAndAssignRows = (events: EventsData[]) => {
     const sortedEvents = events.sort((a, b) => {
       const aStart = toDayjs(a.startDate);
@@ -184,6 +199,7 @@ const CalendarComponent = () => {
 
     const assignedEvents: (EventsData & { row: number })[] = [];
 
+    // 각 이벤트에 행 번호 할당
     sortedEvents.forEach((event) => {
       let row = 0;
       while (true) {
@@ -208,6 +224,9 @@ const CalendarComponent = () => {
     return assignedEvents;
   };
 
+  /**
+   * 날짜 타일의 클래스 이름을 결정하는 함수
+   */
   const tileClassName = ({
     date,
   }: {
@@ -234,21 +253,33 @@ const CalendarComponent = () => {
     return "";
   };
 
+  /**
+   * 날짜를 포맷팅하는 함수 (YYYY년 MM월 형식)
+   */
   const formatDate = (date: Date): string => {
     return `${date.getFullYear()}년 ${(date.getMonth() + 1)
       .toString()
       .padStart(2, "0")}월`;
   };
 
+  /**
+   * 날짜의 일(day)만 문자열로 반환하는 함수
+   */
   const formatDay = (_locale: string | undefined, date: Date) => {
     return date.getDate().toString();
   };
 
+  /**
+   * 두 날짜 사이의 중간 날짜를 계산합니다.
+   */
   const getCenterDate = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
     const diffDays = endDate.diff(startDate, "day");
     return startDate.add(Math.floor(diffDays / 2), "day");
   };
 
+  /**
+   * 주어진 날짜 타일과 이벤트에 대한 다양한 날짜 관련 상태를 확인합니다.
+   */
   const tileCheckDate = (tileDate: dayjs.Dayjs, event: EventsData) => {
     const startDate = toDayjs(event.startDate);
     const endDate = toDayjs(event.endDate);
@@ -274,12 +305,26 @@ const CalendarComponent = () => {
     };
   };
 
+  /**
+   * Date 또는 Timestamp 객체를 Date 객체로 변환합니다.
+   */
   const getDateFromTimestamp = (dateOrTimestamp: Date | Timestamp): Date => {
     return dateOrTimestamp instanceof Timestamp
       ? dateOrTimestamp.toDate()
       : dateOrTimestamp;
   };
 
+  /**
+   * TileContent 컴포넌트
+   *
+   * 캘린더의 각 타일(날짜)에 대한 내용을 렌더링합니다.
+   * 이벤트와 할 일을 표시하고, 날짜 클릭 및 이벤트/할 일 관련 상호작용을 처리합니다.
+   *
+   * @param {Object} props
+   * @param {Date} props.date - 타일의 날짜
+   * @param {EventsData[]} props.events - 표시할 이벤트 배열
+   * @param {CalendarTodos[]} props.todos - 표시할 할 일 배열
+   */
   const TileContent = ({
     date,
     events,
@@ -305,14 +350,11 @@ const CalendarComponent = () => {
       tileDate.isSame(dayjs(getDateFromTimestamp(todo.todoDate)), "day")
     );
 
-    console.log(eventsForTile);
-
     let isMore = false;
     let eventsWrapHeight = 0;
     let index = 0;
     if (eventsRef.current) {
       eventsWrapHeight = eventsRef.current.clientHeight;
-      console.log(eventsWrapHeight);
       if (eventsForTile.length * 25 >= eventsWrapHeight) {
         isMore = true;
       }
@@ -388,6 +430,9 @@ const CalendarComponent = () => {
     );
   };
 
+  /**
+   * 할 일 영역 클릭 처리 함수
+   */
   const handleClickTodo = (
     e: MouseEvent<HTMLSpanElement>,
     date: Date,
@@ -406,6 +451,9 @@ const CalendarComponent = () => {
     }
   };
 
+  /**
+   * 날짜 클릭 처리 함수
+   */
   const handleClickDate = (e: MouseEvent, date: Date) => {
     e.stopPropagation();
     if (isCreate) setIsCreate(false);
@@ -417,6 +465,9 @@ const CalendarComponent = () => {
     }
   };
 
+  /**
+   * 상세 목록으로 이동하는 함수
+   */
   const handleNavigateToDetail = (e: MouseEvent, date: Date) => {
     e.stopPropagation();
     const seconds = Math.floor(date.getTime() / 1000);
@@ -424,12 +475,18 @@ const CalendarComponent = () => {
     return navigate(`/calendarList?date=${seconds}`);
   };
 
+  /**
+   * 생성 버튼 클릭 처리 함수
+   */
   const handleCreateBtn = () => {
     if (clickEventDate) setClickEventDate(null);
 
     setIsCreate((prevState) => !prevState);
   };
 
+  /**
+   * 네비게이션 숨기기 처리 함수
+   */
   const handleHideNav: MouseEventHandler<HTMLElement> = (e) => {
     if (!navRef.current) return;
 
@@ -438,6 +495,9 @@ const CalendarComponent = () => {
     }
   };
 
+  /**
+   * 네비게이션 보이기 처리 함수
+   */
   const handleViewNav = () => {
     if (isCreate) {
       setIsCreate(false);
