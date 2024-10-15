@@ -134,7 +134,7 @@ function CalendarList() {
   const navigate = useNavigate();
 
   const handleEventClick = () => {
-    navigate("*");
+    navigate("/detail");
   };
 
   const isAllDayEvent = (event: Event, selectedDate: Date) => {
