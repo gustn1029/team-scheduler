@@ -29,7 +29,7 @@ const Todos = () => {
   const { todos, selectedDate, setTodos, setSelectedDate } = useTodoStore();
   const navigate = useNavigate();
 
-
+  // todo 데이터 불러오기
   const { data: todoData, isLoading } = useQuery({
     queryKey: [
       "todos",
@@ -47,7 +47,7 @@ const Todos = () => {
     }
   },[])
 
-
+  // 선택된 날짜 저장
   useEffect(() => {
     const dateParam = params
       .get("date")
@@ -62,6 +62,7 @@ const Todos = () => {
     }
   }, [setSelectedDate, params]);
 
+  // 입력된 todo 데이터 저장할 때 사용하는 mutation 설정
   const addTodoMutation = useMutation({
     mutationFn: addTodoFetch,
     onSuccess: (message) => {
@@ -77,6 +78,7 @@ const Todos = () => {
     },
   });
 
+  // 해당 날짜의 todo 데이터를 삭제할 때 사용하는 mutation 설정
   const deleteMutation = useMutation({
     mutationFn: deleteTodoFetch,
     onSuccess: (message) => {
@@ -92,6 +94,7 @@ const Todos = () => {
     },
   });
 
+  // 투두 데이터 등록 함수
   const handleAddTodos = async () => {
     if (todos.length === 0) {
       toast.error("할일을 추가해 주세요.");
@@ -117,12 +120,13 @@ const Todos = () => {
     }
   };
 
+  // 삭제 모달 보여주는 함수
   const handleShowDeleteModal = () => {
     setIsDeleteModal(true);
   };
 
+  // todo 데이터 삭제 함수
   const handleDeleteTodo = async () => {
-    console.log("delete");
     if(todos.length === 0) {
       toast.error("삭제할 할일이 없습니다.");
       setIsDeleteModal(false);
@@ -137,6 +141,7 @@ const Todos = () => {
     }
   };
 
+  // 취소 모달 보여주는 함수
   const handleShowModal = () => {
     if (todos.length !== 0) {
       setIsShowCancelModal(true);
@@ -145,20 +150,22 @@ const Todos = () => {
     }
   };
 
+  // 취소 모달 닫는 함수
   const handleHideCancelModal = () => {
     setIsShowCancelModal(false);
   };
 
+  // 삭제 모달 닫는 함수
   const handleHideDeleteModal = () => {
     setIsDeleteModal(false);
   };
 
+  // 뒤로가기 때 실행되는 함수
   const handleCancel = () => {
     setTodos([]);
     navigate("../");
   };
 
-  console.log(todoData);
   if(isLoading) {
     return <Loader />
   }
