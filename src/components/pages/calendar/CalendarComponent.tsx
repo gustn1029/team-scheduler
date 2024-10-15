@@ -429,10 +429,6 @@ const CalendarComponent = () => {
     toggleIsView();
   };
 
-  // if (!appAuth.currentUser) {
-  //   return <Loader />;
-  // }
-
   return (
     <main className={styles.calendarWrap}>
       <section
