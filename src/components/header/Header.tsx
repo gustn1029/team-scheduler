@@ -1,19 +1,27 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { RiCloseFill } from 'react-icons/ri';
-import { IoMdCheckmark } from 'react-icons/io';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { RiCloseFill } from "react-icons/ri";
+import { IoMdCheckmark } from "react-icons/io";
 import { MdModeEdit, MdDelete } from "react-icons/md";
-import styles from './header.module.scss';
+import styles from "./header.module.scss";
 
 interface HeaderProps {
   title: string;
+  onCancel?: () => void;
   onConfirm?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   onDefault?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, onConfirm, onEdit, onDelete, onDefault }) => {
+const Header: React.FC<HeaderProps> = ({
+  title,
+  onConfirm,
+  onEdit,
+  onDelete,
+  onDefault,
+  onCancel,
+}) => {
   const navigate = useNavigate();
 
   const handleCancel = () => {
@@ -22,28 +30,36 @@ const Header: React.FC<HeaderProps> = ({ title, onConfirm, onEdit, onDelete, onD
 
   return (
     <div className={styles.headerComponent}>
-      <button onClick={handleCancel} className={styles.closeButton}>
-        <RiCloseFill size="22" />
-      </button>
+      {!onCancel && (
+        <button onClick={handleCancel} className={styles.closeButton}>
+          <RiCloseFill size="22" />
+        </button>
+      )}
+
       <h2 className={styles.title}>{title}</h2>
-      {onEdit && (
-        <button onClick={onEdit} className={styles.editButton}>
-          <MdModeEdit size="22" />
-        </button>
-      )}
-      {onDelete && (
-        <button onClick={onDelete} className={styles.deleteButton}>
-          <MdDelete size="22" />
-        </button>
-      )}
-      {onConfirm && (
-        <button type="submit" onClick={onConfirm} className={styles.confirmButton}>
-          <IoMdCheckmark size="22" />
-        </button>
-      )}
-      {/* 이 부분은 오른쪽에 아이콘이 없을때 기본값으로 사용하는 빈값입니다. */}
-      {onDefault && (
-        <button onClick={onDefault}></button>
+
+      {!onDefault && (
+        <div className={styles.editAndDeleteAndConfirmButtonWrap}>
+          {onEdit && (
+            <button onClick={onEdit} className={styles.editButton}>
+              <MdModeEdit size="22" />
+            </button>
+          )}
+          {onDelete && (
+            <button onClick={onDelete} className={styles.deleteButton}>
+              <MdDelete size="22" />
+            </button>
+          )}
+          {onConfirm && (
+            <button
+              type="submit"
+              onClick={onConfirm}
+              className={styles.confirmButton}
+            >
+              <IoMdCheckmark size="22" />
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
