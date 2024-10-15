@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { RiCloseFill } from "react-icons/ri";
 import styles from "./calendarlist.module.scss";
 import {
