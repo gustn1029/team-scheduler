@@ -6,6 +6,7 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 import { EventTypeEnum } from "./enum/EventTypeEnum";
+import { Timestamp } from "firebase/firestore";
 
 export interface UserData {
   token: string;
@@ -55,8 +56,8 @@ export interface EventsData {
   imageUrl?: string;
   nickname?: string;
   title: string;
-  startDate: any;
-  endDate: any;
+  startDate: Timestamp | Date;
+  endDate: Timestamp | Date;
   eventType: EventTypeEnum;
   eventColor: string;
   category: any[];
