@@ -166,7 +166,7 @@ const Todos = () => {
   return (
     <main className={styles.todosWrap}>
       <Header title="TODO" onDelete={handleShowDeleteModal} onCancel={handleCancel} />
-      <TodoForm date={selectedDate} />
+      <TodoForm />
       <TodoList todosData={(todoData && todoData.length !== 0) ? todoData[0].todos : []} />
       <section className={styles.todoBtnWrap}>
         <Button

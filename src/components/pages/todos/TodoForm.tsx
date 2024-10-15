@@ -4,11 +4,7 @@ import LabelInput from "../../inputs/input/LabelInput";
 import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
 
-interface TodoFormProps {
-  date: Date;
-}
-
-const TodoForm = ({ date }: TodoFormProps) => {
+const TodoForm = () => {
   const {
     register,
     watch,
