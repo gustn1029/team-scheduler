@@ -31,6 +31,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { appAuth } from "../../../firebase/config";
 
 import { FaPlus } from "react-icons/fa6";
+import { Timestamp } from "firebase/firestore";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -156,16 +157,29 @@ const CalendarComponent = () => {
     });
   }, [date]);
 
+  // 타입 가드
+  function isTimestamp(date: Date | Timestamp): date is Timestamp {
+    return (date as Timestamp).seconds !== undefined;
+  }
+
+  function toDayjs(date: Date | Timestamp): dayjs.Dayjs {
+    if (isTimestamp(date)) {
+      return dayjs.unix(date.seconds);
+    }
+    return dayjs(date);
+  }
+
   const sortAndAssignRows = (events: EventsData[]) => {
     const sortedEvents = events.sort((a, b) => {
-      if (a.startDate.seconds === b.startDate.seconds) {
-        return (
-          b.endDate.seconds -
-          b.startDate.seconds -
-          (a.endDate.seconds - a.startDate.seconds)
-        );
+      const aStart = toDayjs(a.startDate);
+      const bStart = toDayjs(b.startDate);
+      const aEnd = toDayjs(a.endDate);
+      const bEnd = toDayjs(b.endDate);
+
+      if (aStart.isSame(bStart)) {
+        return bEnd.diff(bStart) - aEnd.diff(aStart);
       }
-      return a.startDate.seconds - b.startDate.seconds;
+      return aStart.diff(bStart);
     });
 
     const assignedEvents: (EventsData & { row: number })[] = [];
@@ -177,12 +191,10 @@ const CalendarComponent = () => {
           (assignedEvent) =>
             row === assignedEvent.row &&
             !(
-              dayjs
-                .unix(event.startDate.seconds)
-                .isAfter(dayjs.unix(assignedEvent.endDate.seconds)) ||
-              dayjs
-                .unix(event.endDate.seconds)
-                .isBefore(dayjs.unix(assignedEvent.startDate.seconds))
+              toDayjs(event.startDate).isAfter(
+                toDayjs(assignedEvent.endDate)
+              ) ||
+              toDayjs(event.endDate).isBefore(toDayjs(assignedEvent.startDate))
             )
         );
         if (!conflict) {
@@ -193,7 +205,7 @@ const CalendarComponent = () => {
       }
     });
 
-    return assignedEvents; // 여기서 필터링 및 정렬된 이벤트를 반환
+    return assignedEvents;
   };
 
   const tileClassName = ({
@@ -238,14 +250,14 @@ const CalendarComponent = () => {
   };
 
   const tileCheckDate = (tileDate: dayjs.Dayjs, event: EventsData) => {
-    const startDate = dayjs.unix(event.startDate.seconds);
+    const startDate = toDayjs(event.startDate);
+    const endDate = toDayjs(event.endDate);
     const isStart = tileDate.isSame(startDate, "day");
     const isSunday = tileDate.day() === 0;
     const isFirstSunday =
       isSunday &&
       tileDate.isSameOrAfter(startDate, "day") &&
       (tileDate.isSame(startDate, "day") || tileDate.day(0).isAfter(startDate));
-    const endDate = dayjs.unix(event.endDate.seconds);
     const isEnd = tileDate.isSame(endDate, "day");
     const centerDate = getCenterDate(startDate, endDate);
     const isCenter = tileDate.isSame(centerDate, "day");
@@ -262,6 +274,12 @@ const CalendarComponent = () => {
     };
   };
 
+  const getDateFromTimestamp = (dateOrTimestamp: Date | Timestamp): Date => {
+    return dateOrTimestamp instanceof Timestamp
+      ? dateOrTimestamp.toDate()
+      : dateOrTimestamp;
+  };
+
   const TileContent = ({
     date,
     events,
@@ -274,14 +292,17 @@ const CalendarComponent = () => {
     const assignedEvents = useMemo(() => sortAndAssignRows(events), [events]);
 
     const tileDate = dayjs(date);
-    const eventsForTile = assignedEvents.filter(
-      (event) =>
-        tileDate.isSameOrAfter(dayjs.unix(event.startDate.seconds), "day") &&
-        tileDate.isSameOrBefore(dayjs.unix(event.endDate.seconds), "day")
+    const eventsForTile = assignedEvents.filter((event) =>
+      tileDate.isBetween(
+        dayjs(getDateFromTimestamp(event.startDate)),
+        dayjs(getDateFromTimestamp(event.endDate)),
+        "day",
+        "[]"
+      )
     );
 
     const todosForTile = todos.filter((todo) =>
-      tileDate.isSame(dayjs(todo.todoDate), "day")
+      tileDate.isSame(dayjs(getDateFromTimestamp(todo.todoDate)), "day")
     );
 
     console.log(eventsForTile);
