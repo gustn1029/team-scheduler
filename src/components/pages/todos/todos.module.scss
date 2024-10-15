@@ -1,0 +1,89 @@
+.todosWrap {
+    display: flex;
+    height: 100%;
+    padding: 10px 30px 30px;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.todoListWrap {
+    flex-grow: 1;
+}
+
+.todoListWrap section:first-of-type {
+    margin-bottom: 20px;
+}
+.sectionWrap {
+    padding: 0 15px 20px;
+    border-bottom: 1px solid #D9D9D9;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.title {
+    font-size: 0.875rem;
+}
+
+.todoInput {
+    width: 100%;
+    padding: 14px;
+    line-height: 20px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+}
+
+.todoInput + span {
+    transform: translate(15px, 18px);
+}
+
+.notComplete {
+    color: #8F8F8F;
+}
+.complete {
+    color: #00C56F;
+}
+
+.todoList li:nth-child(n+2){
+    margin-top: 10px;
+}
+
+.listItem {
+    display: flex;
+    gap: 30px;
+    padding: 12px 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+}
+
+.notCompleteListItem {
+    background-color: #fafafa;
+}
+.completeListItem {
+    background-color: #D9FEE1;
+}
+
+.todoBtnWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.todoBtn {
+    max-width: 110px; width: 100%;
+}
+
+.todoModalBtn {
+    width: 110px;
+}
+
+.todoModalTitle {
+    display: block;
+    color: #222;
+    margin-bottom: 30px;
+    line-height: 1.5;
+    text-align: center;
+}

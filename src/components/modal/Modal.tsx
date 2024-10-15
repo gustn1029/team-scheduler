@@ -1,36 +1,43 @@
-import React, { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-// import styles from './modal.module.scss';
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import styles from  './modal.module.scss';
 
 interface ModalProps {
   children: React.ReactNode;
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const Modal = ({ children, onClose }: ModalProps) => {
+export default function Modal({ children, isOpen, onClose }: ModalProps) {
   const dialog = useRef<HTMLDialogElement | null>(null);
+
   useEffect(() => {
     const modal = dialog.current;
-    modal?.showModal();
+    if (modal) {
+      if (isOpen) {
+        modal.showModal();
+      } else {
+        modal.close();
+      }
+    }
+  }, [isOpen]);
 
-    return () => {
-      modal?.close();
-    };
-  }, []);
-
-  const modalEl = document.getElementById("modal") || document.createElement("div");
-
-  if (!document.getElementById("modal")) {
-    modalEl.id = "modal";
-    document.body.appendChild(modalEl);
-  }
+  const handleBackgroundClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+    if (e.target === dialog.current) {
+      onClose();
+    }
+  };
 
   return createPortal(
-    <dialog ref={dialog} onClose={onClose}>
-      {children}
+    <dialog 
+      className={styles.modal} 
+      ref={dialog} 
+      onClick={handleBackgroundClick}
+    >
+      <div onClick={(e) => e.stopPropagation()}>
+        {children}
+      </div>
     </dialog>,
-    modalEl
+    document.getElementById('modal') as HTMLElement
   );
-};
-
-export default Modal;
+}

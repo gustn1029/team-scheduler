@@ -1,4 +1,3 @@
-
 import styles from "./labelSelect.module.scss";
 import LabelLayout from "../LabelLayout";
 import { LabelSelectOptionsProps } from "../../../types";
@@ -16,6 +15,7 @@ const LabelSelect = (props: LabelSelectOptionsProps) => {
           props.inputClassName ? styles[props.inputClassName] : ""
         }`}
       >
+        <option value="">선택</option>
         {props.optionList.map((el) => {
           return (
             <option
