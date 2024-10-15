@@ -14,6 +14,7 @@ const TodoForm = () => {
   } = useForm<TodoItem>();
   const { addTodo } = useTodoStore();
 
+  // 투두 입력하면 todos 배열에 추가하는 함수
   const onSubmit = (data: TodoItem) => {
     const newTodo: TodoItem = {
       todo: data.todo,
