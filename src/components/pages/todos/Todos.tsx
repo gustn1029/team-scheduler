@@ -41,6 +41,13 @@ const Todos = () => {
     enabled:!!appAuth.currentUser?.uid
   });
 
+  useEffect(()=> {
+    if(todos) {
+      setTodos([])
+    }
+  },[])
+
+
   useEffect(() => {
     const dateParam = params
       .get("date")
@@ -116,6 +123,12 @@ const Todos = () => {
 
   const handleDeleteTodo = async () => {
     console.log("delete");
+    if(todos.length === 0) {
+      toast.error("삭제할 할일이 없습니다.");
+      setIsDeleteModal(false);
+      return;
+    }
+
     if(todoData && todoData[0].id) {
       await deleteMutation.mutateAsync({
         collectionName: "todos",
@@ -152,7 +165,7 @@ const Todos = () => {
 
   return (
     <main className={styles.todosWrap}>
-      <Header title="TODO" onDelete={handleShowDeleteModal} />
+      <Header title="TODO" onDelete={handleShowDeleteModal} onCancel={handleCancel} />
       <TodoForm date={selectedDate} />
       <TodoList todosData={(todoData && todoData.length !== 0) ? todoData[0].todos : []} />
       <section className={styles.todoBtnWrap}>
@@ -199,9 +212,7 @@ const Todos = () => {
       {isDeleteModal && (
         <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
           <strong className={styles.todoModalTitle}>
-            저장되지 않은 할일은 삭제됩니다.
-            <br />
-            취소하시겠습니까?
+            정말 삭제하시겠습니까?
           </strong>
           <section className={styles.todoBtnWrap}>
             <Button
