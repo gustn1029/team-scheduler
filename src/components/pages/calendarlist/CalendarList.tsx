@@ -20,6 +20,7 @@ import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
 import { getAuth } from "firebase/auth";
 import dayjs from "dayjs";
+import Loader from "../../loader/Loader";
 
 type EventColor =
   | "red"
@@ -206,7 +207,7 @@ function CalendarList() {
       <main className={styles.calendarListMain}>
         <ul>
           {eventsLoading ? (
-            <li>Loading...</li>
+            <Loader />
           ) : Array.isArray(events) && events.length > 0 ? (
             events.map((event, index) => (
               <li
