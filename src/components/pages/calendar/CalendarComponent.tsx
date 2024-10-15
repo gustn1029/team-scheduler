@@ -240,7 +240,7 @@ const CalendarComponent = () => {
       .padStart(2, "0")}월`;
   };
 
-  const formatDay = (locale: string | undefined, date: Date) => {
+  const formatDay = (_locale: string | undefined, date: Date) => {
     return date.getDate().toString();
   };
 
