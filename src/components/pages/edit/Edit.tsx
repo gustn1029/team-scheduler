@@ -7,27 +7,18 @@ import styles from "../create/create.module.scss";
 import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "../create/CustomTimePicker";
-import { useQuery } from "@tanstack/react-query";
-import { queryClient, userDataFetch } from "../../../utils/http";
+import { queryClient} from "../../../utils/http";
 import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
-import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
-import { useNavigate, useSearchParams, useParams } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
+import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 import Loader from "../../loader/Loader";
 
 const Edit: React.FC = () => {
   const [isMount, setIsMount] = useState<boolean>(false);
 
   const { id } = useParams(); // 이벤트 ID 가져오기
-  
-
-  const { data: authData } = useQuery({
-    queryKey: ["auth", appAuth.currentUser?.uid],
-    queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
-    enabled: !!appAuth.currentUser?.uid,
-  });
 
   const [eventData, setEventData] = useState<EventsData | null>(null);
 
@@ -78,18 +69,29 @@ const Edit: React.FC = () => {
 
   const navigate = useNavigate();
 
+  console.log(eventData);
+
   useEffect(() => {
     if (eventData) {
-      // 초기값 설정
+      // Timestamp를 Date 객체로 변환
+      
+      if (eventData.startDate && eventData.endDate) {
+        setStartDate(eventData.startDate instanceof Timestamp ? eventData.startDate.toDate() : eventData.startDate);
+        setEndDate(eventData.endDate instanceof Timestamp ? eventData.endDate.toDate() : eventData.endDate);
+      } else {
+        console.error("이벤트에 유효한 날짜가 없습니다.");
+        setStartDate(new Date());
+        setEndDate(new Date());
+      }
+      
+      // setValue를 통한 폼 초기값 설정
       setValue("title", eventData.title);
       setValue("eventColor", eventData.eventColor);
       setValue("eventMemo", eventData.eventMemo);
+      
+      // 선택된 색상 및 메모 카운트 초기화
       setSelectedColor(eventData.eventColor || "blue");
       setSelectedText(eventData.eventColor || "Blue");
-      if(eventData.startDate && eventData.endDate) {
-        setStartDate(eventData.startDate.toDate());
-        setEndDate(eventData.endDate.toDate());
-      }
       setMemoCount(eventData.eventMemo.length);
     }
   }, [eventData, setValue]);
@@ -113,7 +115,7 @@ const Edit: React.FC = () => {
         updateDate: new Date(),
       });
 
-      navigate("/calendar");
+      navigate(`/calendarlist/${id}`);
 
       reset({
         title: "",
