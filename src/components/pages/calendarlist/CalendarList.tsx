@@ -9,7 +9,7 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
-import { appFireStore } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillPlusCircle } from "react-icons/ai";
@@ -18,7 +18,6 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useState } from "react";
 import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
-import { getAuth } from "firebase/auth";
 import dayjs from "dayjs";
 import Loader from "../../loader/Loader";
 
@@ -67,8 +66,7 @@ function CalendarList() {
 
     const startTimestamp = Timestamp.fromDate(startOfDay);
     const endTimestamp = Timestamp.fromDate(endOfDay);
-    const auth = getAuth();
-    const uid = auth.currentUser?.uid;
+    const uid = appAuth.currentUser?.uid;
 
     const eventsRef = collection(appFireStore, "events");
 
