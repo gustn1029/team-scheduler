@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { RiCloseFill } from "react-icons/ri";
 import styles from "./calendarlist.module.scss";
 import {
@@ -9,17 +10,17 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
-import { appFireStore } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillPlusCircle } from "react-icons/ai";
 import IconLinkButton from "../../button/iconButton/IconLinkButton";
 import IconButton from "../../button/iconButton/IconButton";
-import { useState } from "react";
 import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
-import { getAuth } from "firebase/auth";
 import dayjs from "dayjs";
+import Loader from "../../loader/Loader";
+import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 
 type EventColor =
   | "red"
@@ -32,6 +33,7 @@ type EventColor =
 
 interface Event extends DocumentData {
   uid: string;
+  id: string;
   startDate: Timestamp;
   endDate: Timestamp;
   title: string;
@@ -43,8 +45,43 @@ interface UserData {
 }
 
 function CalendarList() {
-  const [clickEventDate, setClickEventDate] = useState<Date | null>(null);
   const [isCreate, setIsCreate] = useState<boolean>(false);
+
+  async function fetchHolidays(date: Date): Promise<Event[]> {
+    const startOfDay = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      0,
+      0,
+      0
+    );
+    const endOfDay = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      23,
+      59,
+      59
+    );
+    const userCollection = collection(appFireStore, "events");
+    const startTimestamp = Timestamp.fromDate(startOfDay);
+    const endTimestamp = Timestamp.fromDate(endOfDay);
+
+    const q = query(
+      userCollection,
+      where("startDate", ">=", startTimestamp),
+      where("startDate", "<=", endTimestamp),
+      where("eventType", "==", EventTypeEnum.HOLIDAY)
+    );
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      uid: "",
+      ...doc.data(),
+    })) as Event[];
+  }
 
   const eventsOfDayFetch = async (date: Date): Promise<Event[]> => {
     const startOfDay = new Date(
@@ -64,12 +101,11 @@ function CalendarList() {
       59
     );
 
-    const startTimestamp = Timestamp.fromDate(startOfDay);
-    const endTimestamp = Timestamp.fromDate(endOfDay);
-    const auth = getAuth();
-    const uid = auth.currentUser?.uid;
-
     const eventsRef = collection(appFireStore, "events");
+
+    const endTimestamp = Timestamp.fromDate(endOfDay);
+    const startTimestamp = Timestamp.fromDate(startOfDay);
+    const uid = appAuth.currentUser?.uid;
 
     const q = query(
       eventsRef,
@@ -81,16 +117,18 @@ function CalendarList() {
 
     const querySnapshot = await getDocs(q);
 
+    const holidays = await fetchHolidays(date);
+
     const events = querySnapshot.docs.map((doc) => ({
       uid: doc.id,
       ...doc.data(),
     })) as Event[];
-    return events;
+    return [...holidays, ...events];
   };
+
   const [params] = useSearchParams();
   const dateParam = params.get("date");
   const date = new Date(Number(dateParam) * 1000);
-  console.log(date);
 
   const { data: events, isLoading: eventsLoading } = useQuery<Event[]>({
     queryKey: ["events", dateParam],
@@ -116,18 +154,19 @@ function CalendarList() {
     enabled: !!events && events.length > 0,
   });
 
-  const { data } = useQuery<Event[]>({
-    queryKey: ["events", dateParam],
-    queryFn: () => eventsOfDayFetch(date),
-    enabled: !!dateParam,
-  });
+  const sortedEvents = useMemo(() => {
+    if (!events) return [];
+    return events.sort((a, b) => {
+      if (a.uid === "" && b.uid !== "") return -1;
+      if (a.uid !== "" && b.uid === "") return 1;
 
-  console.log(data);
+      return a.startDate.seconds - b.startDate.seconds;
+    });
+  }, [events]);
 
   const weekDay = ["일", "월", "화", "수", "목", "금", "토"];
 
   const handleCreateBtn = () => {
-    if (clickEventDate) setClickEventDate(null);
     setIsCreate((prevState) => !prevState);
   };
 
@@ -181,6 +220,7 @@ function CalendarList() {
       ? colorMap[colorName as EventColor]
       : colorName;
   };
+
   return (
     <>
       <header className={styles.calendarListHeader}>
@@ -199,18 +239,18 @@ function CalendarList() {
           <CreateModal
             params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
             top={40}
-            left={260}
+            right={30}
           />
         )}
       </header>
       <main className={styles.calendarListMain}>
         <ul>
           {eventsLoading ? (
-            <li>Loading...</li>
-          ) : Array.isArray(events) && events.length > 0 ? (
-            events.map((event, index) => (
+            <Loader />
+          ) : sortedEvents.length > 0 ? (
+            sortedEvents.map((event, index) => (
               <li
-                key={`${event.uid || "event"}-${index}`}
+                key={`${event.id || "event"}-${index}`}
                 className={styles.liContainer}
               >
                 <div
@@ -263,7 +303,7 @@ function CalendarList() {
               </li>
             ))
           ) : (
-            <li>No events found</li>
+            <li></li>
           )}
         </ul>
       </main>
