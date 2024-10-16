@@ -1,11 +1,18 @@
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
-import { appAuth, appFireStore } from "../firebase/config";
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { appAuth, appFireStore, appStorage } from "../firebase/config";
+import {
+  deleteUser,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  User,
+} from "firebase/auth";
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -14,12 +21,14 @@ import {
 import {
   CalendarTodos,
   DeleteFetchProps,
+  DeleteUserProps,
   EventPostData,
   EventsData,
   EventsFetchProps,
   GetTodosFetchProps,
   Holiday,
   HolidayDataFetchProps,
+  ProfileUpdateFetchProps,
   TodoAddFetchProps,
   TodoData,
   TodoUpdateFetchProps,
@@ -28,6 +37,7 @@ import {
 import { EventTypeEnum } from "../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
 import { handleError } from "./ErrorHandler";
+import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 
 type CurrentUserData = Omit<UserData, "token">;
 
@@ -79,7 +89,10 @@ export const userDataFetch = async (
     return null;
   }
 
-  return querySnapshot.docs[0].data() as CurrentUserData;
+  return {
+    id: querySnapshot.docs[0].id,
+    ...querySnapshot.docs[0].data(),
+  } as CurrentUserData;
 };
 
 // 구글 인증
@@ -196,7 +209,7 @@ export const holidayDataFetch = async ({
     userCollection,
     where("startDate", ">=", queryStartDate),
     where("startDate", "<=", queryEndDate),
-    where("eventType", "==", EventTypeEnum.HOLIDAY),
+    where("eventType", "==", EventTypeEnum.HOLIDAY)
   );
   const querySnapshot = await getDocs(q);
 
@@ -224,9 +237,12 @@ export const eventsDataFetch = async ({
   );
   const querySnapshot = await getDocs(q);
 
-  const holidays = await holidayDataFetch({year, month});
+  const holidays = await holidayDataFetch({ year, month });
 
-  const events = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const events = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
 
   return [...events, ...holidays] as EventsData[];
 };
@@ -251,16 +267,24 @@ export const addEventsFetch = async (data: EventPostData) => {
 };
 
 // events 업데이트
-export const updateEvent = async ({ data, eventData, id }: { data: EventsData, eventData: EventsData, id: string }) => {
+export const updateEvent = async ({
+  data,
+  eventData,
+  id,
+}: {
+  data: EventsData;
+  eventData: EventsData;
+  id: string;
+}) => {
   const eventDoc = doc(appFireStore, "events", id as string);
-    await updateDoc(eventDoc, {
-      ...eventData,
-      ...data,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      updateDate: new Date(),
-    });
-}
+  await updateDoc(eventDoc, {
+    ...eventData,
+    ...data,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    updateDate: new Date(),
+  });
+};
 
 // calendar todo 불러오기
 export const calendarTodosFetch = async ({
@@ -283,7 +307,10 @@ export const calendarTodosFetch = async ({
   );
   const querySnapshot = await getDocs(q);
 
-  const todos = querySnapshot.docs.map((doc) => ({ id: doc.id, todoDate: doc.data().todoDate.toDate()}));
+  const todos = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    todoDate: doc.data().todoDate.toDate(),
+  }));
 
   return todos as CalendarTodos[];
 };
@@ -302,7 +329,7 @@ export const addTodoFetch = async ({ data, uid, date }: TodoAddFetchProps) => {
 
   if (snapshot.empty) {
     await addDoc(todoCollection, data);
-    
+
     message = "할일을 정상적으로 저장했습니다.";
 
     return message;
@@ -357,4 +384,104 @@ export const deleteTodoFetch = async ({
     collectionName === "events" ? "일정을" : "할일을"
   } 성공적으로 삭제했습니다.`;
   return message;
+};
+
+// 이미지 업로드
+export const uploadProfileImage = async (
+  file: File | null,
+  img: string
+): Promise<{ profileImg: string }> => {
+  if (!file || img === "") return { profileImg: "" };
+
+  const fileName = `profileImages/${Date.now()}_${img}`;
+  const storageRef = ref(appStorage, fileName);
+  try {
+    await uploadBytes(storageRef,file);
+    const profileImg = await getDownloadURL(storageRef);
+    return { profileImg };
+  } catch (error) {
+    console.error("error: ", error);
+    throw error;
+  }
+};
+
+// 프로필 수정
+export const profileUpdateFetch = async ({
+  data,
+  id,
+}: ProfileUpdateFetchProps) => {
+  const userDocRef = doc(appFireStore, "users", id);
+  await updateDoc(userDocRef, {
+    nickname: data.nickname,
+    profileImg: data.profileImg,
+  });
+};
+
+// 탈퇴 관련 함수
+async function deleteUserProfileImage(id: string) {
+  try {
+    const userDocRef = doc(appFireStore, "users", id);
+    const user = await getDoc(userDocRef);
+
+    if (!user.exists()) {
+      return;
+    }
+
+    const userData = user.data();
+    const imagePath = userData.profileImg;
+
+    if (!imagePath) {
+      return;
+    }
+
+    const imageRef = ref(appStorage, imagePath);
+
+    // 프로필 이미지 삭제
+    await deleteObject(imageRef);
+  } catch (error) {
+    console.error("프로필 이미지 삭제 중 오류 발생:", error);
+    throw error;
+  }
+}
+
+async function deleteUserDataFromFirestore({ id, uid }: DeleteUserProps) {
+  try {
+    // 사용자 문서 삭제
+    await deleteDoc(doc(appFireStore, "users", id));
+
+    // 사용자와 관련된 events 컬렉션의 문서들 삭제
+    const eventsQuery = query(
+      collection(appFireStore, "events"),
+      where("uid", "==", uid)
+    );
+    const eventsSnapshot = await getDocs(eventsQuery);
+    const deleteEventsPromises = eventsSnapshot.docs.map((doc) =>
+      deleteDoc(doc.ref)
+    );
+    await Promise.all(deleteEventsPromises);
+
+    // 사용자와 관련된 todos 컬렉션의 문서들 삭제
+    const todosQuery = query(
+      collection(appFireStore, "todos"),
+      where("uid", "==", uid)
+    );
+    const todosSnapshot = await getDocs(todosQuery);
+    const deleteTodosPromises = todosSnapshot.docs.map((doc) =>
+      deleteDoc(doc.ref)
+    );
+    await Promise.all(deleteTodosPromises);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+interface DeleteUser extends DeleteUserProps {
+  user:User
+} 
+
+export const deleteUserFetch = async ({user, id, uid}:DeleteUser) => {
+  await deleteUserProfileImage(id);
+  await deleteUserDataFromFirestore({id, uid})
+  await deleteUser(user);
 };

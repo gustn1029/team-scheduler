@@ -4,76 +4,134 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 75px;
 
+  .deleteUserBtn {
+    padding: 0 0 3px;
+    border-bottom: 1px solid #333;
+  }
 
+  .imgUploadBtn {
+    padding: 0;
+    margin: 40px auto 30px;
+    position: relative;
+  }
 
   .profileImage {
     width: 200px;
     height: 200px;
     border-radius: 100%;
     overflow: hidden;
-    margin: 40px auto;
+    object-fit: cover;
+    border: 1px solid #e3e3e3;
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    &.view {
+      margin: 40px auto 30px;
     }
   }
 
-  .profileInfo {
-    text-align: center;
+  .profileForm {
+    width: 100%;
+  }
+
+  .editImgIcon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    right: 10px;
+    bottom: 10px;
+    font-size: 15px;
+    background-color: white;
+    border-radius: 100%;
+    color: #414040;
+    border: 1px solid #929292;
+  }
+
+  .nickname {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .emailWrap {
+    margin-bottom: 50px;
+  }
+
+  .email {
+    font-size: 14px;
+    color: #767676;
+  }
+
+  .label,
+  .emailLabel {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .label {
     margin-bottom: 20px;
+  }
 
-    .nickname {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 5px;
-    }
+  .input {
+    width: 100%;
+    padding: 15px;
+    line-height: 17px;
+    border-radius: 10px;
+  }
 
-    .email {
-      font-size: 14px;
-      color: #767676;
-    }
+  .label span {
+    margin-bottom: 5px;
+  }
+
+  .label span:last-of-type {
+    bottom: -25px;
+  }
+  .emailLabel {
+    display: block;
+    margin-bottom: 5px;
   }
 
   .editButton {
-    width: 159px;
-    height: 39px;
-    border: 1px solid #767676;
-    border-radius: 19px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    color: #333;
+    margin-top: 20px;
+    max-width: 160px;
+    width: 100%;
+    line-height: 20px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12px;
     cursor: pointer;
   }
 
-  
-      .modalButtons {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
+  .modalButtons {
+    display: flex;
+    justify-content: space-between;
 
-        button {
-          width: 48%;
-          height: 48px;
-          border-radius: 8px;
-          font-size: 16px;
-          cursor: pointer;
-
-          &:first-child {
-            background-color: #f0f0f0;
-            color: #333;
-          }
-
-          &:last-child {
-            background-color: #333;
-            color: #fff;
-          }
-        }
-      }
+    button {
+      width: 48%;
+      height: 40px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
     }
+  }
+}
 
+.deleteModalTitle {
+  display: block;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.deleteModalBtnWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  button {
+    max-width: 110px;
+    width: 100%;
+  }
+}

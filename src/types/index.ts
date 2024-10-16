@@ -9,12 +9,28 @@ import { EventTypeEnum } from "./enum/EventTypeEnum";
 import { Timestamp } from "firebase/firestore";
 
 export interface UserData {
+  id?: string;
   token: string;
   uid: string;
   email: string;
   profileImg: string;
   name: string;
   nickname: string;
+}
+
+export interface ProfileData {
+  nickname: string;
+  profileImg: string;
+}
+
+export interface ProfileUpdateFetchProps {
+  data: ProfileData;
+  id: string;
+}
+
+export interface DeleteUserProps {
+  id: string;
+  uid: string;
 }
 
 export interface LabelInputProps {
