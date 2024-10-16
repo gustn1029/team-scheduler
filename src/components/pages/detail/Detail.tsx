@@ -218,7 +218,7 @@ function Detail() {
       <Header
         title="일정 상세"
         {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
-          onEdit: () => navigate("/calendarlist/:id/edit"),
+          onEdit: () => navigate(`/calendarlist/${id}/edit`),
         })}
         onDelete={handleDelete}
       />
@@ -256,11 +256,7 @@ function Detail() {
         {eventData.eventType !== EventTypeEnum.HOLIDAY && (
           <div className={styles.memoContainer}>
             <span>메모</span>
-            <textarea
-              value={eventData?.eventMemo || ""}
-              readOnly
-              className={styles.memoTextarea}
-            ></textarea>
+            <p className={styles.memoTextarea}>{eventData?.eventMemo || ""}</p>
           </div>
         )}
       </main>
