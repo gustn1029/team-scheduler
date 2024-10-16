@@ -24,16 +24,6 @@ const Create: React.FC = () => {
     enabled: !!appAuth.currentUser?.uid,
   });
 
-  // 이벤트 추가 Mutation 설정 (성공 시 이벤트 목록을 업데이트하고, 페이지 이동)
-  const addEventMutation = useMutation({
-    mutationFn: addEventsFetch,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid] });
-      navigate("../");
-      toast.success("일정이 추가되었습니다.");
-    }
-  });
-
   // URL의 파라미터에서 date를 가져오기
   const [params] = useSearchParams();
   const dateParam = params.get("date");
@@ -63,6 +53,16 @@ const Create: React.FC = () => {
 
   // 날짜 및 시간 선택 컴포넌트의 열림 상태 관리 useState
   const [openComponent, setOpenComponent] = useState<string | null>(null);
+
+  // 이벤트 추가 Mutation 설정 (성공 시 이벤트 목록을 업데이트하고, 페이지 이동)
+  const addEventMutation = useMutation({
+    mutationFn: addEventsFetch,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid] });
+      navigate("../");
+      toast.success("일정이 추가되었습니다.");
+    }
+  });
 
   // React Hook Form 설정
   const {
@@ -96,8 +96,6 @@ const Create: React.FC = () => {
     const newEvent: EventsData = {
       ...data,
       uid: authData?.uid,
-      imageUrl: authData?.profileImg || 'default-image-url',
-      nickname: authData?.nickname || 'anonymous',
       startDate: newEventStartDate,
       endDate: newEventEndDate,
       createDate: new Date(),
