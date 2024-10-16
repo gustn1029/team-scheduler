@@ -40,7 +40,7 @@ interface Event extends DocumentData {
   eventColor: EventColor | string;
 }
 
-interface UserData {
+interface UserprofileImg {
   profileImg: string | undefined;
 }
 
@@ -136,7 +136,7 @@ function CalendarList() {
     enabled: !!dateParam,
   });
 
-  const { data: usersData } = useQuery<Record<string, UserData>>({
+  const { data: usersData } = useQuery<Record<string, UserprofileImg>>({
     queryKey: ["users", events],
     queryFn: async () => {
       if (!events) return {};
