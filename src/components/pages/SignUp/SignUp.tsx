@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
@@ -7,8 +7,11 @@ import { appAuth, appFireStore, appStorage } from "../../../firebase/config";
 import styles from "./signup.module.scss";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import LinkButton from "../../button/LinkButton";
+
+import defaultProfileImage from "../../../assets/images/profile/profile.png";
 
 interface FormData {
   userNickName: string;
@@ -29,9 +32,21 @@ export const SignUp: React.FC = () => {
     clearErrors,
   } = useForm<FormData>();
 
+  const [isFormFilled, setIsFormFilled] = useState(false);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      const { userNickName, userEmail, userPassword, userPasswordCheck } =
+        value;
+      setIsFormFilled(
+        !!userNickName && !!userEmail && !!userPassword && !!userPasswordCheck
+      );
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
   async function getImageUrl(): Promise<string> {
-    const imagePath =
-      "gs://timeflow-e3a51.appspot.com/profileImages/profile.png";
+    const imagePath = "profileImages/profile.png";
     const imageRef = ref(appStorage, imagePath);
 
     try {
@@ -39,7 +54,25 @@ export const SignUp: React.FC = () => {
       return url;
     } catch (error) {
       console.error("Error getting download URL: ", error);
-      throw error;
+      throw uploadDefaultImage();
+    }
+  }
+
+  async function uploadDefaultImage(): Promise<string> {
+    const imagePath = `profileImages/profile.png`;
+    const imageRef = ref(appStorage, imagePath);
+
+    try {
+      const response = await fetch(defaultProfileImage);
+      const blob = await response.blob();
+
+      await uploadBytes(imageRef, blob);
+
+      const url = await getDownloadURL(imageRef);
+      return url;
+    } catch (error) {
+      console.error("Error uploading default image: ", error);
+      return defaultProfileImage;
     }
   }
 
@@ -53,15 +86,22 @@ export const SignUp: React.FC = () => {
         data.userPassword
       );
       const userId = userCredential.user.uid;
-      const userProfileImg = await getImageUrl();
+
+      let userProfileImg;
+      try {
+        userProfileImg = await getImageUrl();
+      } catch (error) {
+        console.error("Error getting profile image:", error);
+        userProfileImg = defaultProfileImage;
+      }
 
       await setDoc(doc(appFireStore, "users", userCredential.user.uid), {
-        id: userId,
+        uid: userId,
         email: data.userEmail,
         nickname: data.userNickName,
         profileImg: userProfileImg,
       });
-      navigate("/");
+      navigate("/login");
       reset();
     } catch (error) {
       console.error("Error signing up", error);
@@ -93,10 +133,9 @@ export const SignUp: React.FC = () => {
         />
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
-
       <div className={styles.formContainer}>
+        <h2>회원가입</h2>
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formGroup}>
-          <h2>회원가입</h2>
           <div className={styles.inputContainer}>
             <LabelInput
               type="text"
@@ -109,13 +148,10 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userNickName ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={errors.userNickName}
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="email"
               label="userEmail"
@@ -131,13 +167,10 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userEmail ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={errors.userEmail}
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="password"
               label="userPassword"
@@ -158,7 +191,6 @@ export const SignUp: React.FC = () => {
               ariaInvalid={
                 isSubmitted ? (errors.userPassword ? true : false) : undefined
               }
-              children={undefined}
               error={errors}
               errorView={
                 errors.userPassword && (
@@ -177,8 +209,6 @@ export const SignUp: React.FC = () => {
               }
               isLabelTextHidden={true}
             />
-          </div>
-          <div className={styles.inputContainer}>
             <LabelInput
               type="password"
               label="userPasswordCheck"
@@ -196,23 +226,28 @@ export const SignUp: React.FC = () => {
               })}
               watch={watch}
               ariaInvalid={
-                isSubmitted ? (errors.userEmail ? true : false) : undefined
+                isSubmitted
+                  ? errors.userPasswordCheck
+                    ? true
+                    : false
+                  : undefined
               }
-              children={undefined}
               error={errors}
               errorView={errors.userPasswordCheck}
               isLabelTextHidden={true}
             />
           </div>
           <div className={styles.buttonContainer}>
-            <Button
-              type="button"
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={() => reset()}
-            >
+            <LinkButton href={"/login"} buttonStyle={ButtonStyleEnum.Cancel}>
               취소
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            </LinkButton>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              buttonStyle={
+                isFormFilled ? ButtonStyleEnum.Normal : ButtonStyleEnum.Primary
+              }
+            >
               {isSubmitting ? "처리중" : "확인"}
             </Button>
           </div>
