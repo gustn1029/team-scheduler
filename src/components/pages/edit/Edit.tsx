@@ -13,17 +13,25 @@ import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import Loader from "../../loader/Loader";
+import { updateEvent } from "../../../utils/http";
 
 const Edit: React.FC = () => {
-  // 이벤트 ID를 URL에서 가져오기
-  const { id } = useParams();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("blue");
+  const [selectedText, setSelectedText] = useState("Blue");
 
-  // 페이지 이동을 위한 네비게이션 훅
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const [memoCount, setMemoCount] = useState(0);
+  const maxLength = 100;
+
+  const [openComponent, setOpenComponent] = useState<string | null>(null);
+  
+  const { id } = useParams(); // 이벤트 ID 가져오기
   const navigate = useNavigate();
-
-  // React Query에서 제공하는 QueryClient 인스턴스를 사용
   const queryClient = useQueryClient();
 
   // 이벤트 데이터를 가져오는 useQuery
@@ -41,25 +49,13 @@ const Edit: React.FC = () => {
     enabled: !!id, // id가 존재할 때만 쿼리를 활성화
   });
 
-  // 이벤트를 업데이트하는 함수
-  const updateEvent = async ({ data }: { data: EventsData }) => {
-    const eventDoc = doc(appFireStore, "events", id as string);
-      await updateDoc(eventDoc, {
-        ...eventData,
-        ...data,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        updateDate: new Date(),
-      });
-  }
-
   // 이벤트 업데이트를 처리하는 useMutation
   const updateEventMutation = useMutation<void, Error, EventsData>(
     {
-        mutationFn: async (data) => await updateEvent({ data }),
+        mutationFn: async (data) => await updateEvent({ data, eventData: eventData as EventsData, id: id as string }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid, id]});
-            navigate(`/calendarlist/${id}`); // 성공 시 해당 이벤트 페이지로 이동
+            navigate(`/calendarlist/${id}`);
         },
         onError: (error: Error) => {
             console.error("데이터 업데이트 중 오류 발생:", error);
@@ -68,28 +64,6 @@ const Edit: React.FC = () => {
     }
   );
 
-  // 색상 선택 토글 관리 useState
-  const [isOpen, setIsOpen] = useState(false);
-
-  // 선택된 색상 및 텍스트 관련 useState
-  const [selectedColor, setSelectedColor] = useState("blue");
-  const [selectedText, setSelectedText] = useState("Blue");
-
-  // 시작 날짜, 종료 날짜 관련 useState
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-
-  // 메모 maxlength 핸들러(메모 길이 제한 useState)
-  const [memoCount, setMemoCount] = useState(0);
-  const maxLength = 100;
-
-  // 날짜 및 시간 선택 컴포넌트의 열림 상태 관리 useState
-  const [openComponent, setOpenComponent] = useState<string | null>(null);
-
-  // 하루 종일 토글 상태 관리 useState
-  const [isChecked, setIsChecked] = useState(false);
-
-  // React Hook Form 설정
   const {
     handleSubmit,
     register,
@@ -99,7 +73,6 @@ const Edit: React.FC = () => {
     formState: { errors, isSubmitted },
   } = useForm<EventsData>();
 
-  // 컴포넌트가 처음 렌더링되면 이벤트 데이터를 폼에 설정
   useEffect(() => {
     if (eventData) {
       // Timestamp를 Date 객체로 변환
@@ -131,42 +104,24 @@ const Edit: React.FC = () => {
     }
   }, [eventData, setValue]);
 
-  // Form Submit 핸들러
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
     let newEventStartDate = startDate;
     let newEventEndDate = endDate;
 
-    // 하루 종일 선택 시 시간을 00:00 ~ 23:59로 설정
     if (isChecked) {
       newEventStartDate = new Date(startDate!.setHours(0, 0, 0, 0));
       newEventEndDate = new Date(endDate!.setHours(23, 59, 59, 999));
     }
 
-    // 업데이트할 이벤트 데이터 구성
     const updateEventData: EventsData = {
         ...data,
         startDate: newEventStartDate as Date,
         endDate: newEventEndDate as Date,
         eventColor: selectedColor,
     };
-
-    // 이벤트 업데이트 호출
     updateEventMutation.mutateAsync(updateEventData);
-
-    // 폼 리셋
-    reset({
-      title: "",
-      eventColor: "blue",
-      eventMemo: "",
-      startDate: new Date(),
-      endDate: new Date(),
-    });
-
-    // 메모 카운트 초기화
-    setMemoCount(0);
   };
 
-  // 색상 옵션 설정
   const colorOptions = [
     { colorClass: "red", colorName: "Red" },
     { colorClass: "pink", colorName: "Pink" },
@@ -177,24 +132,21 @@ const Edit: React.FC = () => {
     { colorClass: "gray", colorName: "Gray" },
   ];
 
-  // 색상 선택 핸들러
   const handleColorSelect = (colorClass: string, colorName: string) => {
     setSelectedColor(colorClass);
     setSelectedText(colorName);
     setIsOpen(false);
   };
 
-  // 색상 선택 박스 토글
   const toggleSelectBox = () => {
     setIsOpen(!isOpen);
   };
 
-  // 하루 종일 토글
+  const [isChecked, setIsChecked] = useState(false);
   const handleToggleAllDay = (checked: boolean) => {
     setIsChecked(checked);
   };
 
-  // 시작 날짜 변경 핸들러
   const handleStartDateChange = (date: Date | null) => {
     if (date) {
       setStartDate(date);
@@ -204,7 +156,6 @@ const Edit: React.FC = () => {
     }
   };
 
-  // 종료 날짜 변경 핸들러
   const handleEndDateChange = (date: Date | null) => {
     if (date) {
       if (date < (startDate as Date)) {
@@ -215,7 +166,6 @@ const Edit: React.FC = () => {
     }
   };
 
-  // 시작 시간 변경 핸들러
   const handleStartTimeChange = (date: Date | null) => {
     if (date) {
       const newStartDate = new Date(startDate as Date);
@@ -229,7 +179,6 @@ const Edit: React.FC = () => {
     }
   };
 
-  // 종료 시간 변경 핸들러
   const handleEndTimeChange = (date: Date | null) => {
     if (date) {
       const newEndDate = new Date(endDate as Date);
@@ -243,17 +192,14 @@ const Edit: React.FC = () => {
     }
   };
 
-  // 컴포넌트 열림/닫힘 상태 토글
   const handleToggleComponent = (component: string) => {
     setOpenComponent(openComponent === component ? null : component);
   };
 
-  // 메모 변경 핸들러
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMemoCount(e.target.value.length);
   };
 
-  // 로딩 상태 시 로더 표시
   if (isLoading) return <Loader />;
 
   return (
