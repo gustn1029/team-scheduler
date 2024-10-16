@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../header/Header";
 import styles from "../detail/detail.module.scss";
-import { doc, DocumentData, getDoc, Timestamp } from "firebase/firestore";
-import { useParams, useSearchParams } from "react-router-dom";
+import { deleteDoc, doc, getDoc, Timestamp } from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
 import { appFireStore } from "../../../firebase/config";
 import { EventsData } from "../../../types";
-import LabelTextarea from "../../inputs/textarea/LabelTextarea";
 import Loader from "../../loader/Loader";
+import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 
 type EventColor =
   | "red"
@@ -32,6 +32,7 @@ function Detail() {
   const [eventData, setEventData] = useState<EventsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -142,21 +143,46 @@ function Detail() {
       ? eventData.endDate.toDate()
       : new Date(eventData.endDate);
 
-  console.log(eventData);
-  console.log(eventData.eventMemo);
+  const handleDelete = async () => {
+    if (!id) {
+      console.error("이벤트 ID가 없습니다.");
+      return;
+    }
 
+    const confirmDelete = window.confirm(
+      "정말로 이 이벤트를 삭제하시겠습니까?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      setIsLoading(true);
+      const eventDocRef = doc(appFireStore, "events", id);
+      await deleteDoc(eventDocRef);
+      console.log("이벤트가 성공적으로 삭제되었습니다.");
+      navigate("/");
+    } catch (err) {
+      console.error("이벤트 삭제 중 오류가 발생했습니다:", err);
+      setError("이벤트 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <Header
         title="일정 상세"
-        onEdit={() => console.log("편집")}
-        onDelete={() => console.log("삭제")}
+        onEdit={() => navigate("/calendarlist/:id/edit")}
+        onDelete={handleDelete}
       />
       <main>
-        <div>
-          <span>작성자</span>
-          <img src="" alt="작성자" />
-        </div>
+        {EventTypeEnum.HOLIDAY ? (
+          ""
+        ) : (
+          <div>
+            <span>작성자</span>
+            <img src="" alt="작성자" />
+          </div>
+        )}
         <div>
           <div
             className={styles.listColor}
