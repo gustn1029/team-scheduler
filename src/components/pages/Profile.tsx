@@ -1,68 +1,203 @@
 import { useQuery } from "@tanstack/react-query";
-import { appAuth } from "../../firebase/config";
-import { userDataFetch } from "../../utils/http";
-import React, { useState } from "react";
+import { appAuth, appFireStore } from "../../firebase/config";
+import { userDataFetch, queryClient } from "../../utils/http";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import styles from "./Profile.module.scss";
-import { IoClose } from "react-icons/io5";
+import LabelInput from "../inputs/input/LabelInput";
+import { FieldError, useForm } from "react-hook-form";
+import Button from "../button/Button";
+import { ButtonStyleEnum } from "../../types/enum/ButtonEnum";
+import { deleteUser, updateProfile } from "firebase/auth";
+import { doc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Header from "../header/Header";
 
 const Profile = () => {
-    <IoClose />
+  const { data: userData} = useQuery({
+    queryKey: ["auth"],
+    queryFn: () => userDataFetch(appAuth!.currentUser!.uid),
+  });
+
+  const { register, watch, formState: { errors, isSubmitted }, handleSubmit } = useForm({
+    defaultValues: useMemo(() => {
+      return {
+        userNickName: userData?.nickname || '',
+        userEmail: userData?.email || '',
+      };
+    }, [userData]),
+  });
+
   const [isEditing, setIsEditing] = useState(false);
-  
-  const user = {
-    data:{imageUrl:"https://images-ext-1.discordapp.net/external/uXFrIt1cuaVkVlmXVKhsSaGIlf5qekFS5QXO5tJBPPk/%3Frnd%3D20230712163021/https/image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?format=webp", nickname:"닉네임", email:"abc@abc.com", uid:"123456789", name:"David" }
-  }
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setImagePreview(null);
+      setFile(null);
+    }
+  }, [isEditing]);
+
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const uploadProfileImage = async (file: File | null, img: string): Promise<string> => {
+    if (!file) return '';
+
+    const storage = getStorage();
+    const storageRef = ref(storage, `profileImage/${img}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  };
+
+  const onSubmit = async (data: any) => {
+    try {
+      const currentUser = appAuth.currentUser;
+      if (!currentUser) return;
+
+      setIsUploading(true);
+
+      const profileImg = await uploadProfileImage(file, currentUser.uid);
+
+      setImagePreview(profileImg || currentUser.photoURL);
+
+      await updateProfile(currentUser, {
+        displayName: data.userNickName,
+        photoURL: profileImg || currentUser.photoURL
+      });
+
+      const userDocRef = doc(appFireStore, 'users', currentUser.uid);
+      await updateDoc(userDocRef, {
+        nickname: data.userNickName,
+        profileImg: profileImg || currentUser.photoURL
+      });
+
+      await queryClient.invalidateQueries({queryKey: ["auth"]});
+
+      console.log("프로필이 성공적으로 업데이트되었습니다.", userData);
+      setIsEditing(false);
+      setIsUploading(false);
+    } catch (error) {
+      console.error("프로필 업데이트 중 오류 발생:", error);
+      setIsUploading(false);
+    }
   };
 
   const handleCloseModal = () => {
     setIsEditing(false);
   };
 
-  console.log(user.data);
+  const handleDeleteAccount = async () => {
+    const currentUser = appAuth.currentUser;
+  };
+
+
   return (
     <div className={styles.profileContainer}>
-      <div className={styles.header}>
-        <h2 className={styles.headerTitle}>계정 관리</h2>
-        <button className={styles.deleteAccount}>회원 탈퇴</button>
-      </div>
-      <div className={styles.profileImage}>
-        <img src={user.data?.imageUrl} alt="Profile" />
-      </div>
-      <div className={styles.profileInfo}>
-        <p className={styles.nickname}>{user.data?.nickname}</p>
-        <p className={styles.email}>{user.data?.email}</p>
-      </div>
-      <button className={styles.editButton} onClick={handleEditClick}>
-        프로필 편집
-      </button>
-
-      {isEditing && (
-        <div className={styles.modal}>
+      {isEditing ? (
+        <div>
+          <Header 
+            title="프로필 편집" 
+            onDelete={handleDeleteAccount}
+          />
           <div className={styles.modalContent}>
-            <span className={styles.close} onClick={handleCloseModal}>
-              &times;
-            </span>
-            <h3>프로필 편집</h3>
             <div className={styles.profileImage}>
-              <img src={user.data?.imageUrl} alt="Profile" />
+              <img src={imagePreview || userData?.profileImg} alt="프로필 사진" />
             </div>
-            <form>
-              <label>별명</label>
-              <input type="text" defaultValue={user.data?.nickname} />
-              <label>이메일</label>
-              <input type="email" defaultValue={user.data?.email} />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <LabelInput
+                labelClassName={styles.label}
+                type="text"
+                label="별명"
+                placeholder={`(현재: ${userData?.nickname || ''})`}
+                register={register("userNickName", {
+                  required: { value: true, message: "별명을 입력하세요." },
+                  maxLength: {
+                    value: 8,
+                    message: "8자리 이하 입력",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "3자리 이상 입력",
+                  },
+                })}
+                watch={watch}
+                ariaInvalid={
+                  isSubmitted ? (errors.userNickName ? true : false) : undefined
+                }
+                error={errors}
+                errorView={errors.userNickName as FieldError}
+              />
+              <LabelInput
+                labelClassName={styles.label}
+                type="text"
+                label="이메일"
+                placeholder={`${userData?.email || ''}`}
+                register={register("userEmail")}
+                watch={watch}
+              />
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+
+              <Button
+                type="button"
+                buttonStyle={ButtonStyleEnum.NormalWhite}
+                onClick={handleFileButtonClick}
+              >
+                프로필 사진 변경
+              </Button>
               <div className={styles.modalButtons}>
-                <button type="button" onClick={handleCloseModal}>
+                <Button type="button" buttonStyle={ButtonStyleEnum.Cancel} onClick={handleCloseModal}>
                   취소
-                </button>
-                <button type="submit">확인</button>
+                </Button>
+                <Button type="submit" buttonStyle={ButtonStyleEnum.Primary} disabled={isUploading}>
+                  {isUploading ? '업로드 중...' : '확인'}
+                </Button>
               </div>
             </form>
           </div>
         </div>
+      ) : (
+        <>
+          <Header 
+            title="계정 관리" 
+          />
+          <div className={styles.profileImage}>
+            <img src={imagePreview || userData?.profileImg} alt="Profile" />
+          </div>
+          <div className={styles.profileInfo}>
+            <p className={styles.nickname}>{userData?.nickname}</p>
+            <p className={styles.email}>{userData?.email}</p>
+          </div>
+          <Button buttonStyle={ButtonStyleEnum.NormalWhite} onClick={handleEditClick}>프로필 편집</Button>
+        </>
       )}
     </div>
   );

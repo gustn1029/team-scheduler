@@ -13,7 +13,7 @@ const LabelInput = (props: LabelInputProps) => {
         id={props.label}
         placeholder={props.placeholder}
         className={`${styles.labelInput} ${
-          props.inputClassName ? styles[props.inputClassName] : ""
+          props.inputClassName ? props.inputClassName : ""
         }`}
         defaultValue={props.watch(props.label)}
         aria-invalid={props.ariaInvalid}

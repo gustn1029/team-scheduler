@@ -1,0 +1,52 @@
+.headerComponent {
+  width: 100%;
+  padding: 20px 15px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  box-sizing: border-box;
+
+  .closeButton,
+  .editAndDeleteAndConfirmButtonWrap {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .closeButton {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    left: 15px;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .editAndDeleteAndConfirmButtonWrap {
+    right: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+  .confirmButton {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+  .editButton {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+  .deleteButton {
+    width: 22px;
+    height: 22px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+}

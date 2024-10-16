@@ -6,12 +6,13 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 import { EventTypeEnum } from "./enum/EventTypeEnum";
+import { Timestamp } from "firebase/firestore";
 
 export interface UserData {
   token: string;
   uid: string;
   email: string;
-  imageUrl: string;
+  profileImg: string;
   name: string;
   nickname: string;
 }
@@ -43,20 +44,27 @@ export interface LabelSelectOptionsProps extends LabelInputProps {
   optionList: OptionList[];
 }
 
+export interface DeleteFetchProps {
+  collectionName: string;
+  id: string;
+}
+
+// 이벤트 엔티티
 export interface EventsData {
-  id?:string;
+  id?: string;
+  uid?: string;
+  nickname?: string;
   title: string;
-  startDate: any;
-  endDate: any;
+  startDate: Timestamp | Date;
+  endDate: Timestamp | Date;
   eventType: EventTypeEnum;
   eventColor: string;
   category: any[];
   eventMemo: string;
-  todos: any[];
   like: number;
   comments: any[];
   createDate: Date;
-  updateDate: Date | null
+  updateDate: Date | null;
 }
 
 export interface Holiday {
@@ -67,9 +75,61 @@ export interface Holiday {
   seq: number;
 }
 
-export interface EventsFetchProps {
+export interface HolidayDataFetchProps {
   year: number;
-  month: number
+  month: number;
 }
 
-export type EventPostData = Omit<EventsData, "category" | "todos" | "comments" | "like"| "createDate">
+export interface EventsFetchProps {
+  year: number;
+  month: number;
+  uid: string;
+}
+
+export type EventPostData = Omit<
+  EventsData,
+  "category" | "todos" | "comments" | "like" | "createDate"
+>;
+
+export interface EventsFetchProps {
+  year: number;
+  month: number;
+  uid: string;
+}
+
+export interface CalendarTodos {
+  id: string;
+  todoDate: Date;
+}
+
+export interface TodoData {
+  id?: string;
+  todos: TodoItem[];
+  todoDate?: Date;
+  createDate?: Date;
+  updateDate?: Date | null;
+  uid?: string;
+}
+
+export interface TodoItem {
+  id?: string;
+  isComplete?: boolean;
+  todo?: string;
+  createDate?: Date;
+}
+
+export interface GetTodosFetchProps {
+  date: Date;
+  uid: string;
+}
+
+export interface TodoAddFetchProps {
+  data: TodoData;
+  date: Date;
+  uid: string;
+}
+
+export interface TodoUpdateFetchProps {
+  data: TodoItem[];
+  uid: string;
+}
