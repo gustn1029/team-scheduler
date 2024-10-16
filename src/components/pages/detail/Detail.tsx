@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../header/Header";
 import styles from "../detail/detail.module.scss";
-import { deleteDoc, doc, getDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { appFireStore } from "../../../firebase/config";
-import { EventsData } from "../../../types";
+import { EventsData, UserData } from "../../../types";
 import Loader from "../../loader/Loader";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
+
+type CurrentUserData = Omit<UserData, "token">;
 
 type EventColor =
   | "red"
@@ -31,6 +42,7 @@ const colorMap: Record<EventColor, string> = {
 function Detail() {
   const { id } = useParams<{ id: string }>();
   const [eventData, setEventData] = useState<EventsData | null>(null);
+  const [userData, setUserData] = useState<CurrentUserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -64,18 +76,29 @@ function Detail() {
     fetchEventData();
   }, [id]);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (eventData && eventData.uid) {
+        try {
+          const userData = await userDataFetch(eventData.uid);
+          setUserData(userData);
+          console.log(`사용자 데이터 가져옴`);
+        } catch (err) {
+          console.error(
+            "사용자 데이터를 불러오는 중 오류가 발생했습니다.",
+            err
+          );
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [eventData]);
+
   const getEventColor = (colorName: EventColor | string): string => {
     return colorName in colorMap
       ? colorMap[colorName as EventColor]
       : colorName;
-  };
-
-  const formatDateFull = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const weekDay = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
-    return `${year}.${month}.${day} (${weekDay})`;
   };
 
   const formatDateRange = (startDate: Date, endDate: Date) => {
@@ -171,30 +194,57 @@ function Detail() {
       setIsLoading(false);
     }
   };
+
+  // 로그인 정보 가져오기
+  const userDataFetch = async (
+    userId: string
+  ): Promise<CurrentUserData | null> => {
+    if (!userId) {
+      throw new Error("userId is required");
+    }
+
+    const userCollection = collection(appFireStore, "users");
+    const q = query(userCollection, where("uid", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return null;
+    }
+
+    return querySnapshot.docs[0].data() as CurrentUserData;
+  };
   return (
     <>
       <Header
         title="일정 상세"
-        onEdit={() => navigate("/calendarlist/:id/edit")}
+        {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
+          onEdit: () => navigate("/calendarlist/:id/edit"),
+        })}
         onDelete={handleDelete}
       />
       <main>
-        {EventTypeEnum.HOLIDAY ? (
-          ""
-        ) : (
-          <div>
+        {eventData.eventType !== EventTypeEnum.HOLIDAY && (
+          <div className={styles.writerContainer}>
             <span>작성자</span>
-            <img src="" alt="작성자" />
+            {userData && userData.profileImg ? (
+              <img
+                src={userData.profileImg}
+                alt="작성자 프로필"
+                className={styles.profileImg}
+              />
+            ) : (
+              <div className={styles.defaultProfileImg}>프로필 없음</div>
+            )}
           </div>
         )}
-        <div>
+        <div className={styles.titleContainer}>
           <div
             className={styles.listColor}
             style={{ backgroundColor: getEventColor(eventData.eventColor) }}
           ></div>
           <p>{eventData.title}</p>
         </div>
-        <div>
+        <div className={styles.timeContainer}>
           <p>
             {formatEventPeriod(
               eventStartDate,
@@ -204,9 +254,13 @@ function Detail() {
           </p>
         </div>
         {eventData.eventType !== EventTypeEnum.HOLIDAY && (
-          <div>
+          <div className={styles.memoContainer}>
             <span>메모</span>
-            <textarea value={eventData?.eventMemo || ""} readOnly></textarea>
+            <textarea
+              value={eventData?.eventMemo || ""}
+              readOnly
+              className={styles.memoTextarea}
+            ></textarea>
           </div>
         )}
       </main>
