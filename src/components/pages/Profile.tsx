@@ -7,14 +7,14 @@ import LabelInput from "../inputs/input/LabelInput";
 import { FieldError, useForm } from "react-hook-form";
 import Button from "../button/Button";
 import { ButtonStyleEnum } from "../../types/enum/ButtonEnum";
-import { updateProfile } from "firebase/auth";
+import { deleteUser, updateProfile } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Header from "../header/Header";
 
 const Profile = () => {
-  const { data: userData, isLoading } = useQuery({
-    queryKey: ["user"],
+  const { data: userData} = useQuery({
+    queryKey: ["auth"],
     queryFn: () => userDataFetch(appAuth!.currentUser!.uid),
   });
 
@@ -62,11 +62,11 @@ const Profile = () => {
     }
   };
 
-  const uploadProfileImage = async (file: File | null, userId: string): Promise<string> => {
+  const uploadProfileImage = async (file: File | null, img: string): Promise<string> => {
     if (!file) return '';
 
     const storage = getStorage();
-    const storageRef = ref(storage, `profileImage/${userId}`);
+    const storageRef = ref(storage, `profileImage/${img}`);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef);
   };
@@ -93,7 +93,7 @@ const Profile = () => {
         profileImg: profileImg || currentUser.photoURL
       });
 
-      await queryClient.invalidateQueries({queryKey: ["user"]});
+      await queryClient.invalidateQueries({queryKey: ["auth"]});
 
       console.log("프로필이 성공적으로 업데이트되었습니다.", userData);
       setIsEditing(false);
@@ -108,14 +108,10 @@ const Profile = () => {
     setIsEditing(false);
   };
 
-  const handleDeleteAccount = () => {
-    console.log("회원탈퇴 처리");
+  const handleDeleteAccount = async () => {
+    const currentUser = appAuth.currentUser;
   };
 
-
-  if (isLoading) {
-    return <p>로딩 중...</p>;
-  }
 
   return (
     <div className={styles.profileContainer}>
@@ -123,6 +119,7 @@ const Profile = () => {
         <div>
           <Header 
             title="프로필 편집" 
+            onDelete={handleDeleteAccount}
           />
           <div className={styles.modalContent}>
             <div className={styles.profileImage}>
