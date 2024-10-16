@@ -250,6 +250,18 @@ export const addEventsFetch = async (data: EventPostData) => {
   return doc.id;
 };
 
+// events 업데이트
+export const updateEvent = async ({ data, eventData, id }: { data: EventsData, eventData: EventsData, id: string }) => {
+  const eventDoc = doc(appFireStore, "events", id as string);
+    await updateDoc(eventDoc, {
+      ...eventData,
+      ...data,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      updateDate: new Date(),
+    });
+}
+
 // calendar todo 불러오기
 export const calendarTodosFetch = async ({
   year,

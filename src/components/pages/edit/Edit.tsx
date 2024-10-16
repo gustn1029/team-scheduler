@@ -7,45 +7,17 @@ import styles from "../create/create.module.scss";
 import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "../create/CustomTimePicker";
-import { queryClient} from "../../../utils/http";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQueryClient } from '@tanstack/react-query';
 import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import Loader from "../../loader/Loader";
+import { updateEvent } from "../../../utils/http";
 
 const Edit: React.FC = () => {
-  const [isMount, setIsMount] = useState<boolean>(false);
-
-  const { id } = useParams(); // 이벤트 ID 가져오기
-
-  const [eventData, setEventData] = useState<EventsData | null>(null);
-
-  useEffect(() => {
-    if (!isMount) {
-      setIsMount(true);
-    }
-  }, []);
-
-  // 이벤트 데이터 가져오기
-  useEffect(() => {
-    const fetchEventData = async () => {
-      const eventDoc = doc(appFireStore, "events", id as string);
-      const docSnap = await getDoc(eventDoc);
-
-      if (docSnap.exists()) {
-        setEventData(docSnap.data() as EventsData);
-      } else {
-        console.error("해당 이벤트를 찾을 수 없습니다.");
-      }
-    };
-
-    if (id) {
-      fetchEventData();
-    }
-  }, [id]);
-
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedText, setSelectedText] = useState("Blue");
@@ -57,6 +29,40 @@ const Edit: React.FC = () => {
   const maxLength = 100;
 
   const [openComponent, setOpenComponent] = useState<string | null>(null);
+  
+  const { id } = useParams(); // 이벤트 ID 가져오기
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // 이벤트 데이터를 가져오는 useQuery
+  const { data: eventData, isLoading } = useQuery<EventsData, Error>({
+    queryKey: ["event", id],
+    queryFn: async () => {
+      const eventDoc = doc(appFireStore, "events", id as string);
+      const docSnap = await getDoc(eventDoc);
+      if (docSnap.exists()) {
+        return docSnap.data() as EventsData;
+      } else {
+        throw new Error("해당 이벤트를 찾을 수 없습니다.");
+      }
+    },
+    enabled: !!id, // id가 존재할 때만 쿼리를 활성화
+  });
+
+  // 이벤트 업데이트를 처리하는 useMutation
+  const updateEventMutation = useMutation<void, Error, EventsData>(
+    {
+        mutationFn: async (data) => await updateEvent({ data, eventData: eventData as EventsData, id: id as string }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid, id]});
+            navigate(`/calendarlist/${id}`);
+        },
+        onError: (error: Error) => {
+            console.error("데이터 업데이트 중 오류 발생:", error);
+            alert("데이터 업데이트에 실패했습니다.");
+        },
+    }
+  );
 
   const {
     handleSubmit,
@@ -67,33 +73,36 @@ const Edit: React.FC = () => {
     formState: { errors, isSubmitted },
   } = useForm<EventsData>();
 
-  const navigate = useNavigate();
-
-  console.log(eventData);
-
   useEffect(() => {
     if (eventData) {
       // Timestamp를 Date 객체로 변환
-      
       if (eventData.startDate && eventData.endDate) {
-        setStartDate(eventData.startDate instanceof Timestamp ? eventData.startDate.toDate() : eventData.startDate);
-        setEndDate(eventData.endDate instanceof Timestamp ? eventData.endDate.toDate() : eventData.endDate);
+        setStartDate(
+          eventData.startDate instanceof Timestamp
+            ? eventData.startDate.toDate()
+            : eventData.startDate
+        );
+        setEndDate(
+          eventData.endDate instanceof Timestamp
+            ? eventData.endDate.toDate()
+            : eventData.endDate
+        );
       } else {
-        console.error("이벤트에 유효한 날짜가 없습니다.");
         setStartDate(new Date());
         setEndDate(new Date());
       }
-      
+
       // setValue를 통한 폼 초기값 설정
       setValue("title", eventData.title);
+      setValue("eventColor", eventData.eventColor);
       setValue("eventMemo", eventData.eventMemo);
-      
+
       // 선택된 색상 및 메모 카운트 초기화
       setSelectedColor(eventData.eventColor || "blue");
       setSelectedText(eventData.eventColor || "Blue");
       setMemoCount(eventData.eventMemo.length);
     }
-  }, [eventData]);
+  }, [eventData, setValue]);
 
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
     let newEventStartDate = startDate;
@@ -104,39 +113,13 @@ const Edit: React.FC = () => {
       newEventEndDate = new Date(endDate!.setHours(23, 59, 59, 999));
     }
 
-    try {
-      const eventDoc = doc(appFireStore, "events", id as string);
-      await updateDoc(eventDoc, {
-        ...eventData,
+    const updateEventData: EventsData = {
         ...data,
+        startDate: newEventStartDate as Date,
+        endDate: newEventEndDate as Date,
         eventColor: selectedColor,
-        startDate: newEventStartDate,
-        endDate: newEventEndDate,
-        updateDate: new Date(),
-      });
-
-      navigate(`/calendarlist/${id}`);
-
-      reset({
-        title: "",
-        eventColor: "blue",
-        eventMemo: "",
-        startDate: new Date(),
-        endDate: new Date(),
-      });
-
-      setMemoCount(0);
-
-      queryClient.invalidateQueries({queryKey: [
-        "events",
-        appAuth.currentUser?.uid,
-        id
-      ]});
-
-    } catch (error) {
-      console.error("데이터 업데이트 중 오류 발생:", error);
-      alert("데이터 업데이트에 실패했습니다.");
-    }
+    };
+    updateEventMutation.mutateAsync(updateEventData);
   };
 
   const colorOptions = [
@@ -216,7 +199,9 @@ const Edit: React.FC = () => {
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMemoCount(e.target.value.length);
   };
-  if(!isMount) return <Loader />;
+
+  if (isLoading) return <Loader />;
+
   return (
     <main className={styles.editMain}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -282,7 +267,9 @@ const Edit: React.FC = () => {
                           styles[option.colorClass]
                         }`}
                       ></div>
-                      <span className={styles.listName}>{option.colorName}</span>
+                      <span className={styles.listName}>
+                        {option.colorName}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -313,47 +300,47 @@ const Edit: React.FC = () => {
 
             <div className={styles.calendar}>
               <div className={styles.pickerGroup}>
-              <DatePicker
-              className={styles.datePicker}
-              selected={startDate}
-              onChange={handleStartDateChange}
-              dateFormat="yyyy년 MM월 dd일 (EEE)"
-              locale={ko}
-              placeholderText="시작 날짜를 선택하세요"
-              open={openComponent === "startDate"}
-              onInputClick={() => handleToggleComponent("startDate")}
-              onClickOutside={() => setOpenComponent(null)}
-            />
-            {!isChecked && (
-              <CustomTimePicker
-                selectedDate={startDate as Date}
-                onTimeChange={handleStartTimeChange}
-                isOpen={openComponent === "startTime"}
-                onToggle={() => handleToggleComponent("startTime")}
-              />
-            )}
+                <DatePicker
+                  className={styles.datePicker}
+                  selected={startDate}
+                  onChange={handleStartDateChange}
+                  dateFormat="yyyy년 MM월 dd일 (EEE)"
+                  locale={ko}
+                  placeholderText="시작 날짜를 선택하세요"
+                  open={openComponent === "startDate"}
+                  onInputClick={() => handleToggleComponent("startDate")}
+                  onClickOutside={() => setOpenComponent(null)}
+                />
+                {!isChecked && (
+                  <CustomTimePicker
+                    selectedDate={startDate as Date}
+                    onTimeChange={handleStartTimeChange}
+                    isOpen={openComponent === "startTime"}
+                    onToggle={() => handleToggleComponent("startTime")}
+                  />
+                )}
               </div>
 
               <div className={styles.pickerGroup}>
-              <DatePicker
-              className={styles.datePicker}
-              selected={endDate}
-              onChange={handleEndDateChange}
-              dateFormat="yyyy년 MM월 dd일 (EEE)"
-              locale={ko}
-              placeholderText="종료 날짜를 선택하세요"
-              open={openComponent === "endDate"}
-              onInputClick={() => handleToggleComponent("endDate")}
-              onClickOutside={() => setOpenComponent(null)}
-            />
-            {!isChecked && (
-              <CustomTimePicker
-                selectedDate={endDate as Date}
-                onTimeChange={handleEndTimeChange}
-                isOpen={openComponent === "endTime"}
-                onToggle={() => handleToggleComponent("endTime")}
-              />
-            )}
+                <DatePicker
+                  className={styles.datePicker}
+                  selected={endDate}
+                  onChange={handleEndDateChange}
+                  dateFormat="yyyy년 MM월 dd일 (EEE)"
+                  locale={ko}
+                  placeholderText="종료 날짜를 선택하세요"
+                  open={openComponent === "endDate"}
+                  onInputClick={() => handleToggleComponent("endDate")}
+                  onClickOutside={() => setOpenComponent(null)}
+                />
+                {!isChecked && (
+                  <CustomTimePicker
+                    selectedDate={endDate as Date}
+                    onTimeChange={handleEndTimeChange}
+                    isOpen={openComponent === "endTime"}
+                    onToggle={() => handleToggleComponent("endTime")}
+                  />
+                )}
               </div>
             </div>
 
