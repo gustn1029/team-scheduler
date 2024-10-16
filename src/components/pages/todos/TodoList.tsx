@@ -17,10 +17,7 @@ const TodoList = ({ todosData }: TodoListProps) => {
 
   // todoData 있는지 체크하고 완료 미완료된 데이터로 필터링 되도록 설정
   useEffect(() => {
-    if (todosData !== undefined && todosData.length !== 0) {
-      setTodos(todosData);
-    }
-
+    
     const notComplete = todos.filter((el) => el?.isComplete === false);
     const complete = todos.filter((el) => el.isComplete === true);
 
