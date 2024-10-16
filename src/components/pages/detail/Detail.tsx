@@ -220,7 +220,9 @@ function Detail() {
         {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
           onEdit: () => navigate(`/calendarlist/${id}/edit`),
         })}
-        onDelete={handleDelete}
+        {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
+          onDelete: handleDelete,
+        })}
       />
       <main>
         {eventData.eventType !== EventTypeEnum.HOLIDAY && (
