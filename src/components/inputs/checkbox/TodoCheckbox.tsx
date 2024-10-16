@@ -5,7 +5,7 @@ import styles from "./todoCheckbox.module.scss";
 import { TodoItem } from "../../../types";
 
 const TodoCheckbox = ({ id, isComplete, todo }: TodoItem) => {
-  const { updateTodoState } = useTodoStore();
+  const { updateTodoState, setIsComplete } = useTodoStore();
 
   return (
     <label htmlFor={`${id}_isComplete`} className={styles.customCheckbox}>
@@ -15,6 +15,7 @@ const TodoCheckbox = ({ id, isComplete, todo }: TodoItem) => {
         id={`${id}_isComplete`}
         checked={isComplete}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          setIsComplete(true);
           updateTodoState(id as string, e.target.checked);
         }}
       />
