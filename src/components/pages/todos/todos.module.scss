@@ -9,6 +9,12 @@
 
 .todoListWrap {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.todoListWrap section {
+    height: 50%;
 }
 
 .todoListWrap section:first-of-type {
@@ -22,10 +28,23 @@
     gap: 10px;
 }
 
+.inputWrap {
+    flex-direction: row;
+}
+
+.inputButton {
+    padding: 10px 0;
+    width: 52px;
+    font-size: 0.85rem;
+}
+
 .title {
     font-size: 0.875rem;
 }
 
+.todoLabel {
+    flex-grow: 1;
+}
 .todoInput {
     width: 100%;
     padding: 14px;
@@ -47,6 +66,22 @@
 
 .todoList li:nth-child(n+2){
     margin-top: 10px;
+}
+
+.todoList {
+    padding-right: 5px;
+    margin-right: -25px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        width: 5px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #3FA9F5;
+        border-radius: 12px 12px 12px 12px;
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
 }
 
 .listItem {
@@ -74,6 +109,10 @@
 
 .todoBtn {
     max-width: 110px; width: 100%;
+
+    &:disabled {
+        cursor: auto;
+    }
 }
 
 .todoModalBtn {
