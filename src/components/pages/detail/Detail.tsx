@@ -7,6 +7,7 @@ import { appFireStore } from "../../../firebase/config";
 import { EventsData } from "../../../types";
 import Loader from "../../loader/Loader";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
+import dayjs from "dayjs";
 
 type EventColor =
   | "red"
@@ -77,46 +78,49 @@ function Detail() {
     return `${year}.${month}.${day} (${weekDay})`;
   };
 
+  const formatDateRange = (startDate: Date, endDate: Date) => {
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+
+    const formatSingleDate = (date: dayjs.Dayjs) =>
+      `${date.format("YYYY.MM.DD")}(${weekDays[date.day()]})`;
+
+    if (start.isSame(end, "day")) {
+      return formatSingleDate(start);
+    } else {
+      return `${formatSingleDate(start)} ~ ${formatSingleDate(end)}`;
+    }
+  };
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
+    return dayjs(date).format("HH:mm");
   };
 
-  const formatEventPeriod = (startDate: Date, endDate: Date) => {
-    if (isAllDayEvent(startDate, endDate)) {
-      if (isSameDay(startDate, endDate)) {
-        return formatDateFull(startDate);
-      } else {
-        return `${formatDateFull(startDate)} ~ ${formatDateFull(endDate)}`;
-      }
+  const formatEventPeriod = (
+    startDate: Date,
+    endDate: Date,
+    eventType: EventTypeEnum
+  ) => {
+    const dateRange = formatDateRange(startDate, endDate);
+
+    if (
+      eventType === EventTypeEnum.HOLIDAY ||
+      isAllDayEvent(startDate, endDate)
+    ) {
+      return dateRange;
     } else {
-      const startFormatted = `${formatDateFull(startDate)} ${formatTime(
-        startDate
-      )}`;
-      const endFormatted = isSameDay(startDate, endDate)
-        ? formatTime(endDate)
-        : `${formatDateFull(endDate)} ${formatTime(endDate)}`;
-      return `${startFormatted} ~ ${endFormatted}`;
+      return `${dateRange} ${formatTime(startDate)} ~ ${formatTime(endDate)}`;
     }
   };
 
-  function isSameDay(d1: Date, d2: Date) {
-    return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
-    );
-  }
-
   const isAllDayEvent = (startDate: Date, endDate: Date) => {
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
     return (
-      startDate.getHours() === 0 &&
-      startDate.getMinutes() === 0 &&
-      endDate.getHours() === 23 &&
-      endDate.getMinutes() === 59
+      start.hour() === 0 &&
+      start.minute() === 0 &&
+      end.hour() === 23 &&
+      end.minute() === 59
     );
   };
   if (isLoading) {
@@ -191,12 +195,20 @@ function Detail() {
           <p>{eventData.title}</p>
         </div>
         <div>
-          <p>{formatEventPeriod(eventStartDate, eventEndDate)}</p>
+          <p>
+            {formatEventPeriod(
+              eventStartDate,
+              eventEndDate,
+              eventData.eventType
+            )}
+          </p>
         </div>
-        <div>
-          <span>메모</span>
-          <textarea value={eventData?.eventMemo || ""} readOnly></textarea>
-        </div>
+        {eventData.eventType !== EventTypeEnum.HOLIDAY && (
+          <div>
+            <span>메모</span>
+            <textarea value={eventData?.eventMemo || ""} readOnly></textarea>
+          </div>
+        )}
       </main>
     </>
   );
