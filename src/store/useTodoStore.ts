@@ -10,6 +10,8 @@ interface TodoStore {
   addTodo: (todo: TodoItem) => void;
   deleteTodo: (id: string) => void;
   updateTodoState: (id: string, isComplete: boolean) => void;
+  isComplete: boolean;
+  setIsComplete: (isComplete: boolean) => void;
 }
 
 export const useTodoStore = create<TodoStore>((set) => ({
@@ -52,4 +54,6 @@ export const useTodoStore = create<TodoStore>((set) => ({
 
       return { todos: updatedTodos };
     }),
+  isComplete: false,
+  setIsComplete: (isComplete) => set({ isComplete: isComplete }),
 }));

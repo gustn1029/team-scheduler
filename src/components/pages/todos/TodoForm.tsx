@@ -3,6 +3,8 @@ import { TodoItem } from "../../../types";
 import LabelInput from "../../inputs/input/LabelInput";
 import styles from "./todos.module.scss";
 import { useTodoStore } from "../../../store/useTodoStore";
+import Button from "../../button/Button";
+import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 
 const TodoForm = () => {
   const {
@@ -19,7 +21,6 @@ const TodoForm = () => {
     const newTodo: TodoItem = {
       todo: data.todo,
       isComplete: data.isComplete || false,
-      createDate: new Date(),
     };
     addTodo(newTodo);
     setValue("todo", "");
@@ -29,7 +30,7 @@ const TodoForm = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={`${styles.sectionWrap}`}
+        className={`${styles.sectionWrap} ${styles.inputWrap}`}
       >
         <LabelInput
           label="todo"
@@ -42,8 +43,10 @@ const TodoForm = () => {
           placeholder="+ 항목 추가"
           isLabelTextHidden
           inputClassName={styles.todoInput}
+          labelClassName={styles.todoLabel}
           ariaInvalid={isSubmitted ? (errors.todo ? true : undefined) : undefined}
         />
+        <Button type="submit" buttonClassName={styles.inputButton} buttonStyle={watch("todo") !== "" ? ButtonStyleEnum.Normal : ButtonStyleEnum.Primary} >추가</Button>
       </form>
     </>
   );
