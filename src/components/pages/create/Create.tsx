@@ -7,73 +7,95 @@ import styles from "./create.module.scss";
 import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "./CustomTimePicker";
-import { useQuery } from "@tanstack/react-query";
-import { queryClient, userDataFetch } from "../../../utils/http";
-import { appAuth, appFireStore } from "../../../firebase/config";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { addEventsFetch, queryClient, userDataFetch } from "../../../utils/http";
+import { appAuth } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const Create: React.FC = () => {
+  // 현재 로그인한 사용자 정보 가져오기
   const { data: authData } = useQuery({
     queryKey: ["auth", appAuth.currentUser?.uid],
     queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
     enabled: !!appAuth.currentUser?.uid,
   });
 
-  console.log(authData);
-
+  // URL의 파라미터에서 date를 가져오기
   const [params] = useSearchParams();
   const dateParam = params.get("date");
 
+  // 색상 선택 관련 useState
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedText, setSelectedText] = useState("Blue");
 
+  // 날짜 파싱 함수 (String -> Date 로 변환)
   const parseDate = (dateString: string | null) => {
     if (dateString) {
       const parsedDate = new Date(dateString);
       return !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
     }
-    return new Date();
+    const hours = new Date().setHours(9, 0, 0, 0);
+    return new Date(hours);
   };
   
+  // 시작 날짜, 종료 날짜 관련 useState
   const [startDate, setStartDate] = useState<Date>(() => parseDate(dateParam));
   const [endDate, setEndDate] = useState<Date>(() => parseDate(dateParam));
 
-  // 메모 maxlength 핸들러
+  // 메모 maxlength 핸들러(메모 길이 제한 useState)
   const [memoCount, setMemoCount] = useState(0);
   const maxLength = 100;
 
+  // 날짜 및 시간 선택 컴포넌트의 열림 상태 관리 useState
   const [openComponent, setOpenComponent] = useState<string | null>(null);
 
+  // 이벤트 추가 Mutation 설정 (성공 시 이벤트 목록을 업데이트하고, 페이지 이동)
+  const addEventMutation = useMutation({
+    mutationFn: addEventsFetch,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid] });
+      navigate("../");
+      toast.success("일정이 추가되었습니다.");
+    }
+  });
+
+  // React Hook Form 설정
   const {
     handleSubmit,
     register,
     setValue,
     watch,
-    reset,
     formState: { errors, isSubmitted },
   } = useForm<EventsData>();
 
+  // 메모 길이 초기화(setValue 변경 시)
+  useEffect(() => {
+    setMemoCount(0);
+  }, [setValue]);
+
+  // 페이지 이동을 위한 useNavigate 설정
   const navigate = useNavigate();
 
+  // Form Submit 핸들러
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
     let newEventStartDate = startDate;
     let newEventEndDate = endDate;
 
+    // 하루 종일 선택 시 시간을 00:00 ~ 23:59로 설정
     if(isChecked) {
       newEventStartDate = new Date(startDate?.setHours(0, 0, 0, 0));
       newEventEndDate = new Date(endDate?.setHours(23, 59, 59, 999));
     }
   
+    // 새로운 이벤트 데이터 생성
     const newEvent: EventsData = {
       ...data,
       uid: authData?.uid,
-      imageUrl: authData?.profileImg || 'default-image-url',
-      nickname: authData?.nickname || 'anonymous',
       startDate: newEventStartDate,
       endDate: newEventEndDate,
       createDate: new Date(),
@@ -84,48 +106,11 @@ const Create: React.FC = () => {
       comments: [],
       category: [],
     };
-
-    console.log(newEvent);
-
-    try {
-      const eventCollection = collection(appFireStore, "events");
-      await addDoc(eventCollection, newEvent);
-
-      navigate("/calendar");
-
-      reset({
-        title: "",
-        eventColor: "blue",
-        eventMemo: "",
-        startDate: new Date(),
-        endDate: new Date(),
-      })
-
-      setMemoCount(0);
-
-      let date: Date;
-      if (dateParam) {
-        const dateSplit = dateParam?.split("-").map(Number);
-        date = new Date(dateSplit![0], dateSplit![1] - 1, dateSplit![2]);
-      } else {
-        date = new Date();
-      }
-      
-      queryClient.invalidateQueries({queryKey: [
-        "events",
-        appAuth.currentUser?.uid,
-        date.getFullYear(),
-        date.getMonth(),
-      ]});
-
-    } catch (error) {
-      console.error("데이터 등록 중 오류 발생:", error);
-      alert("데이터 등록에 실패했습니다.");
-    }
+    // 이벤트 추가 Mutation 실행
+    addEventMutation.mutateAsync(newEvent);
   };
 
-  // console.log(dateParam);
-
+  // 색상 옵션 설정
   const colorOptions = [
     { colorClass: "red", colorName: "Red" },
     { colorClass: "pink", colorName: "Pink" },
@@ -136,16 +121,14 @@ const Create: React.FC = () => {
     { colorClass: "gray", colorName: "Gray" },
   ];
 
-  useEffect(() => {
-    setMemoCount(0);
-  }, [setValue]);
-
+  // 색상 선택 핸들러
   const handleColorSelect = (colorClass: string, colorName: string) => {
     setSelectedColor(colorClass);
     setSelectedText(colorName);
     setIsOpen(false);
   };
 
+  // 색상 선택 박스 토글
   const toggleSelectBox = () => {
     setIsOpen(!isOpen);
   };
@@ -179,6 +162,7 @@ const Create: React.FC = () => {
     }
   };
 
+  // 시작 시간 변경 핸들러
   const handleStartTimeChange = (date: Date | null) => {
     if (date) {
       const newStartDate = new Date(startDate);
@@ -192,6 +176,7 @@ const Create: React.FC = () => {
     }
   };
 
+  // 종료 시간 변경 핸들러
   const handleEndTimeChange = (date: Date | null) => {
     if (date) {
       const newEndDate = new Date(endDate);
@@ -205,10 +190,12 @@ const Create: React.FC = () => {
     }
   };
 
+  // 컴포넌트 열림/닫힘 상태 토글
   const handleToggleComponent = (component: string) => {
     setOpenComponent(openComponent === component ? null : component);
   };
 
+  // 메모 변경 핸들러
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMemoCount(e.target.value.length);
   }
@@ -227,6 +214,7 @@ const Create: React.FC = () => {
           />
           <span className={styles.writerName}>{`${authData?.nickname}`}</span>
         </div>
+
         <div className={styles.titleIpt}>
           <LabelInput
             type="text"
@@ -266,6 +254,7 @@ const Create: React.FC = () => {
               </i>
             </button>
           </div>
+
           {isOpen && (
             <ul
               className={`${styles.colorList} ${

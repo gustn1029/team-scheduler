@@ -7,88 +7,108 @@ import styles from "../create/create.module.scss";
 import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "../create/CustomTimePicker";
-import { queryClient} from "../../../utils/http";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQueryClient } from '@tanstack/react-query';
 import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
 import { EventsData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import Loader from "../../loader/Loader";
+import { updateEvent } from "../../../utils/http";
 
 const Edit: React.FC = () => {
-  const [isMount, setIsMount] = useState<boolean>(false);
-
-  const { id } = useParams(); // 이벤트 ID 가져오기
-
-  const [eventData, setEventData] = useState<EventsData | null>(null);
-
-  useEffect(() => {
-    if (!isMount) {
-      setIsMount(true);
-    }
-  }, []);
-
-  // 이벤트 데이터 가져오기
-  useEffect(() => {
-    const fetchEventData = async () => {
-      const eventDoc = doc(appFireStore, "events", id as string);
-      const docSnap = await getDoc(eventDoc);
-
-      if (docSnap.exists()) {
-        setEventData(docSnap.data() as EventsData);
-      } else {
-        console.error("해당 이벤트를 찾을 수 없습니다.");
-      }
-    };
-
-    if (id) {
-      fetchEventData();
-    }
-  }, [id]);
-
+  // 색상 선택 토글 상태
   const [isOpen, setIsOpen] = useState(false);
+
+  // 선택된 색상 및 텍스트 상태
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedText, setSelectedText] = useState("Blue");
 
+  // 시작 날짜와 종료 날짜 상태
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  // 메모 입력 시 카운트를 관리하는 상태
   const [memoCount, setMemoCount] = useState(0);
   const maxLength = 100;
 
+  // 열려 있는 컴포넌트 상태
   const [openComponent, setOpenComponent] = useState<string | null>(null);
+  
+  // 이벤트 ID를 URL에서 가져옴
+  const { id } = useParams();
 
+  // 페이지 이동을 위한 네비게이션 훅
+  const navigate = useNavigate();
+
+  // React Query에서 제공하는 QueryClient 인스턴스를 사용
+  const queryClient = useQueryClient();
+
+  // 이벤트 데이터를 가져오는 useQuery
+  const { data: eventData, isLoading } = useQuery<EventsData, Error>({
+    queryKey: ["event", id],
+    queryFn: async () => {
+      const eventDoc = doc(appFireStore, "events", id as string);
+      const docSnap = await getDoc(eventDoc);
+      if (docSnap.exists()) {
+        return docSnap.data() as EventsData;
+      } else {
+        throw new Error("해당 이벤트를 찾을 수 없습니다.");
+      }
+    },
+    enabled: !!id, // id가 존재할 때만 쿼리를 활성화
+  });
+
+  // 이벤트 업데이트를 처리하는 useMutation
+  const updateEventMutation = useMutation<void, Error, EventsData>(
+    {
+        mutationFn: async (data) => await updateEvent({ data, eventData: eventData as EventsData, id: id as string }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid, id]});
+            navigate(`/calendarlist/${id}`);
+        },
+        onError: (error: Error) => {
+            console.error("데이터 업데이트 중 오류 발생:", error);
+            alert("데이터 업데이트에 실패했습니다.");
+        },
+    }
+  );
+
+  // React Hook Form 사용
   const {
     handleSubmit,
     register,
     setValue,
     watch,
-    reset,
     formState: { errors, isSubmitted },
   } = useForm<EventsData>();
 
-  const navigate = useNavigate();
-
-  console.log(eventData);
-
+  // 컴포넌트가 처음 렌더링되면 이벤트 데이터를 폼에 설정
   useEffect(() => {
     if (eventData) {
-      // Timestamp를 Date 객체로 변환
-      
+      // Firestore에서 가져온 Timestamp를 Date 객체로 변환
       if (eventData.startDate && eventData.endDate) {
-        setStartDate(eventData.startDate instanceof Timestamp ? eventData.startDate.toDate() : eventData.startDate);
-        setEndDate(eventData.endDate instanceof Timestamp ? eventData.endDate.toDate() : eventData.endDate);
+        setStartDate(
+          eventData.startDate instanceof Timestamp
+            ? eventData.startDate.toDate()
+            : eventData.startDate
+        );
+        setEndDate(
+          eventData.endDate instanceof Timestamp
+            ? eventData.endDate.toDate()
+            : eventData.endDate
+        );
       } else {
-        console.error("이벤트에 유효한 날짜가 없습니다.");
         setStartDate(new Date());
         setEndDate(new Date());
       }
-      
+
       // setValue를 통한 폼 초기값 설정
       setValue("title", eventData.title);
       setValue("eventColor", eventData.eventColor);
       setValue("eventMemo", eventData.eventMemo);
-      
+
       // 선택된 색상 및 메모 카운트 초기화
       setSelectedColor(eventData.eventColor || "blue");
       setSelectedText(eventData.eventColor || "Blue");
@@ -96,49 +116,29 @@ const Edit: React.FC = () => {
     }
   }, [eventData, setValue]);
 
+  // 폼 제출 핸들러
   const onSubmit: SubmitHandler<EventsData> = async (data: EventsData) => {
     let newEventStartDate = startDate;
     let newEventEndDate = endDate;
 
+    // 하루 종일 체크가 되어 있으면 시간을 00:00 ~ 23:59로 설정
     if (isChecked) {
       newEventStartDate = new Date(startDate!.setHours(0, 0, 0, 0));
       newEventEndDate = new Date(endDate!.setHours(23, 59, 59, 999));
     }
 
-    try {
-      const eventDoc = doc(appFireStore, "events", id as string);
-      await updateDoc(eventDoc, {
-        ...eventData,
+    // 업데이트할 이벤트 데이터 구성
+    const updateEventData: EventsData = {
         ...data,
-        startDate: newEventStartDate,
-        endDate: newEventEndDate,
-        updateDate: new Date(),
-      });
-
-      navigate(`/calendarlist/${id}`);
-
-      reset({
-        title: "",
-        eventColor: "blue",
-        eventMemo: "",
-        startDate: new Date(),
-        endDate: new Date(),
-      });
-
-      setMemoCount(0);
-
-      queryClient.invalidateQueries({queryKey: [
-        "events",
-        appAuth.currentUser?.uid,
-        id
-      ]});
-
-    } catch (error) {
-      console.error("데이터 업데이트 중 오류 발생:", error);
-      alert("데이터 업데이트에 실패했습니다.");
-    }
+        startDate: newEventStartDate as Date,
+        endDate: newEventEndDate as Date,
+        eventColor: selectedColor,
+    };
+    // 이벤트 업데이트 호출
+    updateEventMutation.mutateAsync(updateEventData);
   };
 
+  // 색상 옵션 설정
   const colorOptions = [
     { colorClass: "red", colorName: "Red" },
     { colorClass: "pink", colorName: "Pink" },
@@ -149,21 +149,27 @@ const Edit: React.FC = () => {
     { colorClass: "gray", colorName: "Gray" },
   ];
 
+  // 색상 선택 핸들러
   const handleColorSelect = (colorClass: string, colorName: string) => {
     setSelectedColor(colorClass);
     setSelectedText(colorName);
     setIsOpen(false);
   };
 
+  // 색상 선택 토글 핸들러
   const toggleSelectBox = () => {
     setIsOpen(!isOpen);
   };
 
+  // 하루 종일 토글 상태
   const [isChecked, setIsChecked] = useState(false);
+
+  // 하루 종일 토글 핸들러
   const handleToggleAllDay = (checked: boolean) => {
     setIsChecked(checked);
   };
 
+  // 시작 날짜 변경 핸들러
   const handleStartDateChange = (date: Date | null) => {
     if (date) {
       setStartDate(date);
@@ -173,6 +179,7 @@ const Edit: React.FC = () => {
     }
   };
 
+  // 종료 날짜 변경 핸들러
   const handleEndDateChange = (date: Date | null) => {
     if (date) {
       if (date < (startDate as Date)) {
@@ -183,6 +190,7 @@ const Edit: React.FC = () => {
     }
   };
 
+  // 시작 시간 변경 핸들러
   const handleStartTimeChange = (date: Date | null) => {
     if (date) {
       const newStartDate = new Date(startDate as Date);
@@ -196,6 +204,7 @@ const Edit: React.FC = () => {
     }
   };
 
+  // 종료 시간 변경 핸들러
   const handleEndTimeChange = (date: Date | null) => {
     if (date) {
       const newEndDate = new Date(endDate as Date);
@@ -209,14 +218,19 @@ const Edit: React.FC = () => {
     }
   };
 
+  // 컴포넌트 토글 핸들러
   const handleToggleComponent = (component: string) => {
     setOpenComponent(openComponent === component ? null : component);
   };
 
+  // 메모 변경 핸들러
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMemoCount(e.target.value.length);
   };
-  if(!isMount) return <Loader />;
+
+  // 로딩 상태 시 로더 표시
+  if (isLoading) return <Loader />;
+
   return (
     <main className={styles.editMain}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -282,7 +296,9 @@ const Edit: React.FC = () => {
                           styles[option.colorClass]
                         }`}
                       ></div>
-                      <span className={styles.listName}>{option.colorName}</span>
+                      <span className={styles.listName}>
+                        {option.colorName}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -313,47 +329,47 @@ const Edit: React.FC = () => {
 
             <div className={styles.calendar}>
               <div className={styles.pickerGroup}>
-              <DatePicker
-              className={styles.datePicker}
-              selected={startDate}
-              onChange={handleStartDateChange}
-              dateFormat="yyyy년 MM월 dd일 (EEE)"
-              locale={ko}
-              placeholderText="시작 날짜를 선택하세요"
-              open={openComponent === "startDate"}
-              onInputClick={() => handleToggleComponent("startDate")}
-              onClickOutside={() => setOpenComponent(null)}
-            />
-            {!isChecked && (
-              <CustomTimePicker
-                selectedDate={startDate as Date}
-                onTimeChange={handleStartTimeChange}
-                isOpen={openComponent === "startTime"}
-                onToggle={() => handleToggleComponent("startTime")}
-              />
-            )}
+                <DatePicker
+                  className={styles.datePicker}
+                  selected={startDate}
+                  onChange={handleStartDateChange}
+                  dateFormat="yyyy년 MM월 dd일 (EEE)"
+                  locale={ko}
+                  placeholderText="시작 날짜를 선택하세요"
+                  open={openComponent === "startDate"}
+                  onInputClick={() => handleToggleComponent("startDate")}
+                  onClickOutside={() => setOpenComponent(null)}
+                />
+                {!isChecked && (
+                  <CustomTimePicker
+                    selectedDate={startDate as Date}
+                    onTimeChange={handleStartTimeChange}
+                    isOpen={openComponent === "startTime"}
+                    onToggle={() => handleToggleComponent("startTime")}
+                  />
+                )}
               </div>
 
               <div className={styles.pickerGroup}>
-              <DatePicker
-              className={styles.datePicker}
-              selected={endDate}
-              onChange={handleEndDateChange}
-              dateFormat="yyyy년 MM월 dd일 (EEE)"
-              locale={ko}
-              placeholderText="종료 날짜를 선택하세요"
-              open={openComponent === "endDate"}
-              onInputClick={() => handleToggleComponent("endDate")}
-              onClickOutside={() => setOpenComponent(null)}
-            />
-            {!isChecked && (
-              <CustomTimePicker
-                selectedDate={endDate as Date}
-                onTimeChange={handleEndTimeChange}
-                isOpen={openComponent === "endTime"}
-                onToggle={() => handleToggleComponent("endTime")}
-              />
-            )}
+                <DatePicker
+                  className={styles.datePicker}
+                  selected={endDate}
+                  onChange={handleEndDateChange}
+                  dateFormat="yyyy년 MM월 dd일 (EEE)"
+                  locale={ko}
+                  placeholderText="종료 날짜를 선택하세요"
+                  open={openComponent === "endDate"}
+                  onInputClick={() => handleToggleComponent("endDate")}
+                  onClickOutside={() => setOpenComponent(null)}
+                />
+                {!isChecked && (
+                  <CustomTimePicker
+                    selectedDate={endDate as Date}
+                    onTimeChange={handleEndTimeChange}
+                    isOpen={openComponent === "endTime"}
+                    onToggle={() => handleToggleComponent("endTime")}
+                  />
+                )}
               </div>
             </div>
 

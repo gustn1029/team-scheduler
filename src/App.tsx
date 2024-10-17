@@ -1,4 +1,8 @@
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Login from "./components/pages/login/Login";
 import CalendarComponent from "./components/pages/calendar/CalendarComponent";
 import Profile from "./components/pages/Profile";
@@ -12,6 +16,7 @@ import CalendarList from "./components/pages/calendarlist/CalendarList";
 import Todos from "./components/pages/todos/Todos";
 import RouteLayout from "./components/layouts/RouteLayout";
 import Edit from "./components/pages/edit/Edit";
+import Detail from "./components/pages/detail/Detail";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "calendarlist",
         element: <CalendarList />,
+      },
+      {
+        path: "calendarlist/:id",
+        element: <Detail />,
       },
       {
         path: "todo",

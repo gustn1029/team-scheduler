@@ -11,7 +11,7 @@ import {
   where,
 } from "firebase/firestore";
 import { appAuth, appFireStore } from "../../../firebase/config";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillPlusCircle } from "react-icons/ai";
 import IconLinkButton from "../../button/iconButton/IconLinkButton";
@@ -40,7 +40,7 @@ interface Event extends DocumentData {
   eventColor: EventColor | string;
 }
 
-interface UserData {
+interface UserprofileImg {
   profileImg: string | undefined;
 }
 
@@ -120,7 +120,7 @@ function CalendarList() {
     const holidays = await fetchHolidays(date);
 
     const events = querySnapshot.docs.map((doc) => ({
-      uid: doc.id,
+      id: doc.id,
       ...doc.data(),
     })) as Event[];
     return [...holidays, ...events];
@@ -136,7 +136,7 @@ function CalendarList() {
     enabled: !!dateParam,
   });
 
-  const { data: usersData } = useQuery<Record<string, UserData>>({
+  const { data: usersData } = useQuery<Record<string, UserprofileImg>>({
     queryKey: ["users", events],
     queryFn: async () => {
       if (!events) return {};
@@ -168,12 +168,6 @@ function CalendarList() {
 
   const handleCreateBtn = () => {
     setIsCreate((prevState) => !prevState);
-  };
-
-  const navigate = useNavigate();
-
-  const handleEventClick = () => {
-    navigate("*");
   };
 
   const isAllDayEvent = (event: Event, selectedDate: Date) => {
@@ -221,6 +215,8 @@ function CalendarList() {
       : colorName;
   };
 
+  console.log(sortedEvents);
+
   return (
     <>
       <header className={styles.calendarListHeader}>
@@ -253,9 +249,9 @@ function CalendarList() {
                 key={`${event.id || "event"}-${index}`}
                 className={styles.liContainer}
               >
-                <div
+                <Link
+                  to={`/calendarlist/${event.id}`}
                   className={styles.textContainer}
-                  onClick={() => handleEventClick()}
                   role="button"
                   tabIndex={0}
                 >
@@ -292,7 +288,7 @@ function CalendarList() {
                   <div className={styles.scheduleContainer}>
                     <p>{event.title}</p>
                   </div>
-                </div>
+                </Link>
                 {event.uid && usersData && usersData[event.uid] ? (
                   <img
                     className={styles.writerProfile}

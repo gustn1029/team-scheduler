@@ -9,12 +9,28 @@ import { EventTypeEnum } from "./enum/EventTypeEnum";
 import { Timestamp } from "firebase/firestore";
 
 export interface UserData {
+  id?: string;
   token: string;
   uid: string;
   email: string;
   profileImg: string;
   name: string;
   nickname: string;
+}
+
+export interface ProfileData {
+  nickname: string;
+  profileImg: string;
+}
+
+export interface ProfileUpdateFetchProps {
+  data: ProfileData;
+  id: string;
+}
+
+export interface DeleteUserProps {
+  id: string;
+  uid: string;
 }
 
 export interface LabelInputProps {
@@ -53,7 +69,6 @@ export interface DeleteFetchProps {
 export interface EventsData {
   id?: string;
   uid?: string;
-  imageUrl?: string;
   nickname?: string;
   title: string;
   startDate: Timestamp | Date;
@@ -100,11 +115,11 @@ export interface EventsFetchProps {
 
 export interface CalendarTodos {
   id: string;
-  todoDate: Date
+  todoDate: Date;
 }
 
 export interface TodoData {
-  id?:string;
+  id?: string;
   todos: TodoItem[];
   todoDate?: Date;
   createDate?: Date;
@@ -130,7 +145,7 @@ export interface TodoAddFetchProps {
   uid: string;
 }
 
-export interface TodoUpdateFetchProps{
+export interface TodoUpdateFetchProps {
   data: TodoItem[];
   uid: string;
 }
