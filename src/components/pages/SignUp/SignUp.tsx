@@ -10,6 +10,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import LinkButton from "../../button/LinkButton";
+import logo from "../../../assets/images/logo.svg";
 
 interface FormData {
   userNickName: string;
@@ -100,11 +101,7 @@ export const SignUp: React.FC = () => {
   return (
     <main>
       <div className={styles.logoContainer}>
-        <img
-          className={styles.logo}
-          src="/src/assets/images/logo.svg"
-          alt="TimeFlow"
-        />
+        <img className={styles.logo} src={logo} alt="TimeFlow" />
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>

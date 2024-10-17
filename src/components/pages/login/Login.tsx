@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { appAuth } from "../../../firebase/config";
 import LinkButton from "../../button/LinkButton";
+import logo from "../../../assets/images/logo.svg";
+import googleLogo from "../../../assets/images/googleLogo.svg";
 
 interface FormData {
   userEmail: string;
@@ -39,7 +41,7 @@ const Login: React.FC = () => {
         queryKey: ["auth", appAuth.currentUser?.uid],
       });
       console.log("로그인 완료");
-      sessionStorage.setItem("user","true");
+      sessionStorage.setItem("user", "true");
       navigate("/calendar");
       setLoginError(null);
     } catch (error) {
@@ -54,23 +56,13 @@ const Login: React.FC = () => {
       await queryClient.invalidateQueries({
         queryKey: ["auth", appAuth.currentUser?.uid],
       });
-      sessionStorage.setItem("user","true");
+      sessionStorage.setItem("user", "true");
       navigate("/calendar");
     },
     onError: (error) => {
       throw new Error(error.message);
     },
   });
-
-  // const logoutMutation = useMutation({
-  //   mutationFn: logoutFetch,
-  //   onSuccess: async () => {
-  //     await queryClient.invalidateQueries({ queryKey: ["users"] });
-  //   },
-  //   onError: (err) => {
-  //     console.error(err.message);
-  //   },
-  // });
 
   const handleGoogleSignIn = async () => {
     await googleLoginMutation.mutateAsync();
@@ -80,18 +72,10 @@ const Login: React.FC = () => {
     navigate("/findpassword");
   }, [navigate]);
 
-  // const handleLogout = () => {
-  //   logoutMutation.mutateAsync();
-  // };
-
   return (
     <main>
       <div className={styles.logoContainer}>
-        <img
-          className={styles.logo}
-          src="/src/assets/images/logo.svg"
-          alt="TimeFlow"
-        />
+        <img className={styles.logo} src={logo} alt="TimeFlow" />
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>
@@ -157,7 +141,7 @@ const Login: React.FC = () => {
               회원가입
             </LinkButton>
             <button onClick={handleGoogleSignIn}>
-              <img src="/src/assets/images/googleLogo.svg" alt="구글 로그인" />
+              <img src={googleLogo} alt="구글 로그인" />
             </button>
             <Button
               onClick={handleNavigateToFindPassword}
