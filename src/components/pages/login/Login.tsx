@@ -131,27 +131,29 @@ const Login: React.FC = () => {
               type="submit"
               buttonStyle={ButtonStyleEnum.Normal}
               disabled={isSubmitting}
+              buttonClassName={styles.loginButton}
             >
               {isSubmitting ? "처리중" : "로그인"}
             </Button>
-            <LinkButton
-              href={"/signup"}
-              buttonStyle={ButtonStyleEnum.NormalWhite}
-            >
-              회원가입
-            </LinkButton>
-            <button onClick={handleGoogleSignIn}>
-              <img src={googleLogo} alt="구글 로그인" />
-            </button>
-            <Button
-              onClick={handleNavigateToFindPassword}
-              type="button"
-              className={styles.lostPw}
-            >
-              비밀번호를 분실하셨나요?
-            </Button>
           </div>
         </form>
+        <LinkButton
+          href={"/signup"}
+          buttonStyle={ButtonStyleEnum.NormalWhite}
+          buttonClassName={styles.signInButton}
+        >
+          회원가입
+        </LinkButton>
+        <button onClick={handleGoogleSignIn} className={styles.googleLogin}>
+          <img src={googleLogo} alt="구글 로그인" />
+        </button>
+        <Button
+          onClick={handleNavigateToFindPassword}
+          type="button"
+          className={styles.lostPw}
+        >
+          비밀번호를 분실하셨나요?
+        </Button>
       </div>
     </main>
   );

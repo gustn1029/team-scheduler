@@ -23,6 +23,8 @@ main {
   border-radius: 10px;
   background-color: #f8fcff;
   box-shadow: 0px 2px 2px 0px #00000040;
+  display: flex;
+  flex-direction: column;
   h2 {
     text-align: center;
     font-size: 20px;
@@ -55,48 +57,47 @@ main {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      & button,
-      & a {
+      .loginButton {
         border-radius: 10px;
         font-weight: 400;
         font-size: 14px;
-      }
-      :nth-child(1) {
         margin-left: 30px;
         margin-right: 30px;
         margin-top: 20px;
         margin-bottom: 10px;
         height: 40px;
       }
-      :nth-child(2) {
-        font-size: 14px;
-        margin-bottom: 20px;
-        margin-left: 30px;
-        margin-right: 30px;
-        text-align: center;
-        height: 40px;
-      }
-      :nth-child(3) {
-        width: 39px;
-        height: 39px;
-        border: 1px solid #747775;
-        border-radius: 90px;
-        margin-left: 130px;
-        margin-bottom: 15px;
-        & img {
-          width: 20px;
-          height: 20px;
-          margin-left: 0;
-          margin-right: 0;
-          margin-top: 9px;
-        }
-      }
-      .lostPw {
-        color: #333333;
-        font-weight: 400;
-        font-size: 12px;
-        margin-bottom: 20px;
-      }
     }
+  }
+  .signInButton {
+    border-radius: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 20px;
+    height: 40px;
+    text-align: center;
+  }
+  .googleLogin {
+    border: 1px solid #747775;
+    border-radius: 90px;
+    margin-left: 130px;
+    margin-bottom: 15px;
+    width: 39px;
+    height: 39px;
+    & img {
+      width: 20px;
+      height: 20px;
+      margin-left: 0;
+      margin-right: 0;
+      margin-top: 5px;
+    }
+  }
+  .lostPw {
+    color: #333333;
+    font-weight: 400;
+    font-size: 12px;
+    margin-bottom: 20px;
   }
 }
