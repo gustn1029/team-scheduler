@@ -7,9 +7,11 @@ import { appAuth, appFireStore, appStorage } from "../../../firebase/config";
 import styles from "./signup.module.scss";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import { doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import LinkButton from "../../button/LinkButton";
+
+import defaultProfileImage from "../../../assets/images/profile/profile.png";
 
 interface FormData {
   userNickName: string;
@@ -44,8 +46,7 @@ export const SignUp: React.FC = () => {
   }, [watch]);
 
   async function getImageUrl(): Promise<string> {
-    const imagePath =
-      "gs://timeflow-e3a51.appspot.com/profileImages/profile.png";
+    const imagePath = "profileImages/profile.png";
     const imageRef = ref(appStorage, imagePath);
 
     try {
@@ -53,7 +54,25 @@ export const SignUp: React.FC = () => {
       return url;
     } catch (error) {
       console.error("Error getting download URL: ", error);
-      throw error;
+      throw uploadDefaultImage();
+    }
+  }
+
+  async function uploadDefaultImage(): Promise<string> {
+    const imagePath = `profileImages/profile.png`;
+    const imageRef = ref(appStorage, imagePath);
+
+    try {
+      const response = await fetch(defaultProfileImage);
+      const blob = await response.blob();
+
+      await uploadBytes(imageRef, blob);
+
+      const url = await getDownloadURL(imageRef);
+      return url;
+    } catch (error) {
+      console.error("Error uploading default image: ", error);
+      return defaultProfileImage;
     }
   }
 
@@ -67,7 +86,14 @@ export const SignUp: React.FC = () => {
         data.userPassword
       );
       const userId = userCredential.user.uid;
-      const userProfileImg = await getImageUrl();
+
+      let userProfileImg;
+      try {
+        userProfileImg = await getImageUrl();
+      } catch (error) {
+        console.error("Error getting profile image:", error);
+        userProfileImg = defaultProfileImage;
+      }
 
       await setDoc(doc(appFireStore, "users", userCredential.user.uid), {
         uid: userId,
