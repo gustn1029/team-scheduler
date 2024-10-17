@@ -4,12 +4,13 @@ import Button from "../../button/Button";
 import LabelInput from "../../inputs/input/LabelInput";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { appAuth, appFireStore, appStorage } from "../../../firebase/config";
-import styles from "./signup.module.scss";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
+import styles from "./signup.module.scss";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import LinkButton from "../../button/LinkButton";
+import logo from "../../../assets/images/logo.svg";
 
 import defaultProfileImage from "../../../assets/images/profile/profile.png";
 
@@ -126,11 +127,7 @@ export const SignUp: React.FC = () => {
   return (
     <main>
       <div className={styles.logoContainer}>
-        <img
-          className={styles.logo}
-          src="/src/assets/images/logo.svg"
-          alt="TimeFlow"
-        />
+        <img className={styles.logo} src={logo} alt="TimeFlow" />
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>

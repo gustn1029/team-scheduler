@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../header/Header";
 import styles from "../detail/detail.module.scss";
 import {
@@ -61,7 +61,6 @@ function Detail() {
 
         if (docSnap.exists()) {
           setEventData(docSnap.data() as EventsData);
-          console.log(`데이터 가져옴`);
         } else {
           setError("해당 이벤트를 찾을 수 없습니다.");
         }
@@ -82,7 +81,6 @@ function Detail() {
         try {
           const userData = await userDataFetch(eventData.uid);
           setUserData(userData);
-          console.log(`사용자 데이터 가져옴`);
         } catch (err) {
           console.error(
             "사용자 데이터를 불러오는 중 오류가 발생했습니다.",
@@ -185,7 +183,6 @@ function Detail() {
       setIsLoading(true);
       const eventDocRef = doc(appFireStore, "events", id);
       await deleteDoc(eventDocRef);
-      console.log("이벤트가 성공적으로 삭제되었습니다.");
       navigate("/");
     } catch (err) {
       console.error("이벤트 삭제 중 오류가 발생했습니다:", err);
