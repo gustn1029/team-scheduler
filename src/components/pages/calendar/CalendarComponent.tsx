@@ -546,7 +546,7 @@ const CalendarComponent = () => {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && <CreateModal bottom={-65} right={25} />}
+        {isCreate && <CreateModal bottom={-65} right={25} params={`date=${dayjs(new Date()).format("YYYY-MM-DD")}`} />}
       </section>
       <Calendar
         className={styles.calendar}

@@ -13,9 +13,11 @@ import { useNavigate } from "react-router-dom";
 
 import { FaCog } from "react-icons/fa";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { useDateStore } from "../../store/useDateStore";
 
 const Navigation = () => {
   const { toggleIsView } = useViewNavStore();
+  const { setDate } = useDateStore();
   const navigate = useNavigate();
 
   const { data: authData } = useQuery({
@@ -30,6 +32,10 @@ const Navigation = () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] });
       toggleIsView();
       sessionStorage.removeItem("user");
+      if (sessionStorage.getItem("currentDate") !== null) {
+        sessionStorage.removeItem("currentDate");
+      }
+      setDate(new Date());
       navigate("/login");
     },
     onError: (error) => {
