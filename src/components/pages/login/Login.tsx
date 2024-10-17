@@ -80,7 +80,11 @@ const Login: React.FC = () => {
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>
         <h2>로그인</h2>
-        <form className={styles.formGroup} onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className={styles.formGroup}
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
           <div className={styles.inputContainer}>
             <LabelInput
               type="email"
@@ -88,6 +92,10 @@ const Login: React.FC = () => {
               placeholder="이메일 주소"
               register={register("userEmail", {
                 required: { value: true, message: "필수 입력칸 입니다" },
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
+                  message: "이메일 형식에 맞춰 작성",
+                },
               })}
               watch={watch}
               ariaInvalid={
