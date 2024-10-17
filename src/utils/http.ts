@@ -316,29 +316,30 @@ export const calendarTodosFetch = async ({
 };
 
 // todo 등록
-export const addTodoFetch = async ({ data, uid, date }: TodoAddFetchProps) => {
-  const todoCollection = collection(appFireStore, "todos");
+export const addTodoFetch = async ({ data, uid, date }: TodoAddFetchProps): Promise<string> => {
+  try {
+    const todoCollection = collection(appFireStore, "todos");
 
-  const q = query(
-    todoCollection,
-    where("todoDate", "==", date),
-    where("uid", "==", uid)
-  );
+    const q = query(
+      todoCollection,
+      where("todoDate", "==", date),
+      where("uid", "==", uid)
+    );
 
-  const snapshot = await getDocs(q);
+    const snapshot = await getDocs(q);
 
-  if (snapshot.empty) {
-    await addDoc(todoCollection, data);
-
-    message = "할일을 정상적으로 저장했습니다.";
-
-    return message;
-  } else {
-    const docId = snapshot.docs[0].id;
-    await updateTodosFetch({ data: data.todos, uid: docId });
-
-    message = "할일을 정상적으로 업데이트 했습니다.";
-    return message;
+    if (snapshot.empty) {
+      await addDoc(todoCollection, data);
+      return "할일을 정상적으로 저장했습니다.";
+    } else {
+      const docId = snapshot.docs[0].id;
+      const docRef = doc(appFireStore, "todos", docId);
+      await updateDoc(docRef, { todos: data.todos });
+      return "할일을 정상적으로 업데이트 했습니다.";
+    }
+  } catch (error) {
+    console.error("Error in addTodoFetch:", error);
+    throw new Error("할일 저장 중 오류가 발생했습니다.");
   }
 };
 
