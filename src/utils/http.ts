@@ -37,7 +37,7 @@ import {
 import { EventTypeEnum } from "../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
 import { handleError } from "./ErrorHandler";
-import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 type CurrentUserData = Omit<UserData, "token">;
 
