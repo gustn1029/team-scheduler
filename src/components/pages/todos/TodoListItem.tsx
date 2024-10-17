@@ -7,7 +7,11 @@ import { useTodoStore } from "../../../store/useTodoStore";
 import styles from "./todos.module.scss";
 
 const TodoListItem = ({ id, isComplete, todo }: TodoItem) => {
-  const { deleteTodo } = useTodoStore();
+  const { deleteTodo, setIsComplete } = useTodoStore();
+  const handleDelete = (id: string) => {
+    setIsComplete(true);
+    deleteTodo(id)
+  }
 
   return (
     <li
@@ -19,7 +23,7 @@ const TodoListItem = ({ id, isComplete, todo }: TodoItem) => {
       <TodoCheckbox id={id} isComplete={isComplete} todo={todo} />
       <IconButton
         icon={<MdCancel />}
-        onClick={() => deleteTodo(id ? id : "")}
+        onClick={() => handleDelete(id ? id : "")}
       />
     </li>
   );
