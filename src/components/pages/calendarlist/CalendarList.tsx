@@ -215,8 +215,6 @@ function CalendarList() {
       : colorName;
   };
 
-  console.log(sortedEvents);
-
   return (
     <>
       <header className={styles.calendarListHeader}>
