@@ -162,6 +162,9 @@ const Todos = () => {
         setIsShowCancelModal(true);
       } else {
         navigate("../");
+        if(isComplete) {
+          setIsComplete(false);
+        }
       }
       return;
     }
