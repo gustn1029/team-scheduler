@@ -93,7 +93,10 @@ export const SignUp: React.FC = () => {
       try {
         userProfileImg = await getImageUrl();
       } catch (error) {
-        console.error("Error getting profile image:", error);
+        console.error(
+          "프로필 이미지를 가져오는 중 오류가 발생했습니다. ",
+          error
+        );
         userProfileImg = defaultProfileImage;
       }
 
@@ -184,7 +187,8 @@ export const SignUp: React.FC = () => {
               register={register("userEmail", {
                 required: { value: true, message: "필수 입력칸입니다." },
                 pattern: {
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
+                  value:
+                    /^[a-zA-Z0-9._-]{1,30}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
                   message: "이메일 형식에 맞춰 작성하기 바랍니다.",
                 },
               })}
