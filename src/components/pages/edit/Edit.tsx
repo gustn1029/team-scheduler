@@ -15,9 +15,15 @@ import { EventsData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, Timestamp } from "firebase/firestore";
 import Loader from "../../loader/Loader";
-import { updateEvent } from "../../../utils/http";
+import { updateEvent, userDataFetch } from "../../../utils/http";
 
 const Edit: React.FC = () => {
+  // 현재 로그인한 사용자 정보 가져오기
+  const { data: authData } = useQuery({
+    queryKey: ["auth", appAuth.currentUser?.uid],
+    queryFn: () => userDataFetch(appAuth.currentUser?.uid as string),
+    enabled: !!appAuth.currentUser?.uid,
+  });
   // 색상 선택 토글 상태
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,6 +41,9 @@ const Edit: React.FC = () => {
 
   // 열려 있는 컴포넌트 상태
   const [openComponent, setOpenComponent] = useState<string | null>(null);
+
+  // 하루 종일 토글 상태
+  const [isChecked, setIsChecked] = useState(false);
   
   // 이벤트 ID를 URL에서 가져옴
   const { id } = useParams();
@@ -88,21 +97,15 @@ const Edit: React.FC = () => {
   useEffect(() => {
     if (eventData) {
       // Firestore에서 가져온 Timestamp를 Date 객체로 변환
-      if (eventData.startDate && eventData.endDate) {
-        setStartDate(
-          eventData.startDate instanceof Timestamp
-            ? eventData.startDate.toDate()
-            : eventData.startDate
-        );
-        setEndDate(
-          eventData.endDate instanceof Timestamp
-            ? eventData.endDate.toDate()
-            : eventData.endDate
-        );
-      } else {
-        setStartDate(new Date());
-        setEndDate(new Date());
-      }
+      const startTime = eventData.startDate instanceof Timestamp ? eventData.startDate.toDate() : eventData.startDate;
+      const endTime = eventData.endDate instanceof Timestamp ? eventData.endDate.toDate() : eventData.endDate;
+      
+      setStartDate(startTime);
+      setEndDate(endTime);
+
+      // 시작 시간이 00:00, 종료 시간이 23:59이면 하루 종일로 설정
+      const isAllDayEvent = startTime.getHours() === 0 && startTime.getMinutes() === 0 && endTime.getHours() === 23 && endTime.getMinutes() === 59;
+      setIsChecked(isAllDayEvent);
 
       // setValue를 통한 폼 초기값 설정
       setValue("title", eventData.title);
@@ -160,9 +163,6 @@ const Edit: React.FC = () => {
   const toggleSelectBox = () => {
     setIsOpen(!isOpen);
   };
-
-  // 하루 종일 토글 상태
-  const [isChecked, setIsChecked] = useState(false);
 
   // 하루 종일 토글 핸들러
   const handleToggleAllDay = (checked: boolean) => {
@@ -225,19 +225,30 @@ const Edit: React.FC = () => {
 
   // 메모 변경 핸들러
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length > maxLength) {
+      e.target.value = e.target.value.slice(0, maxLength);
+    }
     setMemoCount(e.target.value.length);
-  };
+  }
 
   // 로딩 상태 시 로더 표시
   if (isLoading) return <Loader />;
 
   return (
     <main className={styles.editMain}>
+      <Header title="일정 수정" onConfirm={handleSubmit(onSubmit)} />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Header title="일정 수정" onConfirm={handleSubmit(onSubmit)} />
-
         {eventData && (
           <>
+            <div className={styles.sheduleWriter}>
+              <h3 className={styles.writer}>작성자</h3>
+              <img
+                className={styles.writerProfile}
+                src={`${authData?.profileImg}` || "default-profile-image-url"}
+                alt="writerProfile"
+              />
+              <span className={styles.writerName}>{`${authData?.nickname}`}</span>
+            </div>
             <div className={styles.titleIpt}>
               <LabelInput
                 type="text"
@@ -246,8 +257,8 @@ const Edit: React.FC = () => {
                 register={register("title", {
                   required: { value: true, message: "제목을 입력하세요." },
                   minLength: {
-                    value: 3,
-                    message: "제목은 최소 3자 이상 입력하세요.",
+                    value: 2,
+                    message: "제목은 최소 2자 이상 입력하세요.",
                   },
                 })}
                 watch={watch}
