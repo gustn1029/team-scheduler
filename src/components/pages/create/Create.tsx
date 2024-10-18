@@ -130,7 +130,7 @@ const Create: React.FC = () => {
 
   // 색상 선택 박스 토글
   const toggleSelectBox = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
   // 하루 종일 토글
@@ -192,19 +192,24 @@ const Create: React.FC = () => {
 
   // 컴포넌트 열림/닫힘 상태 토글
   const handleToggleComponent = (component: string) => {
+    if (component !== "colorSelect") {
+      setIsOpen(false);
+    }
     setOpenComponent(openComponent === component ? null : component);
   };
 
   // 메모 변경 핸들러
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length > maxLength) {
+      e.target.value = e.target.value.slice(0, maxLength);
+    }
     setMemoCount(e.target.value.length);
   }
 
   return (
     <main className={styles.createMain}>
+      <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
-
         <div className={styles.sheduleWriter}>
           <h3 className={styles.writer}>작성자</h3>
           <img
@@ -223,8 +228,8 @@ const Create: React.FC = () => {
             register={register("title", {
               required: { value: true, message: "제목을 입력하세요." },
               minLength: {
-                value: 3,
-                message: "제목은 최소 3자 이상 입력하세요.",
+                value: 2,
+                message: "제목은 최소 2자 이상 입력하세요.",
               },
             })}
             watch={watch}
