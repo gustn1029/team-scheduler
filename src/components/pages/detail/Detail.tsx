@@ -226,11 +226,14 @@ function Detail() {
           <div className={styles.writerContainer}>
             <span>작성자</span>
             {userData && userData.profileImg ? (
-              <img
-                src={userData.profileImg}
-                alt="작성자 프로필"
-                className={styles.profileImg}
-              />
+              <p>
+                <img
+                  src={userData.profileImg}
+                  alt="작성자 프로필"
+                  className={styles.profileImg}
+                />
+                <span>{userData.nickname}</span>
+              </p>
             ) : (
               <div className={styles.defaultProfileImg}>프로필 없음</div>
             )}
