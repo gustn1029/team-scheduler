@@ -241,7 +241,7 @@ function Detail() {
             className={styles.listColor}
             style={{ backgroundColor: getEventColor(eventData.eventColor) }}
           ></div>
-          <p>{eventData.title}</p>
+          <p className={styles.title}>{eventData.title}</p>
         </div>
         <div className={styles.timeContainer}>
           <p>
