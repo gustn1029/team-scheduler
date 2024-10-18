@@ -21,6 +21,7 @@ export interface UserData {
 export interface ProfileData {
   nickname: string;
   profileImg: string;
+  userPassword?:string;
 }
 
 export interface ProfileUpdateFetchProps {
