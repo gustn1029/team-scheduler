@@ -15,8 +15,8 @@
     color: #000;
   }
   .writerProfile {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     margin-left: 15px;
     border-radius: 50%;
   }
@@ -99,7 +99,6 @@
   line-height: 40px;
   text-align: left;
   white-space: nowrap;
-  cursor: pointer;
 }
 .val {
   min-width: 160px;
@@ -238,13 +237,6 @@
   padding: 20px 15px;
   border-bottom: 1px solid #d9d9d9;
 }
-.datePicker {
-  width: 200px;
-  padding: 15px;
-  border: 1px solid #d9d9d9;
-  border-radius: 10px;
-  cursor: pointer;
-}
 .pickerGroup {
   display: flex;
   justify-content: space-between;
@@ -253,6 +245,17 @@
     margin-bottom: 15px;
   }
 }
+.datePicker {
+  width: 200px;
+  padding: 15px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  cursor: pointer;
+}
+:global(.react-datepicker-popper) {
+  left: 21px !important;
+}
+
 
 .customDropdown {
   width: 80px;

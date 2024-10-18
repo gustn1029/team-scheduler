@@ -33,6 +33,17 @@ const Create: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedText, setSelectedText] = useState("Blue");
 
+    // 시작 날짜, 종료 날짜 관련 useState
+    const [startDate, setStartDate] = useState<Date>(() => parseDate(dateParam));
+    const [endDate, setEndDate] = useState<Date>(() => parseDate(dateParam));
+  
+    // 메모 maxlength 핸들러(메모 길이 제한 useState)
+    const [memoCount, setMemoCount] = useState(0);
+    const maxLength = 100;
+  
+    // 날짜 및 시간 선택 컴포넌트의 열림 상태 관리 useState
+    const [openComponent, setOpenComponent] = useState<string | null>(null);
+
   // 날짜 파싱 함수 (String -> Date 로 변환)
   const parseDate = (dateString: string | null) => {
     if (dateString) {
@@ -42,17 +53,6 @@ const Create: React.FC = () => {
     const hours = new Date().setHours(9, 0, 0, 0);
     return new Date(hours);
   };
-  
-  // 시작 날짜, 종료 날짜 관련 useState
-  const [startDate, setStartDate] = useState<Date>(() => parseDate(dateParam));
-  const [endDate, setEndDate] = useState<Date>(() => parseDate(dateParam));
-
-  // 메모 maxlength 핸들러(메모 길이 제한 useState)
-  const [memoCount, setMemoCount] = useState(0);
-  const maxLength = 100;
-
-  // 날짜 및 시간 선택 컴포넌트의 열림 상태 관리 useState
-  const [openComponent, setOpenComponent] = useState<string | null>(null);
 
   // 이벤트 추가 Mutation 설정 (성공 시 이벤트 목록을 업데이트하고, 페이지 이동)
   const addEventMutation = useMutation({
@@ -130,7 +130,7 @@ const Create: React.FC = () => {
 
   // 색상 선택 박스 토글
   const toggleSelectBox = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
   // 하루 종일 토글
@@ -192,19 +192,24 @@ const Create: React.FC = () => {
 
   // 컴포넌트 열림/닫힘 상태 토글
   const handleToggleComponent = (component: string) => {
+    if (component !== "colorSelect") {
+      setIsOpen(false);
+    }
     setOpenComponent(openComponent === component ? null : component);
   };
 
   // 메모 변경 핸들러
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length > maxLength) {
+      e.target.value = e.target.value.slice(0, maxLength);
+    }
     setMemoCount(e.target.value.length);
   }
 
   return (
     <main className={styles.createMain}>
+      <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
-
         <div className={styles.sheduleWriter}>
           <h3 className={styles.writer}>작성자</h3>
           <img
@@ -223,8 +228,8 @@ const Create: React.FC = () => {
             register={register("title", {
               required: { value: true, message: "제목을 입력하세요." },
               minLength: {
-                value: 3,
-                message: "제목은 최소 3자 이상 입력하세요.",
+                value: 2,
+                message: "제목은 최소 2자 이상 입력하세요.",
               },
             })}
             watch={watch}
