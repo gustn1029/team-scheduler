@@ -20,14 +20,17 @@
   }
 }
 .calendarListMain {
-  & li {
+  .liContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    gap: 10px;
     .textContainer {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 10px;
       .timeContainerIf {
         margin-left: 15px;
         font-weight: 400;
@@ -46,17 +49,15 @@
         height: 30px;
         display: flex;
         align-items: center;
-        margin-left: 10px;
-        margin-right: 10px;
-        margin-top: 3px;
       }
-      .scheduleContainer {
-        display: flex;
-        align-items: center;
-        & p {
-          font-weight: 600;
-          font-size: 14px;
-        }
+      .title {
+        flex-grow: 1;
+        font-weight: 600;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 270px;
       }
     }
     .writerProfile {

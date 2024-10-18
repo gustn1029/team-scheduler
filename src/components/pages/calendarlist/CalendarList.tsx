@@ -254,58 +254,57 @@ function CalendarList() {
             <Loader />
           ) : sortedEvents.length > 0 ? (
             sortedEvents.map((event, index) => (
-              <li
-                key={`${event.id || "event"}-${index}`}
-                className={styles.liContainer}
-              >
+              <li key={`${event.id || "event"}-${index}`}>
                 <Link
                   onClick={handleLink}
                   to={`/calendarlist/${event.id}`}
-                  className={styles.textContainer}
                   role="button"
                   tabIndex={0}
+                  className={styles.liContainer}
                 >
-                  <div className={styles.timeContainerIf}>
-                    {isAllDayEvent(event, date) ? (
-                      <p className={styles.allDay}>종일</p>
-                    ) : (
-                      <div className={styles.timeContainer}>
-                        <p>
-                          {new Date(
-                            event.startDate.seconds * 1000
-                          ).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
-                        <p>
-                          {new Date(
-                            event.endDate.seconds * 1000
-                          ).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
-                      </div>
-                    )}
+                  <div className={styles.textContainer}>
+                    <div className={styles.timeContainerIf}>
+                      {isAllDayEvent(event, date) ? (
+                        <p className={styles.allDay}>종일</p>
+                      ) : (
+                        <div className={styles.timeContainer}>
+                          <p>
+                            {new Date(
+                              event.startDate.seconds * 1000
+                            ).toLocaleTimeString("ko-KR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })}
+                          </p>
+                          <p>
+                            {new Date(
+                              event.endDate.seconds * 1000
+                            ).toLocaleTimeString("ko-KR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className={styles.listColor}
+                      style={{
+                        backgroundColor: getEventColor(event.eventColor),
+                      }}
+                    ></div>
+                    <p className={styles.title}>{event.title}</p>
                   </div>
-                  <div
-                    className={styles.listColor}
-                    style={{ backgroundColor: getEventColor(event.eventColor) }}
-                  ></div>
-                  <div className={styles.scheduleContainer}>
-                    <p>{event.title}</p>
-                  </div>
+                  {event.uid && usersData && usersData[event.uid] ? (
+                    <img
+                      className={styles.writerProfile}
+                      src={usersData[event.uid].profileImg}
+                      alt="작성자"
+                    />
+                  ) : null}
                 </Link>
-                {event.uid && usersData && usersData[event.uid] ? (
-                  <img
-                    className={styles.writerProfile}
-                    src={usersData[event.uid].profileImg}
-                    alt="작성자"
-                  />
-                ) : null}
               </li>
             ))
           ) : (
