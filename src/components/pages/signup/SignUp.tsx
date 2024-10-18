@@ -117,7 +117,7 @@ export const SignUp: React.FC = () => {
     ) {
       setError("userPasswordCheck", {
         type: "password-mismatch",
-        message: "비밀번호가 일치하지 않습니다",
+        message: "비밀번호가 일치하지 얺음",
       });
     } else {
       clearErrors("userPasswordCheck");
@@ -132,14 +132,22 @@ export const SignUp: React.FC = () => {
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>
         <h2>회원가입</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.formGroup}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles.formGroup}
+          noValidate
+        >
           <div className={styles.inputContainer}>
             <LabelInput
               type="text"
               label="userNickName"
               placeholder="닉네임 설정"
               register={register("userNickName", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸" },
+                maxLength: {
+                  value: 10,
+                  message: "닉네임은 최대 10자",
+                },
               })}
               watch={watch}
               ariaInvalid={
@@ -154,7 +162,7 @@ export const SignUp: React.FC = () => {
               label="userEmail"
               placeholder="이메일 주소"
               register={register("userEmail", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸" },
                 pattern: {
                   value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
                   message: "이메일 형식에 맞춰 작성",
@@ -173,7 +181,7 @@ export const SignUp: React.FC = () => {
               label="userPassword"
               placeholder="비밀번호"
               register={register("userPassword", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸" },
                 minLength: {
                   value: 8,
                   message: "8자리 이상 입력",
@@ -211,13 +219,11 @@ export const SignUp: React.FC = () => {
               label="userPasswordCheck"
               placeholder="비밀번호 확인"
               register={register("userPasswordCheck", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸" },
                 validate: {
                   matchPassword: (value) => {
                     const { userPassword } = getValues();
-                    return (
-                      userPassword === value || "비밀번호가 일치하지 않습니다"
-                    );
+                    return userPassword === value || "비밀번호가 일치하지 않음";
                   },
                 },
               })}
