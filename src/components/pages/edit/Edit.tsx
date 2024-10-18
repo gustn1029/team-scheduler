@@ -218,8 +218,11 @@ const Edit: React.FC = () => {
     }
   };
 
-  // 컴포넌트 토글 핸들러
+  // 컴포넌트 열림/닫힘 상태 토글
   const handleToggleComponent = (component: string) => {
+    if (component !== "colorSelect") {
+      setIsOpen(false);
+    }
     setOpenComponent(openComponent === component ? null : component);
   };
 
