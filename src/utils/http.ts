@@ -429,9 +429,13 @@ async function deleteUserProfileImage(id: string) {
     }
 
     const userData = user.data();
-    const imagePath = userData.profileImg;
+    const imagePath:string | undefined = userData.profileImg;
 
     if (!imagePath) {
+      return;
+    }
+
+    if(imagePath.includes("profile.png")) {
       return;
     }
 

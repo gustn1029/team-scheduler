@@ -20,7 +20,19 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
         modal.close();
       }
     }
-  }, [isOpen]);
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+    
+  }, [isOpen, onClose]);
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDialogElement>) => {
     if (e.target === dialog.current) {
