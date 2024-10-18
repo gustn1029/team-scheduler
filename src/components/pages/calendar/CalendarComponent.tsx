@@ -196,7 +196,7 @@ const CalendarComponent = () => {
     const tileDate = dayjs(date);
 
     if (tileDate.isSame(today, "day")) {
-      return !clickEventDate
+      return !clickEventDate || tileDate.isSame(clickEventDate)
         ? `${styles.currentDay} ${styles.currentDayBg}`
         : styles.currentDay;
     }
