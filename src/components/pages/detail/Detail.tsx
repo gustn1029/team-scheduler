@@ -99,20 +99,15 @@ function Detail() {
       : colorName;
   };
 
-  const formatDateRange = (startDate: Date, endDate: Date) => {
-    const start = dayjs(startDate);
-    const end = dayjs(endDate);
+  const formatDateRange = (date: Date) => {
+    const formattedDate = dayjs(date);
     const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
 
-    const formatSingleDate = (date: dayjs.Dayjs) =>
-      `${date.format("YYYY.MM.DD")}(${weekDays[date.day()]})`;
-
-    if (start.isSame(end, "day")) {
-      return formatSingleDate(start);
-    } else {
-      return `${formatSingleDate(start)} ~ ${formatSingleDate(end)}`;
-    }
+    return `${formattedDate.format("YYYY.MM.DD")}(${
+      weekDays[formattedDate.day()]
+    })`;
   };
+
   const formatTime = (date: Date) => {
     return dayjs(date).format("HH:mm");
   };
@@ -122,15 +117,18 @@ function Detail() {
     endDate: Date,
     eventType: EventTypeEnum
   ) => {
-    const dateRange = formatDateRange(startDate, endDate);
+    const startFormatted = `${formatDateRange(startDate)} ${formatTime(
+      startDate
+    )}`;
+    const endFormatted = `${formatDateRange(endDate)} ${formatTime(endDate)}`;
 
     if (
       eventType === EventTypeEnum.HOLIDAY ||
       isAllDayEvent(startDate, endDate)
     ) {
-      return dateRange;
+      return `${formatDateRange(startDate)} ~ ${formatDateRange(endDate)}`;
     } else {
-      return `${dateRange} ${formatTime(startDate)} ~ ${formatTime(endDate)}`;
+      return `${startFormatted} ~ ${endFormatted}`;
     }
   };
 
@@ -192,7 +190,6 @@ function Detail() {
     }
   };
 
-  // 로그인 정보 가져오기
   const userDataFetch = async (
     userId: string
   ): Promise<CurrentUserData | null> => {
