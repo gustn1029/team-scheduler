@@ -123,7 +123,6 @@ export const SignUp: React.FC = () => {
           });
         }
       } else {
-        // FirebaseError가 아니거나 'code' 속성이 없는 경우
         setError("userEmail", {
           type: "manual",
           message: "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.",
@@ -132,7 +131,6 @@ export const SignUp: React.FC = () => {
     }
   };
 
-  // 비밀번호 값 수정 시 비밀번호 확인 값도 유효성 체크
   useEffect(() => {
     if (
       watch("userPassword") !== watch("userPasswordCheck") &&
@@ -186,10 +184,21 @@ export const SignUp: React.FC = () => {
               placeholder="이메일 주소"
               register={register("userEmail", {
                 required: { value: true, message: "필수 입력칸입니다." },
-                pattern: {
-                  value:
-                    /^[a-zA-Z0-9._-]{1,30}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
-                  message: "이메일 형식에 맞춰 작성하기 바랍니다.",
+                validate: {
+                  emailFormat: (value) => {
+                    const emailRegex =
+                      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+                    return (
+                      emailRegex.test(value) || "올바른 이메일 형식이 아닙니다."
+                    );
+                  },
+                  localPartLength: (value) => {
+                    const localPart = value.split("@")[0];
+                    return (
+                      localPart.length <= 30 ||
+                      "로컬 부분은 30자 이내로 작성해야 합니다."
+                    );
+                  },
                 },
               })}
               watch={watch}
@@ -208,13 +217,12 @@ export const SignUp: React.FC = () => {
                 required: { value: true, message: "필수 입력칸입니다." },
                 minLength: {
                   value: 8,
-                  message: "8자리 이상 입력하기 바랍니다.",
+                  message: "8자리 이상 입력해야 합니다.",
                 },
                 pattern: {
                   value:
                     /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]).*$/,
-                  message:
-                    "영어 소문자, 숫자, 특수문자 포함하여 입력하기 바랍니다.",
+                  message: "소문자, 숫자, 특수문자 모두 포함해야 합니다.",
                 },
               })}
               watch={watch}
