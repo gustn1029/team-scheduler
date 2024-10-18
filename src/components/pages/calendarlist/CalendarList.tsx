@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { RiCloseFill } from "react-icons/ri";
 import styles from "./calendarlist.module.scss";
 import {
@@ -215,6 +215,17 @@ function CalendarList() {
       : colorName;
   };
 
+  const handleLink = () => {
+    sessionStorage.setItem("seconds", dateParam as string);
+  };
+
+  useEffect(() => {
+    const seconds = sessionStorage.getItem("seconds");
+    if (seconds !== null) {
+      sessionStorage.removeItem("seconds");
+    }
+  }, []);
+
   return (
     <>
       <header className={styles.calendarListHeader}>
@@ -248,6 +259,7 @@ function CalendarList() {
                 className={styles.liContainer}
               >
                 <Link
+                  onClick={handleLink}
                   to={`/calendarlist/${event.id}`}
                   className={styles.textContainer}
                   role="button"

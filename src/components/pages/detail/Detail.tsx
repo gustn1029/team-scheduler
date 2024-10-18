@@ -166,6 +166,11 @@ function Detail() {
       ? eventData.endDate.toDate()
       : new Date(eventData.endDate);
 
+  const handleCancel = () => {
+    const seconds = sessionStorage.getItem("seconds");
+    navigate(`/calendarList?date=${seconds}`);
+  };
+
   const handleDelete = async () => {
     if (!id) {
       console.error("이벤트 ID가 없습니다.");
@@ -181,6 +186,10 @@ function Detail() {
       setIsLoading(true);
       const eventDocRef = doc(appFireStore, "events", id);
       await deleteDoc(eventDocRef);
+      const seconds = sessionStorage.getItem("seconds");
+      if (seconds !== null) {
+        sessionStorage.removeItem("seconds");
+      }
       navigate("/");
     } catch (err) {
       console.error("이벤트 삭제 중 오류가 발생했습니다:", err);
@@ -210,6 +219,7 @@ function Detail() {
   return (
     <>
       <Header
+        onCancel={handleCancel}
         title="일정 상세"
         {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
           onEdit: () => navigate(`/calendarlist/${id}/edit`),
