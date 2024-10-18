@@ -240,7 +240,7 @@ const Edit: React.FC = () => {
   return (
     <main className={styles.editMain}>
       <Header title="일정 수정" onConfirm={handleSubmit(onSubmit)} />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         {eventData && (
           <>
             <div className={styles.sheduleWriter}>
