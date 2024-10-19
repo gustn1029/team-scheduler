@@ -42,11 +42,11 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
 
   return createPortal(
     <dialog 
-      className={styles.modal} 
       ref={dialog} 
+      className={styles.dialog}
       onClick={handleBackgroundClick}
     >
-      <div onClick={(e) => e.stopPropagation()}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </dialog>,
