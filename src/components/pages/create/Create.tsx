@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import DatePicker from "react-datepicker";
@@ -8,13 +8,25 @@ import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "./CustomTimePicker";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addEventsFetch, queryClient, userDataFetch } from "../../../utils/http";
+import {
+  addEventsFetch,
+  eventAddressFetch,
+  queryClient,
+  userDataFetch,
+} from "../../../utils/http";
 import { appAuth } from "../../../firebase/config";
 import Header from "../../header/Header";
-import { EventsData } from "../../../types";
+import { AddressResult, EventAddress, EventsData } from "../../../types";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import Loader from "../../loader/Loader";
+import Modal from "../../modal/Modal";
+import Button from "../../button/Button";
+import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
+import IconButton from "../../button/iconButton/IconButton";
+
+import { MdCancel } from "react-icons/md";
 
 const Create: React.FC = () => {
   // 현재 로그인한 사용자 정보 가져오기
@@ -32,6 +44,16 @@ const Create: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedText, setSelectedText] = useState("Blue");
+
+  // 주소 관련 state
+  const [isAddressModal, setIsAddressModal] = useState<boolean>(false);
+  const [isDetailAddress, setIsDetailAddress] = useState<boolean>(false);
+  const [isAddAddress, setIsAddAddress] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
+  const [detailQuery, setDetailQuery] = useState<string>("");
+  const [eventAddress, setEventAddress] = useState<EventAddress | undefined>(
+    undefined
+  );
 
   // 날짜 파싱 함수 (String -> Date 로 변환)
   const parseDate = (dateString: string | null) => {
@@ -58,10 +80,22 @@ const Create: React.FC = () => {
   const addEventMutation = useMutation({
     mutationFn: addEventsFetch,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid] });
+      queryClient.invalidateQueries({
+        queryKey: ["events", appAuth.currentUser?.uid],
+      });
       navigate("../");
       toast.success("일정이 추가되었습니다.");
-    }
+    },
+  });
+
+  const {
+    data: addressData,
+    isLoading,
+    refetch,
+  } = useQuery<AddressResult[], Error>({
+    queryKey: ["addressSearch", query],
+    queryFn: () => eventAddressFetch(query),
+    enabled: false,
   });
 
   // React Hook Form 설정
@@ -87,11 +121,11 @@ const Create: React.FC = () => {
     let newEventEndDate = endDate;
 
     // 하루 종일 선택 시 시간을 00:00 ~ 23:59로 설정
-    if(isChecked) {
+    if (isChecked) {
       newEventStartDate = new Date(startDate?.setHours(0, 0, 0, 0));
       newEventEndDate = new Date(endDate?.setHours(23, 59, 59, 999));
     }
-  
+
     // 새로운 이벤트 데이터 생성
     const newEvent: EventsData = {
       ...data,
@@ -103,6 +137,7 @@ const Create: React.FC = () => {
       eventColor: selectedColor,
       eventType: EventTypeEnum.EVENTS,
       like: 0,
+      address: eventAddress ? eventAddress : null,
       comments: [],
       category: [],
     };
@@ -204,10 +239,77 @@ const Create: React.FC = () => {
       e.target.value = e.target.value.slice(0, maxLength);
     }
     setMemoCount(e.target.value.length);
-  }
+  };
 
+  // 주소 검색
+  const handleSearch = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    refetch();
+  };
+
+  // 선택한 주소 데이터 저장하는 함수
+  const handleSetAddress = (data: AddressResult) => {
+    const addressData: EventAddress = {
+      place_name: data?.place_name || "",
+      road_address_name: data?.road_address_name || data?.address_name,
+      region_address_name: data?.address?.address_name || data?.address_name,
+      x: data.x,
+      y: data.y,
+    };
+
+    setEventAddress(addressData);
+
+    if (!data?.place_name) {
+      setIsDetailAddress(true);
+    } else {
+      setIsDetailAddress(false);
+      if (detailQuery && detailQuery.trim() !== "") {
+        setDetailQuery("");
+      }
+    }
+  };
+
+  // 최종 주소 데이터 저장
+  const handleAddAddress = (detail: string | null) => {
+    if (detail !== null && detail.trim() !== "") {
+      setEventAddress((addr) => ({ ...addr, detail_address: detail }));
+    }
+    setIsAddressModal(false);
+    setIsAddAddress(true);
+    setQuery("");
+  };
+
+  // 주소 검색하는 모달 띄우기
+  const handleShowAddressModal = () => {
+    setIsAddressModal(true);
+  };
+
+  // 주소 검색 모달 숨기기
+  const handleHideAddressModal = () => {
+    setIsDetailAddress(false);
+    if (!isAddAddress) {
+      setEventAddress(undefined);
+    }
+    setDetailQuery("");
+    setQuery("");
+    setIsAddressModal(false);
+  };
+
+  // 저장된 주소 데이터 삭제
+  const handleRemoveAddress = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (eventAddress) {
+      setEventAddress(undefined);
+      setIsAddAddress(false);
+    }
+    if (detailQuery !== "") {
+      setDetailQuery("");
+    }
+  };
+  
   return (
     <main className={styles.createMain}>
+      {isLoading && <Loader />}
       <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
       <form>
         <div className={styles.sheduleWriter}>
@@ -353,7 +455,28 @@ const Create: React.FC = () => {
             )}
           </div>
         </div>
-
+        <section className={styles.address}>
+          <h3>주소 입력</h3>
+          <div>
+            <Button
+              buttonStyle={ButtonStyleEnum.NONE}
+              onClick={handleShowAddressModal}
+              buttonClassName={`${styles.addressAddBtn}
+                ${eventAddress ? styles.addressUpdateBtn : styles.addressBtn}`}
+            >
+              {eventAddress
+                ? eventAddress.road_address_name
+                : "주소를 입력해 주세요."}
+            </Button>
+            {isAddAddress && (
+              <IconButton
+                onClick={handleRemoveAddress}
+                className={styles.cancelBtn}
+                icon={<MdCancel />}
+              />
+            )}
+          </div>
+        </section>
         <div className={styles.meMo}>
           <h3>메모</h3>
           <textarea
@@ -368,6 +491,92 @@ const Create: React.FC = () => {
           </div>
         </div>
       </form>
+      {isAddressModal && (
+        <Modal isOpen={isAddressModal} onClose={handleHideAddressModal}>
+          <div className={styles.modalInputWrap}>
+            <label htmlFor="event_address" className={styles.addressLabel}>
+              <span className="sOnly">주소 입력</span>
+              <input
+                type="text"
+                id="event_address"
+                className={styles.addressInput}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="주소를 입력해 주세요."
+              />
+            </label>
+            <Button
+              onClick={(e) => handleSearch(e)}
+              buttonStyle={ButtonStyleEnum.NormalWhite}
+              buttonClassName={`${styles.modalBtn}`}
+            >
+              검색
+            </Button>
+          </div>
+          <ul className={styles.addressList}>
+            {!addressData || addressData.length === 0 ? (
+              <li>검색된 주소가 없습니다.</li>
+            ) : (
+              addressData?.map((result, index) => (
+                <li
+                  key={index}
+                  className={styles.addressListItem}
+                  onClick={() => handleSetAddress(result)}
+                >
+                  <strong>{result?.place_name || result?.address_name}</strong>
+                  <p>
+                    {result?.address?.address_name || result?.road_address_name}
+                  </p>
+                </li>
+              ))
+            )}
+          </ul>
+          {eventAddress && eventAddress.road_address_name && (
+            <address
+              className={`${styles.addressData} ${
+                isDetailAddress
+                  ? styles.showAddressDetail
+                  : styles.hideAddressDetail
+              }`}
+            >
+              {eventAddress.place_name && <p>{eventAddress.place_name}</p>}
+              <p>{eventAddress.road_address_name}</p>
+            </address>
+          )}
+          {isDetailAddress && (
+            <label
+              htmlFor="event_address_detail"
+              className={`${styles.addressLabel} ${styles.detail}`}
+            >
+              <span className="sOnly">상세 주소 입력</span>
+              <input
+                type="text"
+                id="event_address_detail"
+                className={`${styles.addressInput} ${styles.detail}`}
+                value={detailQuery}
+                onChange={(e) => setDetailQuery(e.target.value)}
+                placeholder="상세 주소를 입력해 주세요."
+              />
+            </label>
+          )}
+          <div className={styles.btnWrap}>
+            <Button
+              buttonStyle={ButtonStyleEnum.Cancel}
+              onClick={handleHideAddressModal}
+              buttonClassName={`${styles.modalBtn}`}
+            >
+              취소
+            </Button>
+            <Button
+              buttonStyle={ButtonStyleEnum.Normal}
+              onClick={() => handleAddAddress(detailQuery)}
+              buttonClassName={`${styles.modalBtn}`}
+            >
+              확인
+            </Button>
+          </div>
+        </Modal>
+      )}
     </main>
   );
 };
