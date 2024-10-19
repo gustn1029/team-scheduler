@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import DatePicker from "react-datepicker";
@@ -8,14 +8,19 @@ import { ko } from "date-fns/locale/ko";
 import LabelInput from "../../inputs/input/LabelInput";
 import CustomTimePicker from "../create/CustomTimePicker";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
 import { appAuth, appFireStore } from "../../../firebase/config";
 import Header from "../../header/Header";
-import { EventsData } from "../../../types";
+import { AddressResult, EventAddress, EventsData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, Timestamp } from "firebase/firestore";
 import Loader from "../../loader/Loader";
-import { updateEvent, userDataFetch } from "../../../utils/http";
+import { eventAddressFetch, updateEvent, userDataFetch } from "../../../utils/http";
+import Button from "../../button/Button";
+import Modal from "../../modal/Modal";
+import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
+import IconButton from "../../button/iconButton/IconButton";
+import { MdCancel } from "react-icons/md";
 
 const Edit: React.FC = () => {
   // 현재 로그인한 사용자 정보 가져오기
@@ -44,7 +49,27 @@ const Edit: React.FC = () => {
 
   // 하루 종일 토글 상태
   const [isChecked, setIsChecked] = useState(false);
-  
+
+  // 주소 관련 state
+  const [isAddressModal, setIsAddressModal] = useState<boolean>(false);
+  const [isDetailAddress, setIsDetailAddress] = useState<boolean>(false);
+  const [isAddAddress, setIsAddAddress] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
+  const [detailQuery, setDetailQuery] = useState<string>("");
+  const [eventAddress, setEventAddress] = useState<EventAddress | undefined>(
+    undefined
+  );
+
+  const {
+    data: addressData,
+    isLoading: addressIsLoading,
+    refetch,
+  } = useQuery<AddressResult[], Error>({
+    queryKey: ["addressSearch", query],
+    queryFn: () => eventAddressFetch(query),
+    enabled: false,
+  });
+
   // 이벤트 ID를 URL에서 가져옴
   const { id } = useParams();
 
@@ -70,19 +95,24 @@ const Edit: React.FC = () => {
   });
 
   // 이벤트 업데이트를 처리하는 useMutation
-  const updateEventMutation = useMutation<void, Error, EventsData>(
-    {
-        mutationFn: async (data) => await updateEvent({ data, eventData: eventData as EventsData, id: id as string }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["events", appAuth.currentUser?.uid, id]});
-            navigate(`/calendarlist/${id}`);
-        },
-        onError: (error: Error) => {
-            console.error("데이터 업데이트 중 오류 발생:", error);
-            alert("데이터 업데이트에 실패했습니다.");
-        },
-    }
-  );
+  const updateEventMutation = useMutation<void, Error, EventsData>({
+    mutationFn: async (data) =>
+      await updateEvent({
+        data,
+        eventData: eventData as EventsData,
+        id: id as string,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["events", appAuth.currentUser?.uid, id],
+      });
+      navigate(`/calendarlist/${id}`);
+    },
+    onError: (error: Error) => {
+      console.error("데이터 업데이트 중 오류 발생:", error);
+      alert("데이터 업데이트에 실패했습니다.");
+    },
+  });
 
   // React Hook Form 사용
   const {
@@ -97,14 +127,24 @@ const Edit: React.FC = () => {
   useEffect(() => {
     if (eventData) {
       // Firestore에서 가져온 Timestamp를 Date 객체로 변환
-      const startTime = eventData.startDate instanceof Timestamp ? eventData.startDate.toDate() : eventData.startDate;
-      const endTime = eventData.endDate instanceof Timestamp ? eventData.endDate.toDate() : eventData.endDate;
-      
+      const startTime =
+        eventData.startDate instanceof Timestamp
+          ? eventData.startDate.toDate()
+          : eventData.startDate;
+      const endTime =
+        eventData.endDate instanceof Timestamp
+          ? eventData.endDate.toDate()
+          : eventData.endDate;
+
       setStartDate(startTime);
       setEndDate(endTime);
 
       // 시작 시간이 00:00, 종료 시간이 23:59이면 하루 종일로 설정
-      const isAllDayEvent = startTime.getHours() === 0 && startTime.getMinutes() === 0 && endTime.getHours() === 23 && endTime.getMinutes() === 59;
+      const isAllDayEvent =
+        startTime.getHours() === 0 &&
+        startTime.getMinutes() === 0 &&
+        endTime.getHours() === 23 &&
+        endTime.getMinutes() === 59;
       setIsChecked(isAllDayEvent);
 
       // setValue를 통한 폼 초기값 설정
@@ -116,6 +156,17 @@ const Edit: React.FC = () => {
       setSelectedColor(eventData.eventColor || "blue");
       setSelectedText(eventData.eventColor || "Blue");
       setMemoCount(eventData.eventMemo.length);
+
+      // 주소 정보 저장
+      if(eventData.address !== null) {
+        setEventAddress(eventData.address);
+        setIsAddAddress(true);
+
+        if(eventData.address?.detail_address) {
+          setDetailQuery(eventData?.address.detail_address);
+          setIsDetailAddress(true);
+        }
+      }
     }
   }, [eventData, setValue]);
 
@@ -132,10 +183,11 @@ const Edit: React.FC = () => {
 
     // 업데이트할 이벤트 데이터 구성
     const updateEventData: EventsData = {
-        ...data,
-        startDate: newEventStartDate as Date,
-        endDate: newEventEndDate as Date,
-        eventColor: selectedColor,
+      ...data,
+      address: eventAddress ? eventAddress : null,
+      startDate: newEventStartDate as Date,
+      endDate: newEventEndDate as Date,
+      eventColor: selectedColor,
     };
     // 이벤트 업데이트 호출
     updateEventMutation.mutateAsync(updateEventData);
@@ -232,10 +284,76 @@ const Edit: React.FC = () => {
       e.target.value = e.target.value.slice(0, maxLength);
     }
     setMemoCount(e.target.value.length);
-  }
+  };
+
+  // 주소 검색
+  const handleSearch = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    refetch();
+  };
+
+  // 선택한 주소 데이터 저장하는 함수
+  const handleSetAddress = (data: AddressResult) => {
+    const addressData: EventAddress = {
+      place_name: data?.place_name || "",
+      road_address_name: data?.road_address_name || data?.address_name,
+      region_address_name: data?.address?.address_name || data?.address_name,
+      x: data.x,
+      y: data.y,
+    };
+
+    setEventAddress(addressData);
+
+    if (!data?.place_name) {
+      setIsDetailAddress(true);
+    } else {
+      setIsDetailAddress(false);
+      if (detailQuery && detailQuery.trim() !== "") {
+        setDetailQuery("");
+      }
+    }
+  };
+
+  // 최종 주소 데이터 저장
+  const handleAddAddress = (detail: string | null) => {
+    if (detail !== null && detail.trim() !== "") {
+      setEventAddress((addr) => ({ ...addr, detail_address: detail }));
+    }
+    setIsAddressModal(false);
+    setIsAddAddress(true);
+    setQuery("");
+  };
+
+  // 주소 검색하는 모달 띄우기
+  const handleShowAddressModal = () => {
+    setIsAddressModal(true);
+  };
+
+  // 주소 검색 모달 숨기기
+  const handleHideAddressModal = () => {
+    setIsDetailAddress(false);
+    if (!isAddAddress) {
+      setEventAddress(undefined);
+    }
+    setDetailQuery("");
+    setQuery("");
+    setIsAddressModal(false);
+  };
+
+  // 저장된 주소 데이터 삭제
+  const handleRemoveAddress = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (eventAddress) {
+      setEventAddress(undefined);
+      setIsAddAddress(false);
+    }
+    if (detailQuery !== "") {
+      setDetailQuery("");
+    }
+  };
 
   // 로딩 상태 시 로더 표시
-  if (isLoading) return <Loader />;
+  if (isLoading || addressIsLoading) return <Loader />;
 
   return (
     <main className={styles.editMain}>
@@ -250,7 +368,9 @@ const Edit: React.FC = () => {
                 src={`${authData?.profileImg}` || "default-profile-image-url"}
                 alt="writerProfile"
               />
-              <span className={styles.writerName}>{`${authData?.nickname}`}</span>
+              <span
+                className={styles.writerName}
+              >{`${authData?.nickname}`}</span>
             </div>
             <div className={styles.titleIpt}>
               <LabelInput
@@ -386,7 +506,28 @@ const Edit: React.FC = () => {
                 )}
               </div>
             </div>
-
+            <section className={styles.address}>
+              <h3>주소 입력</h3>
+              <div>
+                <Button
+                  buttonStyle={ButtonStyleEnum.NONE}
+                  onClick={handleShowAddressModal}
+                  buttonClassName={`${styles.addressAddBtn}
+                ${eventAddress ? styles.addressUpdateBtn : styles.addressBtn}`}
+                >
+                  {eventAddress
+                    ? eventAddress.road_address_name
+                    : "주소를 입력해 주세요."}
+                </Button>
+                {isAddAddress && (
+                  <IconButton
+                    onClick={handleRemoveAddress}
+                    className={styles.cancelBtn}
+                    icon={<MdCancel />}
+                  />
+                )}
+              </div>
+            </section>
             <div className={styles.meMo}>
               <h3>메모</h3>
               <textarea
@@ -403,6 +544,92 @@ const Edit: React.FC = () => {
           </>
         )}
       </form>
+      {isAddressModal && (
+        <Modal isOpen={isAddressModal} onClose={handleHideAddressModal}>
+          <div className={styles.modalInputWrap}>
+            <label htmlFor="event_address" className={styles.addressLabel}>
+              <span className="sOnly">주소 입력</span>
+              <input
+                type="text"
+                id="event_address"
+                className={styles.addressInput}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="주소를 입력해 주세요."
+              />
+            </label>
+            <Button
+              onClick={(e) => handleSearch(e)}
+              buttonStyle={ButtonStyleEnum.NormalWhite}
+              buttonClassName={`${styles.modalBtn}`}
+            >
+              검색
+            </Button>
+          </div>
+          <ul className={styles.addressList}>
+            {!addressData || addressData.length === 0 ? (
+              <li>검색된 주소가 없습니다.</li>
+            ) : (
+              addressData?.map((result, index) => (
+                <li
+                  key={index}
+                  className={styles.addressListItem}
+                  onClick={() => handleSetAddress(result)}
+                >
+                  <strong>{result?.place_name || result?.address_name}</strong>
+                  <p>
+                    {result?.address?.address_name || result?.road_address_name}
+                  </p>
+                </li>
+              ))
+            )}
+          </ul>
+          {eventAddress && eventAddress.road_address_name && (
+            <address
+              className={`${styles.addressData} ${
+                isDetailAddress
+                  ? styles.showAddressDetail
+                  : styles.hideAddressDetail
+              }`}
+            >
+              {eventAddress.place_name && <p>{eventAddress.place_name}</p>}
+              <p>{eventAddress.road_address_name}</p>
+            </address>
+          )}
+          {isDetailAddress && (
+            <label
+              htmlFor="event_address_detail"
+              className={`${styles.addressLabel} ${styles.detail}`}
+            >
+              <span className="sOnly">상세 주소 입력</span>
+              <input
+                type="text"
+                id="event_address_detail"
+                className={`${styles.addressInput} ${styles.detail}`}
+                value={detailQuery}
+                onChange={(e) => setDetailQuery(e.target.value)}
+                placeholder="상세 주소를 입력해 주세요."
+              />
+            </label>
+          )}
+          <div className={styles.btnWrap}>
+            <Button
+              buttonStyle={ButtonStyleEnum.Cancel}
+              onClick={handleHideAddressModal}
+              buttonClassName={`${styles.modalBtn}`}
+            >
+              취소
+            </Button>
+            <Button
+              buttonStyle={ButtonStyleEnum.Normal}
+              onClick={() => handleAddAddress(detailQuery)}
+              buttonClassName={`${styles.modalBtn}`}
+            >
+              확인
+            </Button>
+          </div>
+        </Modal>
+      )}
     </main>
   );
 };
