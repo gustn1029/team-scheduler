@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className={styles.headerComponent}>
+    <header className={styles.headerComponent}>
       <button
         onClick={onCancel ? onCancel : handleCancel}
         className={styles.closeButton}
@@ -65,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
         </div>
       )}
-    </div>
+    </header>
   );
 };
 
