@@ -399,7 +399,7 @@ const Create: React.FC = () => {
             htmlFor="toggleSwitch"
             role="switch"
           >
-            <h3>하루 종일</h3>
+            <span>하루 종일</span>
             <input
               id="toggleSwitch"
               className={styles.toggleBar}
