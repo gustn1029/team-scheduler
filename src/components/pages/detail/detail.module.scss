@@ -63,3 +63,28 @@
     word-break: break-word;
   }
 }
+
+.eventAddress {
+  padding: 20px 15px;
+  border-bottom: 1px solid #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  address {
+    strong,
+    em,
+    span {
+      display: block;
+      font-style: normal;
+    }
+
+    em,
+    span {
+      font-size: 14px;
+    }
+    span {
+      color: #777;
+    }
+  }
+}

@@ -17,6 +17,8 @@ import { EventsData, UserData } from "../../../types";
 import Loader from "../../loader/Loader";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
+import KakaoMap from "../../kakaoMap/KakaoMap";
+import { toast } from "react-toastify";
 
 type CurrentUserData = Omit<UserData, "token">;
 
@@ -50,7 +52,7 @@ function Detail() {
   useEffect(() => {
     const fetchEventData = async () => {
       if (!id) {
-        setError("이벤트 ID가 없습니다.");
+        setError("일정 ID가 없습니다.");
         setIsLoading(false);
         return;
       }
@@ -173,12 +175,12 @@ function Detail() {
 
   const handleDelete = async () => {
     if (!id) {
-      console.error("이벤트 ID가 없습니다.");
+      console.error("일정 ID가 없습니다.");
       return;
     }
 
     const confirmDelete = window.confirm(
-      "정말로 이 이벤트를 삭제하시겠습니까?"
+      "정말로 이 일정을 삭제하시겠습니까?"
     );
     if (!confirmDelete) return;
 
@@ -191,9 +193,10 @@ function Detail() {
         sessionStorage.removeItem("seconds");
       }
       navigate("/");
+      toast.success("일정를 삭제했습니다.")
     } catch (err) {
-      console.error("이벤트 삭제 중 오류가 발생했습니다:", err);
-      setError("이벤트 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
+      console.error("일정 삭제 중 오류가 발생했습니다:", err);
+      setError("일정 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
     } finally {
       setIsLoading(false);
     }
@@ -216,6 +219,8 @@ function Detail() {
 
     return querySnapshot.docs[0].data() as CurrentUserData;
   };
+
+  console.log(eventData);
   return (
     <>
       <Header
@@ -231,7 +236,7 @@ function Detail() {
       <main>
         {eventData.eventType !== EventTypeEnum.HOLIDAY && (
           <div className={styles.writerContainer}>
-            <span>작성자</span>
+            <h3>작성자</h3>
             {userData && userData.profileImg ? (
               <p>
                 <img
@@ -251,9 +256,11 @@ function Detail() {
             className={styles.listColor}
             style={{ backgroundColor: getEventColor(eventData.eventColor) }}
           ></div>
+          <h3 className="sOnly">제목</h3>
           <p className={styles.title}>{eventData.title}</p>
         </div>
         <div className={styles.timeContainer}>
+          <h3 className="sOnly">일정 기간</h3>
           <p>
             {formatEventPeriod(
               eventStartDate,
@@ -263,10 +270,37 @@ function Detail() {
           </p>
         </div>
         {eventData.eventType !== EventTypeEnum.HOLIDAY && (
-          <div className={styles.memoContainer}>
-            <span>메모</span>
-            <p className={styles.memoTextarea}>{eventData?.eventMemo || ""}</p>
-          </div>
+          <>
+            <div className={styles.memoContainer}>
+              <h3>메모</h3>
+              <p className={styles.memoTextarea}>
+                {eventData?.eventMemo || ""}
+              </p>
+            </div>
+            {eventData.address &&
+              eventData.address.x &&
+              eventData.address.y && (
+                <div className={styles.eventAddress}>
+                  <h3>일정 장소</h3>
+                  <KakaoMap
+                    latitude={Number(eventData.address.y)}
+                    longitude={Number(eventData.address.x)}
+                  />
+                  <address>
+                    {eventData.address.place_name && (
+                      <strong> {eventData.address.place_name}</strong>
+                    )}
+                    <em>
+                      {`${eventData.address.road_address_name}${eventData.address.detail_address ? ` ${eventData.address.detail_address}`:""}`}
+
+                    </em>
+                    <span>
+                      지번 주소: {eventData.address.region_address_name}
+                    </span>
+                  </address>
+                </div>
+              )}
+          </>
         )}
       </main>
     </>
