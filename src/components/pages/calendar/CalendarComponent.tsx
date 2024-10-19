@@ -110,7 +110,8 @@ const CalendarComponent = () => {
         // 할 일 prefetch
         queryClient.prefetchQuery({
           queryKey: ["todos", year, month, currentUserUid],
-          queryFn: () => calendarTodosFetch({ year, month, uid: currentUserUid }),
+          queryFn: () =>
+            calendarTodosFetch({ year, month, uid: currentUserUid }),
           staleTime: Infinity,
         });
       };
@@ -195,26 +196,33 @@ const CalendarComponent = () => {
     const today = dayjs();
     const tileDate = dayjs(date);
 
+    let className = "";
+
+    // 오늘 날짜 처리
     if (tileDate.isSame(today, "day")) {
-      return !clickEventDate || tileDate.isSame(clickEventDate)
-        ? `${styles.currentDay} ${styles.currentDayBg}`
-        : styles.currentDay;
-    }
-    if (tileDate.day() === 6) {
-      return tileDate.isSame(clickEventDate)
-        ? `${styles.clickedDay} ${styles.saturday}`
-        : styles.saturday;
-    }
-    if (tileDate.day() === 0) {
-      return tileDate.isSame(clickEventDate)
-        ? `${styles.clickedDay} ${styles.sunday}`
-        : styles.sunday;
-    }
-    if (tileDate.isSame(dayjs(clickEventDate))) {
-      return styles.clickedDay;
+      className += `${styles.currentDay} `;
+
+      if (!clickEventDate || tileDate.isSame(clickEventDate, "day")) {
+        className += `${styles.currentDayBg} `;
+      }
     }
 
-    return "";
+    // 클릭된 날짜 처리
+    if (clickEventDate && tileDate.isSame(clickEventDate, "day")) {
+      className += `${styles.clickedDay} `;
+    }
+
+    // 토요일 처리
+    if (tileDate.day() === 6) {
+      className += `${styles.saturday} `;
+    }
+
+    // 일요일 처리
+    if (tileDate.day() === 0) {
+      className += `${styles.sunday} `;
+    }
+
+    return className.trim();
   };
 
   /**
@@ -505,7 +513,13 @@ const CalendarComponent = () => {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && <CreateModal bottom={-65} right={25} params={`date=${dayjs(new Date()).format("YYYY-MM-DD")}`} />}
+        {isCreate && (
+          <CreateModal
+            bottom={-65}
+            right={25}
+            params={`date=${dayjs(new Date()).format("YYYY-MM-DD")}`}
+          />
+        )}
       </section>
       <Calendar
         className={styles.calendar}
