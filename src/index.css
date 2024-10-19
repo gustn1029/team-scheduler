@@ -128,6 +128,17 @@ button {
   height: 100vh;
   max-width: 390px;
   background-color: #ffffff;
-  overflow: hidden;
+  overflow-y: scroll;
   position: relative;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #3FA9F5;
+    border-radius: 12px 12px 12px 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
