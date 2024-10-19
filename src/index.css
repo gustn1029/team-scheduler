@@ -129,6 +129,7 @@ button {
   max-width: 390px;
   background-color: #ffffff;
   overflow-y: scroll;
+  overflow-x: hidden;
   position: relative;
 
   &::-webkit-scrollbar {
