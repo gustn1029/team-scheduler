@@ -78,6 +78,7 @@ export interface EventsData {
   eventColor: string;
   category: any[];
   eventMemo: string;
+  address: EventAddress | null;
   like: number;
   comments: any[];
   createDate: Date;
@@ -107,6 +108,29 @@ export type EventPostData = Omit<
   EventsData,
   "category" | "todos" | "comments" | "like" | "createDate"
 >;
+
+export interface AddressResult {
+  address_name: string;
+  place_name?: string;
+  road_address_name?:string;
+  place_url?:string;
+  address_type?: 'REGION' | 'ROAD' | 'REGION_ADDR' | 'ROAD_ADDR';
+  address: {
+    address_name: string;
+  };
+  x: string;
+  y: string;
+}
+
+export interface EventAddress {
+  region_address_name?: string;
+  place_url?: string;
+  road_address_name?:string;
+  place_name?:string;
+  detail_address?:string;
+  x?: string;
+  y?: string;
+}
 
 export interface EventsFetchProps {
   year: number;
