@@ -301,114 +301,100 @@
 
 ## 7. 페이지별 기능
 
-### [기능1]
+### [로그인]
 
 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
 
-| 기능1 |
-|----------|
-|이미지|
-
-<br>
-
-### [기능2]
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-| 기능2 |
-|----------|
-|이미지|
-
-<br>
-
-### [기능3]
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-
-| 기능3 |
-|----------|
-|이미지|
-
-<br>
-
-### [기능4]
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-| 기능4 |
-|----------|
-|이미지|
-
-<br>
-
-### [기능5]
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-| 기능5 |
-|----------|
-|이미지|
-
-<br>
-
-### [기능6]
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-| 기능6 |
-|----------|
-|이미지|
-
-<br>
-
-### [기능7]
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-| 기능7.1 | 기능7.2 |
+| 로그인 | 구글 로그인 |
 |----------|----------|
-|이미지|이미지|
+| 이미지 | 이미지 |
 
 <br>
 
-### [기능8]
+### [회원가입]
 
 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
 
-| 기능8 |
+| 회원가입 | 비밀번호 조건에 안맞을 시 | 회원가입 조건에 맞을 시 |
+|----------|----------|----------|
+| 이미지 | 이미지 | 이미지 |
+
+<br>
+
+### [캘린더 메인 페이지]
+
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+
+
+| 메인 페이지 | 캘린더 월 변경 | + 버튼 터치시 |
+|----------|----------|----------|
+| 이미지 | gif 이미지 | 이미지 |
+
+<br>
+
+### [일정 추가 페이지]
+
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+
+| 일정 추가 | 하루 종일 설정 시 | 메모 글자 수 제한 |
+|----------|----------|----------|
+| 이미지 | 이미지 | gif 이미지 |
+
+<br>
+
+### [일정 상세 페이지]
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+
+| 일정 상세 페이지 |
 |----------|
-|이미지|
-
+| 이미지 |
 <br>
 
-### [기능9]
-
-#### 1. 기능9.1
-
+#### [공휴일 일 경우]
 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
 
-| 기능9.1.1 | 기능9.1.2 |
-|----------|----------|
-|이미지|이미지|
-
-<br>
-
-#### 2. 기능9.2
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-| 기능9.2.1 |
+| 공휴일 수정 불가 페이지 |
 |----------|
-|이미지|
+| 이미지 |
 <br>
 
-#### 3. 기능9.3
+### [일정 수정 페이지]
 
 - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
 
-| 기능9.3.1 |
+| 일정 수정 페이지 |
 |----------|
-|이미지|
+| 이미지 |
+
+<br>
+
+### [프로필 상세 페이지]
+
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+
+| 프로필 상세 페이지 |
+|----------|
+| 이미지 |
+
+<br>
+
+### [프로필 수정 페이지]
+
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+
+| 프로필 수정 페이지 |
+|----------|
+| 이미지 |
+
+<br>
+
+### [To-do 페이지]
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+
+| To-do 페이지 |
+|----------|
+| 이미지 |
+
 <br>
 
 
