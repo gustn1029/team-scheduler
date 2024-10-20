@@ -12,6 +12,8 @@ import { appAuth } from "../../../firebase/config";
 import LinkButton from "../../button/LinkButton";
 import logo from "../../../assets/images/logo.svg";
 import googleLogo from "../../../assets/images/googleLogo.svg";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutYVarients } from "../../../utils/Animations";
 
 interface FormData {
   userEmail: string;
@@ -73,7 +75,7 @@ const Login: React.FC = () => {
   }, [navigate]);
 
   return (
-    <main>
+    <MainAnimationLayout variants={layoutYVarients}>
       <div className={styles.logoContainer}>
         <img className={styles.logo} src={logo} alt="TimeFlow" />
       </div>
@@ -163,7 +165,7 @@ const Login: React.FC = () => {
           비밀번호를 분실하셨나요?
         </Button>
       </div>
-    </main>
+    </MainAnimationLayout>
   );
 };
 export default Login;

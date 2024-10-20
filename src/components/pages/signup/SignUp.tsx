@@ -13,6 +13,8 @@ import LinkButton from "../../button/LinkButton";
 import logo from "../../../assets/images/logo.svg";
 import defaultProfileImage from "../../../assets/images/profile/profile.png";
 import { FirebaseError } from "firebase/app";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutYVarients } from "../../../utils/Animations";
 
 interface FormData {
   userNickName: string;
@@ -146,7 +148,7 @@ export const SignUp: React.FC = () => {
   }, [clearErrors, setError, watch]);
 
   return (
-    <main>
+    <MainAnimationLayout variants={layoutYVarients}>
       <div className={styles.logoContainer}>
         <img className={styles.logo} src={logo} alt="TimeFlow" />
       </div>
@@ -291,6 +293,6 @@ export const SignUp: React.FC = () => {
           </div>
         </form>
       </div>
-    </main>
+    </MainAnimationLayout>
   );
 };
