@@ -198,7 +198,7 @@ export const SignUp: React.FC = () => {
                     const localPart = value.split("@")[0];
                     return (
                       localPart.length <= 30 ||
-                      "로컬 부분은 30자 이내로 작성해야 합니다."
+                      "로컬 부분(@ 앞)은 30자 내로 작성해야 합니다."
                     );
                   },
                 },
