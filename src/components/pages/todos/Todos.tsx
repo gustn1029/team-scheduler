@@ -20,6 +20,9 @@ import { useEffect, useState } from "react";
 import Modal from "../../modal/Modal";
 import Header from "../../header/Header";
 import Loader from "../../loader/Loader";
+import { AnimatePresence } from "framer-motion";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutYVarients } from "../../../utils/Animations";
 
 const Todos = () => {
   const [params] = useSearchParams();
@@ -101,7 +104,7 @@ const Todos = () => {
           selectedDate.toISOString().split("T")[0],
         ],
       });
-      if(!emptyTodosCheck) {
+      if (!emptyTodosCheck) {
         toast.success(message);
       }
       navigate(-1);
@@ -154,7 +157,7 @@ const Todos = () => {
       setIsDeleteModal(false);
       return;
     }
-  
+
     if (todoData[0]?.id) {
       await deleteMutation.mutateAsync({
         collectionName: "todos",
@@ -220,11 +223,16 @@ const Todos = () => {
   const emptyTodosCheck = todoData && todoData[0]?.todos && todos.length === 0;
 
   return (
-    <main className={styles.todosWrap}>
+    <MainAnimationLayout
+      variants={layoutYVarients}
+      className={styles.todosWrap}
+    >
       <Header
         title="TODO"
         onDelete={
-          todoData && todoData[0]?.todos && !emptyTodosCheck ? handleShowDeleteModal : undefined
+          todoData && todoData[0]?.todos && !emptyTodosCheck
+            ? handleShowDeleteModal
+            : undefined
         }
         onCancel={handleShowModal}
       />
@@ -253,55 +261,57 @@ const Todos = () => {
           저장
         </Button>
       </section>
-      {isShowCancelModal && (
-        <Modal isOpen={isShowCancelModal} onClose={handleHideCancelModal}>
-          <strong className={styles.todoModalTitle}>
-            저장되지 않은 할일은 삭제됩니다.
-            <br />
-            취소하시겠습니까?
-          </strong>
-          <section className={styles.todoBtnWrap}>
-            <Button
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleHideCancelModal}
-            >
-              취소
-            </Button>
-            <Button
-              onClick={handleCancel}
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Normal}
-            >
-              확인
-            </Button>
-          </section>
-        </Modal>
-      )}
-      {isDeleteModal && (
-        <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
-          <strong className={styles.todoModalTitle}>
-            할일을 전체 삭제하시겠습니까?
-          </strong>
-          <section className={styles.todoBtnWrap}>
-            <Button
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleHideDeleteModal}
-            >
-              취소
-            </Button>
-            <Button
-              onClick={handleDeleteTodo}
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Normal}
-            >
-              삭제
-            </Button>
-          </section>
-        </Modal>
-      )}
-    </main>
+      <AnimatePresence>
+        {isShowCancelModal && (
+          <Modal isOpen={isShowCancelModal} onClose={handleHideCancelModal}>
+            <strong className={styles.todoModalTitle}>
+              저장되지 않은 할일은 삭제됩니다.
+              <br />
+              취소하시겠습니까?
+            </strong>
+            <section className={styles.todoBtnWrap}>
+              <Button
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={handleHideCancelModal}
+              >
+                취소
+              </Button>
+              <Button
+                onClick={handleCancel}
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Normal}
+              >
+                확인
+              </Button>
+            </section>
+          </Modal>
+        )}
+        {isDeleteModal && (
+          <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
+            <strong className={styles.todoModalTitle}>
+              할일을 전체 삭제하시겠습니까?
+            </strong>
+            <section className={styles.todoBtnWrap}>
+              <Button
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={handleHideDeleteModal}
+              >
+                취소
+              </Button>
+              <Button
+                onClick={handleDeleteTodo}
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Normal}
+              >
+                삭제
+              </Button>
+            </section>
+          </Modal>
+        )}
+      </AnimatePresence>
+    </MainAnimationLayout>
   );
 };
 

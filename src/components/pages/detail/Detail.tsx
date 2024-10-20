@@ -19,6 +19,8 @@ import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
 import KakaoMap from "../../kakaoMap/KakaoMap";
 import { toast } from "react-toastify";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutXVarients } from "../../../utils/Animations";
 
 type CurrentUserData = Omit<UserData, "token">;
 
@@ -179,9 +181,7 @@ function Detail() {
       return;
     }
 
-    const confirmDelete = window.confirm(
-      "정말로 이 일정을 삭제하시겠습니까?"
-    );
+    const confirmDelete = window.confirm("정말로 이 일정을 삭제하시겠습니까?");
     if (!confirmDelete) return;
 
     try {
@@ -193,7 +193,7 @@ function Detail() {
         sessionStorage.removeItem("seconds");
       }
       navigate("/");
-      toast.success("일정를 삭제했습니다.")
+      toast.success("일정를 삭제했습니다.");
     } catch (err) {
       console.error("일정 삭제 중 오류가 발생했습니다:", err);
       setError("일정 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
@@ -222,7 +222,7 @@ function Detail() {
 
   console.log(eventData);
   return (
-    <>
+    <MainAnimationLayout variants={layoutXVarients}>
       <Header
         onCancel={handleCancel}
         title="일정 상세"
@@ -233,77 +233,68 @@ function Detail() {
           onDelete: handleDelete,
         })}
       />
-      <main>
-        {eventData.eventType !== EventTypeEnum.HOLIDAY && (
-          <div className={styles.writerContainer}>
-            <h3>작성자</h3>
-            {userData && userData.profileImg ? (
-              <p>
-                <img
-                  src={userData.profileImg}
-                  alt="작성자 프로필"
-                  className={styles.profileImg}
-                />
-                <span>{userData.nickname}</span>
-              </p>
-            ) : (
-              <div className={styles.defaultProfileImg}>프로필 없음</div>
-            )}
+      {eventData.eventType !== EventTypeEnum.HOLIDAY && (
+        <div className={styles.writerContainer}>
+          <h3>작성자</h3>
+          {userData && userData.profileImg ? (
+            <p>
+              <img
+                src={userData.profileImg}
+                alt="작성자 프로필"
+                className={styles.profileImg}
+              />
+              <span>{userData.nickname}</span>
+            </p>
+          ) : (
+            <div className={styles.defaultProfileImg}>프로필 없음</div>
+          )}
+        </div>
+      )}
+      <div className={styles.titleContainer}>
+        <div
+          className={styles.listColor}
+          style={{ backgroundColor: getEventColor(eventData.eventColor) }}
+        ></div>
+        <h3 className="sOnly">제목</h3>
+        <p className={styles.title}>{eventData.title}</p>
+      </div>
+      <div className={styles.timeContainer}>
+        <h3 className="sOnly">일정 기간</h3>
+        <p>
+          {formatEventPeriod(eventStartDate, eventEndDate, eventData.eventType)}
+        </p>
+      </div>
+      {eventData.eventType !== EventTypeEnum.HOLIDAY && (
+        <>
+          <div className={styles.memoContainer}>
+            <h3>메모</h3>
+            <p className={styles.memoTextarea}>{eventData?.eventMemo || ""}</p>
           </div>
-        )}
-        <div className={styles.titleContainer}>
-          <div
-            className={styles.listColor}
-            style={{ backgroundColor: getEventColor(eventData.eventColor) }}
-          ></div>
-          <h3 className="sOnly">제목</h3>
-          <p className={styles.title}>{eventData.title}</p>
-        </div>
-        <div className={styles.timeContainer}>
-          <h3 className="sOnly">일정 기간</h3>
-          <p>
-            {formatEventPeriod(
-              eventStartDate,
-              eventEndDate,
-              eventData.eventType
-            )}
-          </p>
-        </div>
-        {eventData.eventType !== EventTypeEnum.HOLIDAY && (
-          <>
-            <div className={styles.memoContainer}>
-              <h3>메모</h3>
-              <p className={styles.memoTextarea}>
-                {eventData?.eventMemo || ""}
-              </p>
+          {eventData.address && eventData.address.x && eventData.address.y && (
+            <div className={styles.eventAddress}>
+              <h3>일정 장소</h3>
+              <KakaoMap
+                latitude={Number(eventData.address.y)}
+                longitude={Number(eventData.address.x)}
+              />
+              <address>
+                {eventData.address.place_name && (
+                  <strong> {eventData.address.place_name}</strong>
+                )}
+                <em>
+                  {`${eventData.address.road_address_name}${
+                    eventData.address.detail_address
+                      ? ` ${eventData.address.detail_address}`
+                      : ""
+                  }`}
+                </em>
+                <span>지번 주소: {eventData.address.region_address_name}</span>
+              </address>
             </div>
-            {eventData.address &&
-              eventData.address.x &&
-              eventData.address.y && (
-                <div className={styles.eventAddress}>
-                  <h3>일정 장소</h3>
-                  <KakaoMap
-                    latitude={Number(eventData.address.y)}
-                    longitude={Number(eventData.address.x)}
-                  />
-                  <address>
-                    {eventData.address.place_name && (
-                      <strong> {eventData.address.place_name}</strong>
-                    )}
-                    <em>
-                      {`${eventData.address.road_address_name}${eventData.address.detail_address ? ` ${eventData.address.detail_address}`:""}`}
-
-                    </em>
-                    <span>
-                      지번 주소: {eventData.address.region_address_name}
-                    </span>
-                  </address>
-                </div>
-              )}
-          </>
-        )}
-      </main>
-    </>
+          )}
+        </>
+      )}
+    </MainAnimationLayout>
   );
 }
 

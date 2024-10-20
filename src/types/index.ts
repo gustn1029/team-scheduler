@@ -110,6 +110,7 @@ export type EventPostData = Omit<
 >;
 
 export interface AddressResult {
+  id?:string;
   address_name: string;
   place_name?: string;
   road_address_name?:string;

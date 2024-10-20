@@ -32,6 +32,8 @@ import { appAuth } from "../../../firebase/config";
 
 import { FaPlus } from "react-icons/fa6";
 import { Timestamp } from "firebase/firestore";
+import { layoutYVarients } from "../../../utils/Animations";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -379,11 +381,10 @@ const CalendarComponent = () => {
                 </Fragment>
               );
             })}
-            {dayjs(date).isSame(dayjs(clickEventDate)) && (
-              <CreateModal
-                params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
-              />
-            )}
+            <CreateModal
+              isOpen={dayjs(date).isSame(dayjs(clickEventDate))}
+              params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
+            />
           </span>
         </span>
         <span
@@ -479,7 +480,7 @@ const CalendarComponent = () => {
   };
 
   return (
-    <main className={styles.calendarWrap}>
+    <MainAnimationLayout variants={layoutYVarients} className={styles.calendarWrap}>
       <section
         className={`${styles.navWrap} ${isView ? styles.view : styles.hidden}`}
         onClick={handleHideNav}
@@ -513,13 +514,12 @@ const CalendarComponent = () => {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && (
-          <CreateModal
-            bottom={-65}
-            right={25}
-            params={`date=${dayjs(new Date()).format("YYYY-MM-DD")}`}
-          />
-        )}
+        <CreateModal
+          isOpen={isCreate}
+          bottom={-65}
+          right={25}
+          params={`date=${dayjs(new Date()).format("YYYY-MM-DD")}`}
+        />
       </section>
       <Calendar
         className={styles.calendar}
@@ -539,7 +539,7 @@ const CalendarComponent = () => {
         minDetail="month"
         showNavigation={false}
       />
-    </main>
+    </MainAnimationLayout>
   );
 };
 

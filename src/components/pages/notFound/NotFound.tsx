@@ -5,6 +5,8 @@ import styles from "./notFound.module.scss";
 
 import notFoundImage from "../../../assets/images/utils/not_found.png";
 import { useNavigate } from "react-router-dom";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutXVarients } from "../../../utils/Animations";
 
 const NotFound = () => {
     const navigate = useNavigate();
@@ -13,7 +15,7 @@ const NotFound = () => {
         navigate(-1);
     }
   return (
-    <section className={styles.notFound}>
+    <MainAnimationLayout variants={layoutXVarients} className={styles.notFound}>
       <div>
         <img
           src={notFoundImage}
@@ -30,7 +32,7 @@ const NotFound = () => {
       >
         이전 페이지로 이동
       </Button>
-    </section>
+    </MainAnimationLayout>
   );
 };
 

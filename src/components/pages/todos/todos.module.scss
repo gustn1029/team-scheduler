@@ -69,11 +69,12 @@
 }
 
 .todoList {
+    flex-grow: 1;
     padding-right: 5px;
     margin-right: -25px;
-    overflow-y: scroll;
+    overflow-y: auto;
     &::-webkit-scrollbar {
-        width: 5px;
+        width: 3px;
       }
       &::-webkit-scrollbar-thumb {
         background: #3FA9F5;

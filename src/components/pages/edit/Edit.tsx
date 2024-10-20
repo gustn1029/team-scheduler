@@ -15,12 +15,25 @@ import { AddressResult, EventAddress, EventsData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, Timestamp } from "firebase/firestore";
 import Loader from "../../loader/Loader";
-import { eventAddressFetch, updateEvent, userDataFetch } from "../../../utils/http";
+import {
+  eventAddressFetch,
+  updateEvent,
+  userDataFetch,
+} from "../../../utils/http";
 import Button from "../../button/Button";
 import Modal from "../../modal/Modal";
 import { ButtonStyleEnum } from "../../../types/enum/ButtonEnum";
 import IconButton from "../../button/iconButton/IconButton";
 import { MdCancel } from "react-icons/md";
+import { AnimatePresence } from "framer-motion";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import {
+  layoutXVarients,
+  layoutYVarients,
+  listItemVariants,
+  listVariants,
+} from "../../../utils/Animations";
+import { motion } from "framer-motion";
 
 const Edit: React.FC = () => {
   // 현재 로그인한 사용자 정보 가져오기
@@ -54,6 +67,7 @@ const Edit: React.FC = () => {
   const [isAddressModal, setIsAddressModal] = useState<boolean>(false);
   const [isDetailAddress, setIsDetailAddress] = useState<boolean>(false);
   const [isAddAddress, setIsAddAddress] = useState<boolean>(false);
+  const [isUpdateAddress, setIsUpdateAddress] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [detailQuery, setDetailQuery] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<EventAddress | undefined>(
@@ -158,11 +172,11 @@ const Edit: React.FC = () => {
       setMemoCount(eventData.eventMemo.length);
 
       // 주소 정보 저장
-      if(eventData.address !== null) {
+      if (eventData.address !== null) {
         setEventAddress(eventData.address);
         setIsAddAddress(true);
 
-        if(eventData.address?.detail_address) {
+        if (eventData.address?.detail_address) {
           setDetailQuery(eventData?.address.detail_address);
           setIsDetailAddress(true);
         }
@@ -320,7 +334,7 @@ const Edit: React.FC = () => {
       setEventAddress((addr) => ({ ...addr, detail_address: detail }));
     }
     setIsAddressModal(false);
-    setIsAddAddress(true);
+    setIsUpdateAddress(true);
     setQuery("");
   };
 
@@ -332,8 +346,8 @@ const Edit: React.FC = () => {
   // 주소 검색 모달 숨기기
   const handleHideAddressModal = () => {
     setIsDetailAddress(false);
-    if (!isAddAddress) {
-      setEventAddress(undefined);
+    if (!isUpdateAddress && eventData?.address) {
+      setEventAddress(eventData?.address);
     }
     setDetailQuery("");
     setQuery("");
@@ -356,7 +370,7 @@ const Edit: React.FC = () => {
   if (isLoading || addressIsLoading) return <Loader />;
 
   return (
-    <main className={styles.editMain}>
+    <MainAnimationLayout variants={layoutXVarients} className={styles.editMain}>
       <Header title="일정 수정" onConfirm={handleSubmit(onSubmit)} />
       <form>
         {eventData && (
@@ -411,32 +425,48 @@ const Edit: React.FC = () => {
                   </i>
                 </button>
               </div>
-              {isOpen && (
-                <ul
-                  className={`${styles.colorList} ${
-                    isOpen ? styles.view : styles.hidden
-                  }`}
-                >
-                  {colorOptions.map((option) => (
-                    <li
-                      className={styles.selectOption}
-                      key={option.colorClass}
-                      onClick={() =>
-                        handleColorSelect(option.colorClass, option.colorName)
-                      }
-                    >
-                      <div
-                        className={`${styles.colorBox} ${
-                          styles[option.colorClass]
-                        }`}
-                      ></div>
-                      <span className={styles.listName}>
-                        {option.colorName}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.ul
+                    variants={{
+                      hidden: { opacity: 0, y: -10 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: {
+                          staggerChildren: 0.1,
+                        },
+                      },
+                    }}
+                    initial="hidden"
+                    animate="visible"
+                    exit={{ opacity: 0, y: -10 }}
+                    className={`${styles.colorList} ${
+                      isOpen ? styles.view : styles.hidden
+                    }`}
+                  >
+                    {colorOptions.map((option) => (
+                      <motion.li
+                        variants={listItemVariants}
+                        className={styles.selectOption}
+                        key={option.colorClass}
+                        onClick={() =>
+                          handleColorSelect(option.colorClass, option.colorName)
+                        }
+                      >
+                        <div
+                          className={`${styles.colorBox} ${
+                            styles[option.colorClass]
+                          }`}
+                        ></div>
+                        <span className={styles.listName}>
+                          {option.colorName}
+                        </span>
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
               <input
                 type="hidden"
                 {...register("eventColor")}
@@ -475,14 +505,17 @@ const Edit: React.FC = () => {
                   onInputClick={() => handleToggleComponent("startDate")}
                   onClickOutside={() => setOpenComponent(null)}
                 />
-                {!isChecked && (
-                  <CustomTimePicker
-                    selectedDate={startDate as Date}
-                    onTimeChange={handleStartTimeChange}
-                    isOpen={openComponent === "startTime"}
-                    onToggle={() => handleToggleComponent("startTime")}
-                  />
-                )}
+
+                <AnimatePresence>
+                  {!isChecked && (
+                    <CustomTimePicker
+                      selectedDate={startDate as Date}
+                      onTimeChange={handleStartTimeChange}
+                      isOpen={openComponent === "startTime"}
+                      onToggle={() => handleToggleComponent("startTime")}
+                    />
+                  )}
+                </AnimatePresence>
               </div>
 
               <div className={styles.pickerGroup}>
@@ -545,93 +578,112 @@ const Edit: React.FC = () => {
           </>
         )}
       </form>
-      {isAddressModal && (
-        <Modal isOpen={isAddressModal} onClose={handleHideAddressModal}>
-          <div className={styles.modalInputWrap}>
-            <label htmlFor="event_address" className={styles.addressLabel}>
-              <span className="sOnly">주소 입력</span>
-              <input
-                type="text"
-                id="event_address"
-                className={styles.addressInput}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="주소를 입력해 주세요."
-              />
-            </label>
-            <Button
-              onClick={(e) => handleSearch(e)}
-              buttonStyle={ButtonStyleEnum.NormalWhite}
-              buttonClassName={`${styles.modalBtn}`}
-            >
-              검색
-            </Button>
-          </div>
-          <ul className={styles.addressList}>
-            {!addressData || addressData.length === 0 ? (
-              <li>검색된 주소가 없습니다.</li>
-            ) : (
-              addressData?.map((result, index) => (
-                <li
-                  key={index}
-                  className={styles.addressListItem}
-                  onClick={() => handleSetAddress(result)}
+      <AnimatePresence>
+        {isAddressModal && (
+          <Modal isOpen={isAddressModal} onClose={handleHideAddressModal}>
+            <div className={styles.modalInputWrap}>
+              <label htmlFor="event_address" className={styles.addressLabel}>
+                <span className="sOnly">주소 입력</span>
+                <input
+                  type="text"
+                  id="event_address"
+                  className={styles.addressInput}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="주소를 입력해 주세요."
+                />
+              </label>
+              <Button
+                onClick={(e) => handleSearch(e)}
+                buttonStyle={ButtonStyleEnum.NormalWhite}
+                buttonClassName={`${styles.modalBtn}`}
+              >
+                검색
+              </Button>
+            </div>
+
+            <AnimatePresence>
+              <motion.ul
+                key="address"
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+                className={styles.addressList}
+              >
+                {!addressData || addressData.length === 0 ? (
+                  <li>검색된 주소가 없습니다.</li>
+                ) : (
+                  addressData?.map((result) => (
+                    <motion.li
+                      variants={listItemVariants}
+                      key={`${result?.id ? result?.id : result.address_name}`}
+                      className={styles.addressListItem}
+                      onClick={() => handleSetAddress(result)}
+                    >
+                      <strong>
+                        {result?.place_name || result?.address_name}
+                      </strong>
+                      <p>
+                        {result?.address?.address_name ||
+                          result?.road_address_name}
+                      </p>
+                    </motion.li>
+                  ))
+                )}
+              </motion.ul>
+            </AnimatePresence>
+            <AnimatePresence>
+              {eventAddress && eventAddress.road_address_name && (
+                <motion.address
+                  variants={layoutYVarients}
+                  exit={{ opacity: 1, y: 0 }}
+                  className={`${styles.addressData} ${
+                    isDetailAddress
+                      ? styles.showAddressDetail
+                      : styles.hideAddressDetail
+                  }`}
                 >
-                  <strong>{result?.place_name || result?.address_name}</strong>
-                  <p>
-                    {result?.address?.address_name || result?.road_address_name}
-                  </p>
-                </li>
-              ))
+                  {eventAddress.place_name && <p>{eventAddress.place_name}</p>}
+                  <p>{eventAddress.road_address_name}</p>
+                </motion.address>
+              )}
+            </AnimatePresence>
+            {isDetailAddress && (
+              <label
+                htmlFor="event_address_detail"
+                className={`${styles.addressLabel} ${styles.detail}`}
+              >
+                <span className="sOnly">상세 주소 입력</span>
+                <input
+                  type="text"
+                  id="event_address_detail"
+                  className={`${styles.addressInput} ${styles.detail}`}
+                  value={detailQuery}
+                  onChange={(e) => setDetailQuery(e.target.value)}
+                  placeholder="상세 주소를 입력해 주세요."
+                />
+              </label>
             )}
-          </ul>
-          {eventAddress && eventAddress.road_address_name && (
-            <address
-              className={`${styles.addressData} ${
-                isDetailAddress
-                  ? styles.showAddressDetail
-                  : styles.hideAddressDetail
-              }`}
-            >
-              {eventAddress.place_name && <p>{eventAddress.place_name}</p>}
-              <p>{eventAddress.road_address_name}</p>
-            </address>
-          )}
-          {isDetailAddress && (
-            <label
-              htmlFor="event_address_detail"
-              className={`${styles.addressLabel} ${styles.detail}`}
-            >
-              <span className="sOnly">상세 주소 입력</span>
-              <input
-                type="text"
-                id="event_address_detail"
-                className={`${styles.addressInput} ${styles.detail}`}
-                value={detailQuery}
-                onChange={(e) => setDetailQuery(e.target.value)}
-                placeholder="상세 주소를 입력해 주세요."
-              />
-            </label>
-          )}
-          <div className={styles.btnWrap}>
-            <Button
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleHideAddressModal}
-              buttonClassName={`${styles.modalBtn}`}
-            >
-              취소
-            </Button>
-            <Button
-              buttonStyle={ButtonStyleEnum.Normal}
-              onClick={() => handleAddAddress(detailQuery)}
-              buttonClassName={`${styles.modalBtn}`}
-            >
-              확인
-            </Button>
-          </div>
-        </Modal>
-      )}
-    </main>
+            <div className={styles.btnWrap}>
+              <Button
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={handleHideAddressModal}
+                buttonClassName={`${styles.modalBtn}`}
+              >
+                취소
+              </Button>
+              <Button
+                buttonStyle={ButtonStyleEnum.Normal}
+                onClick={() => handleAddAddress(detailQuery)}
+                buttonClassName={`${styles.modalBtn}`}
+              >
+                확인
+              </Button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+    </MainAnimationLayout>
   );
 };
 

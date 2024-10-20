@@ -22,6 +22,9 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../modal/Modal";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import Loader from "../loader/Loader";
+import { AnimatePresence, motion } from "framer-motion";
+import MainAnimationLayout from "../layouts/MainAnimationLayout";
+import { layoutYVarients } from "../../utils/Animations";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -221,7 +224,7 @@ const Profile = () => {
   };
 
   return (
-    <main>
+    <MainAnimationLayout variants={layoutYVarients}>
       {isMutating || (isDeleteUserLoading && <Loader />)}
       <Header
         onCancel={isEditing ? () => setIsEditing(false) : undefined}
@@ -243,168 +246,208 @@ const Profile = () => {
         ) : undefined}
       </Header>
       <section className={styles.profileContainer}>
-        {isEditing ? (
-          <>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-              accept=".jpg,.jpeg,.png"
-            />
-            <Button
-              type="button"
-              buttonClassName={styles.imgUploadBtn}
-              buttonStyle={ButtonStyleEnum.NONE}
-              onClick={handleFileButtonClick}
+        <AnimatePresence mode="wait">
+          {isEditing ? (
+            <motion.div
+              key="editing"
+              initial={{
+                scale: 0.5,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.5,
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.15,
+              }}
             >
-              <img
-                className={styles.profileImage}
-                src={imagePreview || userData?.profileImg}
-                alt="프로필 사진"
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+                accept=".jpg,.jpeg,.png"
               />
-              <span className={styles.editImgIcon}>
-                <FaPen />
-              </span>
-            </Button>
-            <form
-              className={styles.profileForm}
-              onSubmit={handleSubmit(onSubmit)}
+              <Button
+                type="button"
+                buttonClassName={styles.imgUploadBtn}
+                buttonStyle={ButtonStyleEnum.NONE}
+                onClick={handleFileButtonClick}
+              >
+                <img
+                  className={styles.profileImage}
+                  src={imagePreview || userData?.profileImg}
+                  alt="프로필 사진"
+                />
+                <span className={styles.editImgIcon}>
+                  <FaPen />
+                </span>
+              </Button>
+              <form
+                className={styles.profileForm}
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <LabelInput
+                  labelClassName={styles.label}
+                  inputClassName={styles.input}
+                  type="text"
+                  label="별명"
+                  register={register("nickname", {
+                    required: { value: true, message: "별명을 입력하세요." },
+                    maxLength: {
+                      value: 20,
+                      message: "20자리 이하 입력",
+                    },
+                    minLength: {
+                      value: 3,
+                      message: "3자리 이상 입력",
+                    },
+                  })}
+                  watch={watch}
+                  error={errors}
+                  errorView={errors.nickname as FieldError}
+                />
+                <section className={styles.emailWrap}>
+                  <strong className={styles.emailLabel}>이메일</strong>
+                  <p className={styles.email}>{userData?.email || ""}</p>
+                </section>
+                <section className={styles.modalButtons}>
+                  <Button
+                    type="button"
+                    buttonStyle={ButtonStyleEnum.Cancel}
+                    onClick={handleCloseModal}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    type="submit"
+                    buttonStyle={ButtonStyleEnum.Normal}
+                    disabled={isPending}
+                  >
+                    {isPending ? "업로드 중..." : "확인"}
+                  </Button>
+                </section>
+              </form>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="viewing"
+              initial={{
+                scale: 0.5,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.5,
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.15,
+              }}
             >
-              <LabelInput
-                labelClassName={styles.label}
-                inputClassName={styles.input}
-                type="text"
-                label="별명"
-                register={register("nickname", {
-                  required: { value: true, message: "별명을 입력하세요." },
-                  maxLength: {
-                    value: 20,
-                    message: "20자리 이하 입력",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "3자리 이상 입력",
-                  },
-                })}
-                watch={watch}
-                error={errors}
-                errorView={errors.nickname as FieldError}
-              />
-              <section className={styles.emailWrap}>
-                <strong className={styles.emailLabel}>이메일</strong>
-                <p className={styles.email}>{userData?.email || ""}</p>
-              </section>
-              <section className={styles.modalButtons}>
-                <Button
-                  type="button"
-                  buttonStyle={ButtonStyleEnum.Cancel}
-                  onClick={handleCloseModal}
-                >
-                  취소
-                </Button>
-                <Button
-                  type="submit"
-                  buttonStyle={ButtonStyleEnum.Normal}
-                  disabled={isPending}
-                >
-                  {isPending ? "업로드 중..." : "확인"}
-                </Button>
-              </section>
-            </form>
-          </>
-        ) : (
-          <>
-            <div>
-              <img
-                className={`${styles.profileImage} ${styles.view}`}
-                src={imagePreview || userData?.profileImg}
-                alt="Profile"
-              />
-            </div>
-            <strong className={styles.nickname}>{userData?.nickname}</strong>
-            <p className={styles.email}>{userData?.email}</p>
-            <Button
-              buttonStyle={ButtonStyleEnum.NormalWhite}
-              onClick={handleEditClick}
-              buttonClassName={styles.editButton}
-            >
-              프로필 편집
-            </Button>
-          </>
-        )}
+              <div>
+                <img
+                  className={`${styles.profileImage} ${styles.view}`}
+                  src={imagePreview || userData?.profileImg}
+                  alt="Profile"
+                />
+              </div>
+              <strong className={styles.nickname}>{userData?.nickname}</strong>
+              <p className={styles.email}>{userData?.email}</p>
+              <Button
+                buttonStyle={ButtonStyleEnum.NormalWhite}
+                onClick={handleEditClick}
+                buttonClassName={styles.editButton}
+              >
+                프로필 편집
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
-      {isDeleteUserModal && (
-        <Modal
-          isOpen={isDeleteUserModal}
-          onClose={() => setIsDeleteUserModal(false)}
-        >
-          <strong className={styles.deleteModalTitle}>
-            회원탈퇴하시면
-            <br />
-            관련된 모든 데이터가 삭제 됩니다.
-            <br />
-            탈퇴하시겠습니까?
-          </strong>
-          <div className={styles.deleteModalBtnWrap}>
-            <Button
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={() => setIsDeleteUserModal(false)}
-            >
-              취소
-            </Button>
-            <Button
-              buttonStyle={ButtonStyleEnum.Normal}
-              onClick={handleShowIsCheckPasswordDeleteUserModal}
-            >
-              탈퇴
-            </Button>
-          </div>
-        </Modal>
-      )}
-      {isCheckPasswordDeleteUserModal && (
-        <Modal
-          isOpen={isCheckPasswordDeleteUserModal}
-          onClose={handleCancelIsCheckPasswordDeleteUserModal}
-        >
-          <strong className={styles.deleteModalTitle}>
-            계정 삭제를 위해
-            <br />
-            비밀번호를 입력해주세요.
-          </strong>
-          <LabelInput
-            label="userPassword"
-            type="password"
-            register={register("userPassword", {
-              required: {
-                value: true,
-                message: "비밀번호를 입력해 주세요.",
-              },
-            })}
-            isLabelTextHidden
-            labelClassName={styles.passwordCheckModalLabel}
-            inputClassName={styles.input}
-            watch={watch}
-            error={errors}
-            errorView={errors.userPassword}
-          />
-          <div className={styles.deleteModalBtnWrap}>
-            <Button
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleCancelIsCheckPasswordDeleteUserModal}
-            >
-              취소
-            </Button>
-            <Button
-              buttonStyle={ButtonStyleEnum.Normal}
-              onClick={handleDeleteAccount}
-            >
-              확인
-            </Button>
-          </div>
-        </Modal>
-      )}
-    </main>
+      <AnimatePresence>
+        {isDeleteUserModal && (
+          <Modal
+            isOpen={isDeleteUserModal}
+            onClose={() => setIsDeleteUserModal(false)}
+          >
+            <strong className={styles.deleteModalTitle}>
+              회원탈퇴하시면
+              <br />
+              관련된 모든 데이터가 삭제 됩니다.
+              <br />
+              탈퇴하시겠습니까?
+            </strong>
+            <div className={styles.deleteModalBtnWrap}>
+              <Button
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={() => setIsDeleteUserModal(false)}
+              >
+                취소
+              </Button>
+              <Button
+                buttonStyle={ButtonStyleEnum.Normal}
+                onClick={handleShowIsCheckPasswordDeleteUserModal}
+              >
+                탈퇴
+              </Button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isCheckPasswordDeleteUserModal && (
+          <Modal
+            isOpen={isCheckPasswordDeleteUserModal}
+            onClose={handleCancelIsCheckPasswordDeleteUserModal}
+          >
+            <strong className={styles.deleteModalTitle}>
+              계정 삭제를 위해
+              <br />
+              비밀번호를 입력해주세요.
+            </strong>
+            <LabelInput
+              label="userPassword"
+              type="password"
+              register={register("userPassword", {
+                required: {
+                  value: true,
+                  message: "비밀번호를 입력해 주세요.",
+                },
+              })}
+              isLabelTextHidden
+              labelClassName={styles.passwordCheckModalLabel}
+              inputClassName={styles.input}
+              watch={watch}
+              error={errors}
+              errorView={errors.userPassword}
+            />
+            <div className={styles.deleteModalBtnWrap}>
+              <Button
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={handleCancelIsCheckPasswordDeleteUserModal}
+              >
+                취소
+              </Button>
+              <Button
+                buttonStyle={ButtonStyleEnum.Normal}
+                onClick={handleDeleteAccount}
+              >
+                확인
+              </Button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+    </MainAnimationLayout>
   );
 };
 
