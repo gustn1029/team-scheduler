@@ -192,15 +192,12 @@
 }
 
 .toggleStyle {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  h3 {
-    display: inline-block;
-    font-size: 16px;
-  }
   .toggleBar {
     width: 44px;
     height: 20px;
