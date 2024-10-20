@@ -93,10 +93,22 @@ const Login: React.FC = () => {
               label="userEmail"
               placeholder="이메일 주소"
               register={register("userEmail", {
-                required: { value: true, message: "필수 입력칸 입니다" },
-                pattern: {
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
-                  message: "이메일 형식에 맞춰 작성",
+                required: { value: true, message: "필수 입력칸입니다." },
+                validate: {
+                  emailFormat: (value) => {
+                    const emailRegex =
+                      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+                    return (
+                      emailRegex.test(value) || "올바른 이메일 형식이 아닙니다."
+                    );
+                  },
+                  localPartLength: (value) => {
+                    const localPart = value.split("@")[0];
+                    return (
+                      localPart.length <= 30 ||
+                      "로컬 부분(@ 앞)은 30자 내로 작성해야 합니다."
+                    );
+                  },
                 },
               })}
               watch={watch}
@@ -118,7 +130,16 @@ const Login: React.FC = () => {
               label="userPassword"
               placeholder="비밀번호"
               register={register("userPassword", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸입니다." },
+                minLength: {
+                  value: 8,
+                  message: "8자리 이상 입력해야 합니다.",
+                },
+                pattern: {
+                  value:
+                    /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]).*$/,
+                  message: "소문자, 숫자, 특수문자 모두 포함해야 합니다.",
+                },
               })}
               watch={watch}
               ariaInvalid={

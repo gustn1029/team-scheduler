@@ -90,27 +90,30 @@ const Navigation = () => {
             <FaCog />
           </Button>
         </li>
-        <li>
-          {authData ? (
-            <Button
-              buttonStyle={ButtonStyleEnum.NONE}
-              buttonClassName={styles.logoutBtn}
-              onClick={handleLogout}
-            >
-              LOGOUT
-            </Button>
-          ) : (
-            <Button
-              buttonStyle={ButtonStyleEnum.NONE}
-              buttonClassName={styles.loginBtn}
-              onClick={handleLogin}
-            >
-              <RiLogoutBoxFill className={styles.loginIcon} />
-              LOGIN
-            </Button>
-          )}
+        <li className={styles.categoryWrap}>
+          <dl>
+            <dt>카테고리</dt>
+          </dl>
         </li>
       </ul>
+      {authData ? (
+        <Button
+          buttonStyle={ButtonStyleEnum.NONE}
+          buttonClassName={styles.logoutBtn}
+          onClick={handleLogout}
+        >
+          LOGOUT
+        </Button>
+      ) : (
+        <Button
+          buttonStyle={ButtonStyleEnum.NONE}
+          buttonClassName={styles.loginBtn}
+          onClick={handleLogin}
+        >
+          <RiLogoutBoxFill className={styles.loginIcon} />
+          LOGIN
+        </Button>
+      )}
     </nav>
   );
 };
