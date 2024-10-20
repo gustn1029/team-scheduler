@@ -17,6 +17,7 @@ import Todos from "./components/pages/todos/Todos";
 import RouteLayout from "./components/layouts/RouteLayout";
 import Edit from "./components/pages/edit/Edit";
 import Detail from "./components/pages/detail/Detail";
+import { AnimatePresence } from "framer-motion";
 
 const router = createBrowserRouter([
   {
@@ -77,22 +78,10 @@ function App() {
   return (
     <>
       <Loader />
-      <RouterProvider router={router} />
+      <AnimatePresence>
+        <RouterProvider router={router} />
+      </AnimatePresence>
       <ToastProvider />
-      {/* <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/calendar" replace />} />
-          <Route path="/calendar" element={<CalendarComponent />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/create" element={<Create />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/findpassword" element={<FindPassword />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/calendarlist" element={<CalendarList />} />
-          <Route path="/todo" element={<Todos />} />
-        </Routes>
-        </BrowserRouter> */}
     </>
   );
 }
