@@ -13,9 +13,11 @@ import { useNavigate } from "react-router-dom";
 
 import { FaCog } from "react-icons/fa";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { useDateStore } from "../../store/useDateStore";
 
 const Navigation = () => {
   const { toggleIsView } = useViewNavStore();
+  const { setDate } = useDateStore();
   const navigate = useNavigate();
 
   const { data: authData } = useQuery({
@@ -30,6 +32,10 @@ const Navigation = () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] });
       toggleIsView();
       sessionStorage.removeItem("user");
+      if (sessionStorage.getItem("currentDate") !== null) {
+        sessionStorage.removeItem("currentDate");
+      }
+      setDate(new Date());
       navigate("/login");
     },
     onError: (error) => {
@@ -61,44 +67,50 @@ const Navigation = () => {
       <ul className={styles.navList}>
         <li>
           <IconButton
-            icon={<FaXmark className={styles.closeBtn} />}
+            className={styles.closeBtn}
+            icon={<FaXmark />}
             onClick={toggleIsView}
           />
         </li>
-        <li className={styles.navItem}>
-          <div className={styles.profileWrap}>
-            <img
-              src={authData ? `${authData?.profileImg}` : thumbnailImage}
-              alt={authData ? authData.nickname : "profile thumbnail"}
-              className={authData ? styles.authProfile : styles.basicProfile}
-            />
-            <p>{authData ? authData?.nickname : "로그인이 필요합니다."}</p>
-          </div>
-          <IconButton
-            icon={<FaCog />}
-            className={styles.settingBtn}
-            onClick={handleRouteUrl}
+        <li className={styles.profileWrap}>
+          <img
+            src={authData ? `${authData?.profileImg}` : thumbnailImage}
+            alt={authData ? authData.nickname : "profile thumbnail"}
+            className={styles.authProfile}
           />
+          <p>{authData ? authData?.nickname : "로그인이 필요합니다."}</p>
+        </li>
+        <li>
+          <Button
+            buttonStyle={ButtonStyleEnum.NONE}
+            buttonClassName={styles.settingBtn}
+            onClick={handleRouteUrl}
+          >
+            <span>프로필 수정</span>
+            <FaCog />
+          </Button>
+        </li>
+        <li>
+          {authData ? (
+            <Button
+              buttonStyle={ButtonStyleEnum.NONE}
+              buttonClassName={styles.logoutBtn}
+              onClick={handleLogout}
+            >
+              LOGOUT
+            </Button>
+          ) : (
+            <Button
+              buttonStyle={ButtonStyleEnum.NONE}
+              buttonClassName={styles.loginBtn}
+              onClick={handleLogin}
+            >
+              <RiLogoutBoxFill className={styles.loginIcon} />
+              LOGIN
+            </Button>
+          )}
         </li>
       </ul>
-      {authData ? (
-        <Button
-          buttonStyle={ButtonStyleEnum.NONE}
-          buttonClassName={styles.logoutBtn}
-          onClick={handleLogout}
-        >
-          LOGOUT
-        </Button>
-      ) : (
-        <Button
-          buttonStyle={ButtonStyleEnum.NONE}
-          buttonClassName={styles.loginBtn}
-          onClick={handleLogin}
-        >
-          <RiLogoutBoxFill className={styles.loginIcon} />
-          LOGIN
-        </Button>
-      )}
     </nav>
   );
 };

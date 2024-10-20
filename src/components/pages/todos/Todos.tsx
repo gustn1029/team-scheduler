@@ -20,12 +20,22 @@ import { useEffect, useState } from "react";
 import Modal from "../../modal/Modal";
 import Header from "../../header/Header";
 import Loader from "../../loader/Loader";
+import { AnimatePresence } from "framer-motion";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutYVarients } from "../../../utils/Animations";
 
 const Todos = () => {
   const [params] = useSearchParams();
   const [isShowCancelModal, setIsShowCancelModal] = useState<boolean>(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
-  const { todos, isComplete, setIsComplete, selectedDate, setTodos, setSelectedDate } = useTodoStore();
+  const {
+    todos,
+    isComplete,
+    setIsComplete,
+    selectedDate,
+    setTodos,
+    setSelectedDate,
+  } = useTodoStore();
   const navigate = useNavigate();
 
   // todo 데이터 불러오기
@@ -75,9 +85,9 @@ const Todos = () => {
         ],
       });
       toast.success(message);
-      navigate("../");
+      navigate(-1);
 
-      if(isComplete) {
+      if (isComplete) {
         setIsComplete(false);
       }
     },
@@ -94,10 +104,12 @@ const Todos = () => {
           selectedDate.toISOString().split("T")[0],
         ],
       });
-      toast.success(message);
-      navigate("../");
+      if (!emptyTodosCheck) {
+        toast.success(message);
+      }
+      navigate(-1);
 
-      if(isComplete) {
+      if (isComplete) {
         setIsComplete(false);
       }
     },
@@ -105,8 +117,7 @@ const Todos = () => {
 
   // 투두 데이터 등록 함수
   const handleAddTodos = async () => {
-    
-    if(todoData && todoData[0]?.todos && todos.length === 0) {
+    if (todoData && todoData[0]?.todos && todos.length === 0) {
       setIsDeleteModal(true);
       return;
     }
@@ -141,17 +152,20 @@ const Todos = () => {
 
   // todo 데이터 삭제 함수
   const handleDeleteTodo = async () => {
-    if (!todoData && todos.length === 0) {
+    if (!todoData || todoData.length === 0 || todos.length === 0) {
       toast.error("삭제할 할일이 없습니다.");
       setIsDeleteModal(false);
       return;
     }
 
-    if (todoData && todoData[0].id) {
+    if (todoData[0]?.id) {
       await deleteMutation.mutateAsync({
         collectionName: "todos",
         id: todoData[0].id,
       });
+    } else {
+      toast.error("삭제할 데이터의 ID를 찾을 수 없습니다.");
+      setIsDeleteModal(false);
     }
   };
 
@@ -161,8 +175,8 @@ const Todos = () => {
       if (todoData[0]?.todos.length !== todos.length) {
         setIsShowCancelModal(true);
       } else {
-        navigate("../");
-        if(isComplete) {
+        navigate(-1);
+        if (isComplete) {
           setIsComplete(false);
         }
       }
@@ -170,13 +184,12 @@ const Todos = () => {
     }
 
     if (todos.length === 0) {
-      navigate("../");
-      
+      navigate(-1);
     } else {
-      setIsShowCancelModal(true)
+      setIsShowCancelModal(true);
     }
 
-    if(isComplete) {
+    if (isComplete) {
       setIsComplete(false);
     }
   };
@@ -194,9 +207,9 @@ const Todos = () => {
   // 뒤로가기 때 실행되는 함수
   const handleCancel = () => {
     setTodos([]);
-    navigate("../");
+    navigate(-1);
 
-    if(isComplete) {
+    if (isComplete) {
       setIsComplete(false);
     }
   };
@@ -205,16 +218,21 @@ const Todos = () => {
     return <Loader />;
   }
 
-  const buttonDisabledCheck = (todoData && todoData[0]?.todos) ? isComplete ? !isComplete : todoData[0]?.todos.length === todos.length : todos.length === 0;
+  const buttonDisabledCheck = !isComplete;
 
   const emptyTodosCheck = todoData && todoData[0]?.todos && todos.length === 0;
 
   return (
-    <main className={styles.todosWrap}>
+    <MainAnimationLayout
+      variants={layoutYVarients}
+      className={styles.todosWrap}
+    >
       <Header
         title="TODO"
         onDelete={
-           handleShowDeleteModal
+          todoData && todoData[0]?.todos && !emptyTodosCheck
+            ? handleShowDeleteModal
+            : undefined
         }
         onCancel={handleShowModal}
       />
@@ -232,62 +250,68 @@ const Todos = () => {
         </Button>
         <Button
           buttonClassName={styles.todoBtn}
-          onClick={handleAddTodos}
-          buttonStyle={buttonDisabledCheck ? ButtonStyleEnum.Primary : ButtonStyleEnum.Normal}
-          disabled={buttonDisabledCheck ? true: undefined}
+          onClick={emptyTodosCheck ? handleDeleteTodo : handleAddTodos}
+          buttonStyle={
+            buttonDisabledCheck
+              ? ButtonStyleEnum.Primary
+              : ButtonStyleEnum.Normal
+          }
+          disabled={buttonDisabledCheck ? true : undefined}
         >
           저장
         </Button>
       </section>
-      {isShowCancelModal && (
-        <Modal isOpen={isShowCancelModal} onClose={handleHideCancelModal}>
-          <strong className={styles.todoModalTitle}>
-            저장되지 않은 할일은 삭제됩니다.
-            <br />
-            취소하시겠습니까?
-          </strong>
-          <section className={styles.todoBtnWrap}>
-            <Button
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleHideCancelModal}
-            >
-              취소
-            </Button>
-            <Button
-              onClick={handleCancel}
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Normal}
-            >
-              확인
-            </Button>
-          </section>
-        </Modal>
-      )}
-      {isDeleteModal && (
-        <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
-          <strong className={styles.todoModalTitle}>
-            {emptyTodosCheck ? `등록된 할일이 없습니다.\n삭제하시겠습니까?` : "정말 삭제하시겠습니까?"}
-          </strong>
-          <section className={styles.todoBtnWrap}>
-            <Button
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Cancel}
-              onClick={handleHideDeleteModal}
-            >
-              취소
-            </Button>
-            <Button
-              onClick={handleDeleteTodo}
-              buttonClassName={styles.todoModalBtn}
-              buttonStyle={ButtonStyleEnum.Normal}
-            >
-              삭제
-            </Button>
-          </section>
-        </Modal>
-      )}
-    </main>
+      <AnimatePresence>
+        {isShowCancelModal && (
+          <Modal isOpen={isShowCancelModal} onClose={handleHideCancelModal}>
+            <strong className={styles.todoModalTitle}>
+              저장되지 않은 할일은 삭제됩니다.
+              <br />
+              취소하시겠습니까?
+            </strong>
+            <section className={styles.todoBtnWrap}>
+              <Button
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={handleHideCancelModal}
+              >
+                취소
+              </Button>
+              <Button
+                onClick={handleCancel}
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Normal}
+              >
+                확인
+              </Button>
+            </section>
+          </Modal>
+        )}
+        {isDeleteModal && (
+          <Modal isOpen={isDeleteModal} onClose={handleHideDeleteModal}>
+            <strong className={styles.todoModalTitle}>
+              할일을 전체 삭제하시겠습니까?
+            </strong>
+            <section className={styles.todoBtnWrap}>
+              <Button
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Cancel}
+                onClick={handleHideDeleteModal}
+              >
+                취소
+              </Button>
+              <Button
+                onClick={handleDeleteTodo}
+                buttonClassName={styles.todoModalBtn}
+                buttonStyle={ButtonStyleEnum.Normal}
+              >
+                삭제
+              </Button>
+            </section>
+          </Modal>
+        )}
+      </AnimatePresence>
+    </MainAnimationLayout>
   );
 };
 

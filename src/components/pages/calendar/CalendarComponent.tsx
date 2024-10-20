@@ -32,6 +32,8 @@ import { appAuth } from "../../../firebase/config";
 
 import { FaPlus } from "react-icons/fa6";
 import { Timestamp } from "firebase/firestore";
+import { layoutYVarients } from "../../../utils/Animations";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -59,7 +61,7 @@ const CalendarComponent = () => {
       eventsDataFetch({
         year: date.getFullYear(),
         month: date.getMonth(),
-        uid: appAuth.currentUser!.uid,
+        uid: appAuth.currentUser?.uid as string,
       }),
     enabled: !!appAuth.currentUser?.uid,
   });
@@ -76,7 +78,7 @@ const CalendarComponent = () => {
       calendarTodosFetch({
         year: date.getFullYear(),
         month: date.getMonth(),
-        uid: appAuth.currentUser!.uid,
+        uid: appAuth.currentUser?.uid as string,
       }),
     enabled: !!appAuth.currentUser?.uid,
   });
@@ -95,74 +97,34 @@ const CalendarComponent = () => {
     const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
     const prevMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
 
-    // 다음 달 이벤트 prefetch
-    queryClient.prefetchQuery({
-      queryKey: [
-        "events",
-        date.getFullYear(),
-        nextMonth.getMonth(),
-        appAuth.currentUser!.uid,
-      ],
-      queryFn: () =>
-        eventsDataFetch({
-          year: date.getFullYear(),
-          month: nextMonth.getMonth(),
-          uid: appAuth.currentUser!.uid,
-        }),
-      staleTime: Infinity,
-    });
+    // 현재 사용자의 UID를 안전하게 가져오기
+    const currentUserUid = appAuth.currentUser?.uid;
 
-    // 이전 달 이벤트 prefetch
-    queryClient.prefetchQuery({
-      queryKey: [
-        "events",
-        date.getFullYear(),
-        prevMonth.getMonth(),
-        appAuth.currentUser?.uid,
-      ],
-      queryFn: () =>
-        eventsDataFetch({
-          year: date.getFullYear(),
-          month: prevMonth.getMonth(),
-          uid: appAuth.currentUser!.uid,
-        }),
-      staleTime: Infinity,
-    });
+    if (currentUserUid) {
+      const prefetchData = (year: number, month: number) => {
+        // 이벤트 prefetch
+        queryClient.prefetchQuery({
+          queryKey: ["events", year, month, currentUserUid],
+          queryFn: () => eventsDataFetch({ year, month, uid: currentUserUid }),
+          staleTime: Infinity,
+        });
 
-    // 다음 달 할 일 prefetch
-    queryClient.prefetchQuery({
-      queryKey: [
-        "todos",
-        date.getFullYear(),
-        nextMonth.getMonth(),
-        appAuth.currentUser!.uid,
-      ],
-      queryFn: () =>
-        calendarTodosFetch({
-          year: date.getFullYear(),
-          month: nextMonth.getMonth(),
-          uid: appAuth.currentUser!.uid,
-        }),
-      staleTime: Infinity,
-    });
+        // 할 일 prefetch
+        queryClient.prefetchQuery({
+          queryKey: ["todos", year, month, currentUserUid],
+          queryFn: () =>
+            calendarTodosFetch({ year, month, uid: currentUserUid }),
+          staleTime: Infinity,
+        });
+      };
 
-    // 이전 달 할 일 prefetch
-    queryClient.prefetchQuery({
-      queryKey: [
-        "todos",
-        date.getFullYear(),
-        prevMonth.getMonth(),
-        appAuth.currentUser?.uid,
-      ],
-      queryFn: () =>
-        calendarTodosFetch({
-          year: date.getFullYear(),
-          month: prevMonth.getMonth(),
-          uid: appAuth.currentUser!.uid,
-        }),
-      staleTime: Infinity,
-    });
-  }, [date]);
+      // 다음 달 데이터 prefetch
+      prefetchData(date.getFullYear(), nextMonth.getMonth());
+
+      // 이전 달 데이터 prefetch
+      prefetchData(date.getFullYear(), prevMonth.getMonth());
+    }
+  }, [date, appAuth]);
 
   /**
    * 주어진 날짜가 Timestamp 타입인지 확인하는 타입 가드 함수
@@ -236,26 +198,33 @@ const CalendarComponent = () => {
     const today = dayjs();
     const tileDate = dayjs(date);
 
+    let className = "";
+
+    // 오늘 날짜 처리
     if (tileDate.isSame(today, "day")) {
-      return !clickEventDate
-        ? `${styles.currentDay} ${styles.currentDayBg}`
-        : styles.currentDay;
-    }
-    if (tileDate.day() === 6) {
-      return tileDate.isSame(clickEventDate)
-        ? `${styles.clickedDay} ${styles.saturday}`
-        : styles.saturday;
-    }
-    if (tileDate.day() === 0) {
-      return tileDate.isSame(clickEventDate)
-        ? `${styles.clickedDay} ${styles.sunday}`
-        : styles.sunday;
-    }
-    if (tileDate.isSame(dayjs(clickEventDate))) {
-      return styles.clickedDay;
+      className += `${styles.currentDay} `;
+
+      if (!clickEventDate || tileDate.isSame(clickEventDate, "day")) {
+        className += `${styles.currentDayBg} `;
+      }
     }
 
-    return "";
+    // 클릭된 날짜 처리
+    if (clickEventDate && tileDate.isSame(clickEventDate, "day")) {
+      className += `${styles.clickedDay} `;
+    }
+
+    // 토요일 처리
+    if (tileDate.day() === 6) {
+      className += `${styles.saturday} `;
+    }
+
+    // 일요일 처리
+    if (tileDate.day() === 0) {
+      className += `${styles.sunday} `;
+    }
+
+    return className.trim();
   };
 
   /**
@@ -412,11 +381,10 @@ const CalendarComponent = () => {
                 </Fragment>
               );
             })}
-            {dayjs(date).isSame(dayjs(clickEventDate)) && (
-              <CreateModal
-                params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
-              />
-            )}
+            <CreateModal
+              isOpen={dayjs(date).isSame(dayjs(clickEventDate))}
+              params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
+            />
           </span>
         </span>
         <span
@@ -512,7 +480,7 @@ const CalendarComponent = () => {
   };
 
   return (
-    <main className={styles.calendarWrap}>
+    <MainAnimationLayout variants={layoutYVarients} className={styles.calendarWrap}>
       <section
         className={`${styles.navWrap} ${isView ? styles.view : styles.hidden}`}
         onClick={handleHideNav}
@@ -546,7 +514,12 @@ const CalendarComponent = () => {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && <CreateModal bottom={-65} right={25} />}
+        <CreateModal
+          isOpen={isCreate}
+          bottom={-65}
+          right={25}
+          params={`date=${dayjs(new Date()).format("YYYY-MM-DD")}`}
+        />
       </section>
       <Calendar
         className={styles.calendar}
@@ -566,7 +539,7 @@ const CalendarComponent = () => {
         minDetail="month"
         showNavigation={false}
       />
-    </main>
+    </MainAnimationLayout>
   );
 };
 

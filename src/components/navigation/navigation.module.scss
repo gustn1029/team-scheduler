@@ -14,39 +14,48 @@
   color: white;
 
   .closeBtn {
+    display: inline-block;
     font-size: 20px;
     color: white;
   }
 
   .settingBtn {
-    font-size: 24px;
-    color: white;
+    display: flex;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 30px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    color: #263140;
   }
   .navList {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 30px;
 
-    .navItem {
+    li:first-child {
+      text-align: right;
+    }
+
+    .profileWrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
+      img {
+        width: 30px;
+        height: 30px;
+      }
 
-      .profileWrap {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        img {
-          width: 30px;
-          height: 30px;
-        }
+      .authProfile {
+        border-radius: 100%;
+      }
 
-        .authProfile {
-          border-radius: 100%;
-        }
-
-        .basicProfile {
-        }
+      p {
+        flex-grow: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }

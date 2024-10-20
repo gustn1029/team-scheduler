@@ -15,8 +15,8 @@
     color: #000;
   }
   .writerProfile {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     margin-left: 15px;
     border-radius: 50%;
   }
@@ -99,7 +99,6 @@
   line-height: 40px;
   text-align: left;
   white-space: nowrap;
-  cursor: pointer;
 }
 .val {
   min-width: 160px;
@@ -193,15 +192,12 @@
 }
 
 .toggleStyle {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  h3 {
-    display: inline-block;
-    font-size: 16px;
-  }
   .toggleBar {
     width: 44px;
     height: 20px;
@@ -209,6 +205,7 @@
     background-color: #D9D9D9;
     border-radius: 20px;
     appearance: none;
+    cursor: pointer;
   }
   .toggleBar::before {
     content: "";
@@ -238,13 +235,6 @@
   padding: 20px 15px;
   border-bottom: 1px solid #d9d9d9;
 }
-.datePicker {
-  width: 200px;
-  padding: 15px;
-  border: 1px solid #d9d9d9;
-  border-radius: 10px;
-  cursor: pointer;
-}
 .pickerGroup {
   display: flex;
   justify-content: space-between;
@@ -253,6 +243,17 @@
     margin-bottom: 15px;
   }
 }
+.datePicker {
+  width: 200px;
+  padding: 15px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  cursor: pointer;
+}
+:global(.react-datepicker-popper) {
+  left: 21px !important;
+}
+
 
 .customDropdown {
   width: 80px;
@@ -306,6 +307,54 @@
   background-color: #f0f0f0;
 }
 
+.address {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 20px 15px;
+  border-bottom: 1px solid #d9d9d9;
+  h3 {
+    font-size: 16px;
+  }
+
+  div {
+    position: relative;
+    
+    border-radius: 10px;
+    flex: 1;
+    border: 1px solid #d9d9d9;
+    text-align: left;
+    word-break: keep-all;
+    line-height: 1.3;
+  }
+  button {
+    text-align: left;
+    word-break: keep-all;
+    line-height: 1.3;
+    padding: 10px 25px 10px 10px;
+  }
+
+  .addressAddBtn {
+    width: 100%;
+  }
+
+  .cancelBtn {
+    position: absolute;
+    right: 5px; top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+    z-index: 1;
+  }
+
+  .addressBtn {
+    color: #d9d9d9;
+  }
+
+  .addressUpdateBtn {
+    color: #000;
+  }
+}
+
 .meMo {
   width: 100%;
   padding: 20px 15px;
@@ -326,4 +375,98 @@
     font-size: 13px;
     text-align: right;
   }
+}
+.modalInputWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  
+  label {
+    flex-grow: 1;
+  }
+
+  button {
+    height: 40px;
+  }
+}
+.addressLabel {
+  display: block;
+  font-size: 0.85rem;
+
+  &.detail {
+    margin-bottom: 20px;
+  }
+}
+
+.addressInput {
+  height: 40px;
+  padding-left: 10px;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  &:focus {
+    outline: none;
+  }
+
+  &.detail {
+    width: 100%;
+  }
+}
+
+.addressList {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 10px 5px;
+  gap: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  max-height: 200px;
+  overflow-y: scroll;
+  border-bottom: 1px solid #d9d9d9;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #3FA9F5;
+    border-radius: 12px 12px 12px 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.addressListItem {
+  cursor: pointer;
+
+  p {
+    color: #777;
+  }
+}
+
+.addressData {
+  display: block;
+  font-style: normal;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+
+  &.showAddressDetail {
+    margin-bottom: 10px;
+  }
+  &.hideAddressDetail {
+  margin-bottom: 20px;
+  }
+}
+
+.btnWrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+.modalBtn {
+  max-width: 110px;
+  width: 100%;
+  font-size: 0.85rem;
 }

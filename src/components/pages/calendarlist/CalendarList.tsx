@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { RiCloseFill } from "react-icons/ri";
 import styles from "./calendarlist.module.scss";
 import {
@@ -20,7 +20,11 @@ import CreateModal from "../../createModal/CreateModal";
 import { userDataFetch } from "../../../utils/http";
 import dayjs from "dayjs";
 import Loader from "../../loader/Loader";
+import { AnimatePresence, motion } from "framer-motion";
+
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { listItemVariants, layoutYVarients, listVariants } from "../../../utils/Animations";
 
 type EventColor =
   | "red"
@@ -215,10 +219,19 @@ function CalendarList() {
       : colorName;
   };
 
-  console.log(sortedEvents);
+  const handleLink = () => {
+    sessionStorage.setItem("seconds", dateParam as string);
+  };
+
+  useEffect(() => {
+    const seconds = sessionStorage.getItem("seconds");
+    if (seconds !== null) {
+      sessionStorage.removeItem("seconds");
+    }
+  }, []);
 
   return (
-    <>
+    <MainAnimationLayout variants={layoutYVarients} className={styles.calendarListMain}>
       <header className={styles.calendarListHeader}>
         <IconLinkButton
           icon={<RiCloseFill className={styles.closeButton} />}
@@ -231,79 +244,83 @@ function CalendarList() {
           icon={<AiFillPlusCircle className={styles.createBtn} />}
           onClick={handleCreateBtn}
         />
-        {isCreate && (
-          <CreateModal
-            params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
-            top={40}
-            right={30}
-          />
-        )}
+        <CreateModal
+          isOpen={isCreate}
+          params={`date=${dayjs(date).format("YYYY-MM-DD")}`}
+          top={40}
+          right={30}
+        />
       </header>
-      <main className={styles.calendarListMain}>
-        <ul>
-          {eventsLoading ? (
-            <Loader />
-          ) : sortedEvents.length > 0 ? (
-            sortedEvents.map((event, index) => (
-              <li
-                key={`${event.id || "event"}-${index}`}
-                className={styles.liContainer}
-              >
-                <Link
-                  to={`/calendarlist/${event.id}`}
-                  className={styles.textContainer}
-                  role="button"
-                  tabIndex={0}
+      {eventsLoading ? (
+        <Loader />
+      ) : (
+        <AnimatePresence>
+          <motion.ul variants={listVariants} initial="hidden" animate="visible">
+            {sortedEvents.length > 0 ? (
+              sortedEvents.map((event, index) => (
+                <motion.li
+                  key={`${event.id || "event"}-${index}`}
+                  variants={listItemVariants}
                 >
-                  <div className={styles.timeContainerIf}>
-                    {isAllDayEvent(event, date) ? (
-                      <p className={styles.allDay}>종일</p>
-                    ) : (
-                      <div className={styles.timeContainer}>
-                        <p>
-                          {new Date(
-                            event.startDate.seconds * 1000
-                          ).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
-                        <p>
-                          {new Date(
-                            event.endDate.seconds * 1000
-                          ).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
+                  <Link
+                    onClick={handleLink}
+                    to={`/calendarlist/${event.id}`}
+                    role="button"
+                    tabIndex={0}
+                    className={styles.liContainer}
+                  >
+                    <div className={styles.textContainer}>
+                      <div className={styles.timeContainerIf}>
+                        {isAllDayEvent(event, date) ? (
+                          <p className={styles.allDay}>종일</p>
+                        ) : (
+                          <div className={styles.timeContainer}>
+                            <p>
+                              {new Date(
+                                event.startDate.seconds * 1000
+                              ).toLocaleTimeString("ko-KR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })}
+                            </p>
+                            <p>
+                              {new Date(
+                                event.endDate.seconds * 1000
+                              ).toLocaleTimeString("ko-KR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div
-                    className={styles.listColor}
-                    style={{ backgroundColor: getEventColor(event.eventColor) }}
-                  ></div>
-                  <div className={styles.scheduleContainer}>
-                    <p>{event.title}</p>
-                  </div>
-                </Link>
-                {event.uid && usersData && usersData[event.uid] ? (
-                  <img
-                    className={styles.writerProfile}
-                    src={usersData[event.uid].profileImg}
-                    alt="작성자"
-                  />
-                ) : null}
-              </li>
-            ))
-          ) : (
-            <li></li>
-          )}
-        </ul>
-      </main>
-    </>
+                      <div
+                        className={styles.listColor}
+                        style={{
+                          backgroundColor: getEventColor(event.eventColor),
+                        }}
+                      ></div>
+                      <p className={styles.title}>{event.title}</p>
+                    </div>
+                    {event.uid && usersData && usersData[event.uid] ? (
+                      <img
+                        className={styles.writerProfile}
+                        src={usersData[event.uid].profileImg}
+                        alt="작성자"
+                      />
+                    ) : null}
+                  </Link>
+                </motion.li>
+              ))
+            ) : (
+              <motion.li></motion.li>
+            )}
+          </motion.ul>
+        </AnimatePresence>
+      )}
+    </MainAnimationLayout>
   );
 }
 

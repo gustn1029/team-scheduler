@@ -14,7 +14,7 @@ const TodoForm = () => {
     formState: { errors, isSubmitted },
     handleSubmit,
   } = useForm<TodoItem>();
-  const { addTodo } = useTodoStore();
+  const { addTodo, setIsComplete, isComplete } = useTodoStore();
 
   // 투두 입력하면 todos 배열에 추가하는 함수
   const onSubmit = (data: TodoItem) => {
@@ -24,6 +24,10 @@ const TodoForm = () => {
     };
     addTodo(newTodo);
     setValue("todo", "");
+
+    if(!isComplete) {
+      setIsComplete(true);
+    }
   };
 
   return (

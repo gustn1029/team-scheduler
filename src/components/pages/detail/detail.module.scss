@@ -5,20 +5,30 @@
   padding: 20px 15px;
   border-bottom: 1px solid #d9d9d9;
   display: flex;
-  .profileImg {
-    width: 22px;
-    height: 22px;
-    border-radius: 15px;
-    margin-left: 20px;
+  align-items: center;
+  & p {
+    display: flex;
+    align-items: center;
+    .profileImg {
+      width: 22px;
+      height: 22px;
+      border-radius: 15px;
+      margin-left: 20px;
+      margin-right: 6px;
+    }
   }
 }
 .titleContainer {
   .listColor {
     width: 16px;
     height: 16px;
+    min-width: 16px;
     border-radius: 4px;
     margin-right: 8px;
     align-self: center;
+  }
+  .title {
+    word-break: break-word;
   }
   display: flex;
   font-size: 18px;
@@ -28,7 +38,7 @@
   border-bottom: 1px solid #d9d9d9;
 }
 .timeContainer {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   width: 100%;
   padding: 20px 15px;
@@ -48,9 +58,33 @@
     width: 100%;
     height: 100px;
     margin-top: 10px;
-    padding: 15px;
-    border: 1px solid #d9d9d9;
     border-radius: 10px;
     resize: none;
+    word-break: break-word;
+  }
+}
+
+.eventAddress {
+  padding: 20px 15px;
+  border-bottom: 1px solid #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  address {
+    strong,
+    em,
+    span {
+      display: block;
+      font-style: normal;
+    }
+
+    em,
+    span {
+      font-size: 14px;
+    }
+    span {
+      color: #777;
+    }
   }
 }

@@ -11,8 +11,10 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import LinkButton from "../../button/LinkButton";
 import logo from "../../../assets/images/logo.svg";
-
 import defaultProfileImage from "../../../assets/images/profile/profile.png";
+import { FirebaseError } from "firebase/app";
+import MainAnimationLayout from "../../layouts/MainAnimationLayout";
+import { layoutYVarients } from "../../../utils/Animations";
 
 interface FormData {
   userNickName: string;
@@ -54,7 +56,7 @@ export const SignUp: React.FC = () => {
       const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
-      console.error("Error getting download URL: ", error);
+      console.error("다운로드 URL을 가져오는 중 오류가 발생했습니다. ", error);
       throw uploadDefaultImage();
     }
   }
@@ -72,7 +74,7 @@ export const SignUp: React.FC = () => {
       const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
-      console.error("Error uploading default image: ", error);
+      console.error("기본 이미지 업로드 중 오류가 발생했습니다. ", error);
       return defaultProfileImage;
     }
   }
@@ -81,6 +83,7 @@ export const SignUp: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
+      clearErrors("userEmail");
       const userCredential = await createUserWithEmailAndPassword(
         appAuth,
         data.userEmail,
@@ -92,7 +95,10 @@ export const SignUp: React.FC = () => {
       try {
         userProfileImg = await getImageUrl();
       } catch (error) {
-        console.error("Error getting profile image:", error);
+        console.error(
+          "프로필 이미지를 가져오는 중 오류가 발생했습니다. ",
+          error
+        );
         userProfileImg = defaultProfileImage;
       }
 
@@ -104,12 +110,29 @@ export const SignUp: React.FC = () => {
       });
       navigate("/login");
       reset();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error signing up", error);
+      if (error instanceof FirebaseError && "code" in error) {
+        if (error.code === "auth/email-already-in-use") {
+          setError("userEmail", {
+            type: "manual",
+            message: "이미 사용 중인 이메일 주소입니다.",
+          });
+        } else {
+          setError("userEmail", {
+            type: "manual",
+            message: "회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.",
+          });
+        }
+      } else {
+        setError("userEmail", {
+          type: "manual",
+          message: "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.",
+        });
+      }
     }
   };
 
-  // 비밀번호 값 수정 시 비밀번호 확인 값도 유효성 체크
   useEffect(() => {
     if (
       watch("userPassword") !== watch("userPasswordCheck") &&
@@ -117,7 +140,7 @@ export const SignUp: React.FC = () => {
     ) {
       setError("userPasswordCheck", {
         type: "password-mismatch",
-        message: "비밀번호가 일치하지 않습니다",
+        message: "비밀번호가 일치하지 얺습니다.",
       });
     } else {
       clearErrors("userPasswordCheck");
@@ -125,21 +148,29 @@ export const SignUp: React.FC = () => {
   }, [clearErrors, setError, watch]);
 
   return (
-    <main>
+    <MainAnimationLayout variants={layoutYVarients}>
       <div className={styles.logoContainer}>
         <img className={styles.logo} src={logo} alt="TimeFlow" />
       </div>
       <h1 className={styles.h1}>TimeFlow</h1>
       <div className={styles.formContainer}>
         <h2>회원가입</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.formGroup}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles.formGroup}
+          noValidate
+        >
           <div className={styles.inputContainer}>
             <LabelInput
               type="text"
               label="userNickName"
               placeholder="닉네임 설정"
               register={register("userNickName", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸입니다." },
+                maxLength: {
+                  value: 10,
+                  message: "닉네임은 최대 10자입니다.",
+                },
               })}
               watch={watch}
               ariaInvalid={
@@ -154,10 +185,22 @@ export const SignUp: React.FC = () => {
               label="userEmail"
               placeholder="이메일 주소"
               register={register("userEmail", {
-                required: { value: true, message: "필수 입력칸 입니다" },
-                pattern: {
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
-                  message: "이메일 형식에 맞춰 작성",
+                required: { value: true, message: "필수 입력칸입니다." },
+                validate: {
+                  emailFormat: (value) => {
+                    const emailRegex =
+                      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+                    return (
+                      emailRegex.test(value) || "올바른 이메일 형식이 아닙니다."
+                    );
+                  },
+                  localPartLength: (value) => {
+                    const localPart = value.split("@")[0];
+                    return (
+                      localPart.length <= 30 ||
+                      "로컬 부분은 30자 이내로 작성해야 합니다."
+                    );
+                  },
                 },
               })}
               watch={watch}
@@ -173,15 +216,15 @@ export const SignUp: React.FC = () => {
               label="userPassword"
               placeholder="비밀번호"
               register={register("userPassword", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸입니다." },
                 minLength: {
                   value: 8,
-                  message: "8자리 이상 입력",
+                  message: "8자리 이상 입력해야 합니다.",
                 },
                 pattern: {
                   value:
                     /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]).*$/,
-                  message: "영어 소문자, 숫자, 특수문자 포함하여 입력",
+                  message: "소문자, 숫자, 특수문자 모두 포함해야 합니다.",
                 },
               })}
               watch={watch}
@@ -211,12 +254,12 @@ export const SignUp: React.FC = () => {
               label="userPasswordCheck"
               placeholder="비밀번호 확인"
               register={register("userPasswordCheck", {
-                required: { value: true, message: "필수 입력칸 입니다" },
+                required: { value: true, message: "필수 입력칸입니다." },
                 validate: {
                   matchPassword: (value) => {
                     const { userPassword } = getValues();
                     return (
-                      userPassword === value || "비밀번호가 일치하지 않습니다"
+                      userPassword === value || "비밀번호가 일치하지 않습니다."
                     );
                   },
                 },
@@ -250,6 +293,6 @@ export const SignUp: React.FC = () => {
           </div>
         </form>
       </div>
-    </main>
+    </MainAnimationLayout>
   );
 };

@@ -6,115 +6,120 @@
   align-items: center;
   padding: 0 75px;
 
-  .deleteUserBtn {
-    padding: 0 0 3px;
-    border-bottom: 1px solid #333;
+  > div {
+    text-align: center;
   }
+}
 
-  .imgUploadBtn {
-    padding: 0;
+.deleteUserBtn {
+  padding: 0 0 3px;
+  border-bottom: 1px solid #333;
+}
+
+.imgUploadBtn {
+  padding: 0;
+  margin: 40px auto 30px;
+  position: relative;
+}
+
+.profileImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  overflow: hidden;
+  object-fit: cover;
+  border: 1px solid #e3e3e3;
+
+  &.view {
     margin: 40px auto 30px;
-    position: relative;
   }
+}
 
-  .profileImage {
-    width: 200px;
-    height: 200px;
-    border-radius: 100%;
-    overflow: hidden;
-    object-fit: cover;
-    border: 1px solid #e3e3e3;
+.profileForm {
+  width: 100%;
+  text-align: left;
+}
 
-    &.view {
-      margin: 40px auto 30px;
-    }
-  }
+.editImgIcon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  right: 10px;
+  bottom: 10px;
+  font-size: 15px;
+  background-color: white;
+  border-radius: 100%;
+  color: #414040;
+  border: 1px solid #929292;
+}
 
-  .profileForm {
-    width: 100%;
-  }
+.nickname {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
 
-  .editImgIcon {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px; height: 40px;
-    right: 10px;
-    bottom: 10px;
-    font-size: 15px;
-    background-color: white;
-    border-radius: 100%;
-    color: #414040;
-    border: 1px solid #929292;
-  }
+.emailWrap {
+  margin-bottom: 50px;
+}
 
-  .nickname {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
-  }
+.email {
+  font-size: 14px;
+  color: #767676;
+}
 
-  .emailWrap {
-    margin-bottom: 50px;
-  }
+.label,
+.emailLabel {
+  font-size: 14px;
+  font-weight: 400;
+}
 
-  .email {
-    font-size: 14px;
-    color: #767676;
-  }
+.label {
+  margin-bottom: 20px;
+}
 
-  .label,
-  .emailLabel {
-    font-size: 14px;
-    font-weight: 400;
-  }
+.input {
+  width: 100%;
+  padding: 15px;
+  line-height: 17px;
+  border-radius: 10px;
+}
 
-  .label {
-    margin-bottom: 20px;
-  }
+.label span {
+  margin-bottom: 5px;
+}
 
-  .input {
-    width: 100%;
-    padding: 15px;
-    line-height: 17px;
+.label span:last-of-type {
+  bottom: -25px;
+}
+.emailLabel {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.editButton {
+  margin-top: 20px;
+  max-width: 160px;
+  width: 100%;
+  line-height: 20px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    width: 48%;
+    height: 40px;
     border-radius: 10px;
-  }
-
-  .label span {
-    margin-bottom: 5px;
-  }
-
-  .label span:last-of-type {
-    bottom: -25px;
-  }
-  .emailLabel {
-    display: block;
-    margin-bottom: 5px;
-  }
-
-  .editButton {
-    margin-top: 20px;
-    max-width: 160px;
-    width: 100%;
-    line-height: 20px;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
-  }
-
-  .modalButtons {
-    display: flex;
-    justify-content: space-between;
-
-    button {
-      width: 48%;
-      height: 40px;
-      border-radius: 10px;
-      font-size: 14px;
-      cursor: pointer;
-    }
   }
 }
 
@@ -134,4 +139,8 @@
     max-width: 110px;
     width: 100%;
   }
+}
+
+.passwordCheckModalLabel {
+  margin-bottom: 30px;
 }

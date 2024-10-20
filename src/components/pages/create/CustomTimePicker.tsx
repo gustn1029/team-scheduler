@@ -1,6 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
-import styles from './create.module.scss';
+import React, { useRef, useEffect } from "react";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import styles from "./create.module.scss";
+import { motion } from "framer-motion";
+import { opacityVarients } from "../../../utils/Animations";
 
 interface CustomTimePickerProps {
   selectedDate: Date;
@@ -9,15 +11,20 @@ interface CustomTimePickerProps {
   onToggle: () => void;
 }
 
-const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedDate, onTimeChange, isOpen, onToggle }) => {
+const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
+  selectedDate,
+  onTimeChange,
+  isOpen,
+  onToggle,
+}) => {
   const pickerRef = useRef<HTMLDivElement>(null);
-  
+
   const generateTimeOptions = () => {
     const times: string[] = [];
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < 60; j += 15) {
-        const hour = i.toString().padStart(2, '0');
-        const minute = j.toString().padStart(2, '0');
+        const hour = i.toString().padStart(2, "0");
+        const minute = j.toString().padStart(2, "0");
         times.push(`${hour}:${minute}`);
       }
     }
@@ -25,15 +32,15 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedDate, onTim
   };
 
   const getTimeValue = (date: Date | null) => {
-    if (!date) return '';
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    if (!date) return "";
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
   const handleSelectTime = (time: string) => {
     try {
-      const [hours, minutes] = time.split(':').map(Number);
+      const [hours, minutes] = time.split(":").map(Number);
       const updatedDate = selectedDate;
       updatedDate.setHours(hours, minutes, 0, 0);
       onTimeChange(updatedDate);
@@ -45,29 +52,39 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedDate, onTim
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(event.target as Node)
+      ) {
         onToggle();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     // Cleanup 이벤트 리스너
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, onToggle]);
 
   const timeOptions = generateTimeOptions();
 
   return (
-    <div className={styles.customDropdown} ref={pickerRef}>
+    <motion.div
+      variants={opacityVarients}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      className={styles.customDropdown}
+      ref={pickerRef}
+    >
       <div className={styles.selectedTime} onClick={onToggle}>
-        <span>{selectedDate ? getTimeValue(selectedDate) : '시간 선택'}</span>
+        <span>{selectedDate ? getTimeValue(selectedDate) : "시간 선택"}</span>
         <i className={styles.arrowIcon}>
           {isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
         </i>
@@ -85,7 +102,7 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({ selectedDate, onTim
           ))}
         </ul>
       )}
-    </div>
+    </motion.div>
   );
 };
 
