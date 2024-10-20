@@ -97,9 +97,6 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
               visible: {
                 opacity: 1,
                 y: 0,
-                transition: {
-                  staggerChildren: 0.1,
-                },
               },
             }}
             initial="hidden"
