@@ -225,7 +225,7 @@ const Profile = () => {
 
   return (
     <MainAnimationLayout variants={layoutYVarients}>
-      {isMutating || (isDeleteUserLoading && <Loader />)}
+      {(isMutating || isDeleteUserLoading) && <Loader />}
       <Header
         onCancel={isEditing ? () => setIsEditing(false) : undefined}
         title={`${isEditing ? "프로필 편집" : "프로필 관리"}`}
