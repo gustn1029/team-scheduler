@@ -73,6 +73,7 @@ const baseEventData: Omit<
   eventColor: "red",
   category: [],
   eventMemo: "",
+  address: null,
   like: 0,
   comments: [],
   createDate: new Date(),
