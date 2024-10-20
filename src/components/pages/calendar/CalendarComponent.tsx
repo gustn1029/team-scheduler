@@ -35,6 +35,8 @@ import { Timestamp } from "firebase/firestore";
 import { layoutYVarients } from "../../../utils/Animations";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
+import { AnimatePresence, motion } from "framer-motion";
+
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -480,14 +482,52 @@ const CalendarComponent = () => {
   };
 
   return (
-    <MainAnimationLayout variants={layoutYVarients} className={styles.calendarWrap}>
-      <section
-        className={`${styles.navWrap} ${isView ? styles.view : styles.hidden}`}
+    <MainAnimationLayout
+      variants={layoutYVarients}
+      className={styles.calendarWrap}
+    >
+      <motion.section
+        className={styles.navWrap}
         onClick={handleHideNav}
         ref={navRef}
+        initial="hidden"
+        animate={isView ? "visible" : "hidden"}
+        transition={{ type: "tween", stiffness: 300, damping: 30 }}
+        variants={{
+          visible: { x: 0 },
+          hidden: { x: "-100%" },
+        }}
       >
         <Navigation />
-      </section>
+        <AnimatePresence>
+          {isView && (
+            <motion.div
+              variants={{
+                hidden: { 
+                  opacity: 0,
+                  transition: { delay: 0, duration: 0.3 }
+                },
+                visible: { 
+                  opacity: 1,
+                  transition: { delay: 0.5, duration: 0.3 }
+                },
+                exit: { 
+                  opacity: 0,
+                  transition: { delay: 0, duration: 0.3 }
+                }
+              }}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{
+                type: "tween",
+                stiffness: 300,
+              }}
+              onClick={handleHideNav}
+            ></motion.div>
+          )}
+        </AnimatePresence>
+      </motion.section>
       <section className={styles.header}>
         <div>
           <IconButton
