@@ -312,7 +312,7 @@ const Create: React.FC = () => {
       {isLoading && <Loader />}
       <Header title="일정 추가" onConfirm={handleSubmit(onSubmit)} />
       <form>
-        <div className={styles.sheduleWriter}>
+        <section className={styles.sheduleWriter}>
           <h3 className={styles.writer}>작성자</h3>
           <img
             className={styles.writerProfile}
@@ -320,9 +320,9 @@ const Create: React.FC = () => {
             alt="writerProfile"
           />
           <span className={styles.writerName}>{`${authData?.nickname}`}</span>
-        </div>
+        </section>
 
-        <div className={styles.titleIpt}>
+        <section className={styles.titleIpt}>
           <LabelInput
             type="text"
             label="Title"
@@ -342,9 +342,9 @@ const Create: React.FC = () => {
             errorView={errors.title}
             isLabelTextHidden={true}
           />
-        </div>
+        </section>
 
-        <div className={`${styles.colorSelect} ${isOpen ? "on" : ""}`}>
+        <section className={`${styles.colorSelect} ${isOpen ? "on" : ""}`}>
           <div className={styles.colorFlex}>
             <h3 className={styles.colorTitle}>색상 선택</h3>
             <button
@@ -391,15 +391,16 @@ const Create: React.FC = () => {
             {...register("eventColor")}
             value={selectedColor}
           />
-        </div>
+        </section>
 
-        <div className={styles.toggleArea}>
+        <section className={styles.toggleArea}>
+          <h3 className="sOnly">하루 종일 선택</h3>
           <label
             className={styles.toggleStyle}
             htmlFor="toggleSwitch"
             role="switch"
           >
-            <h3>하루 종일</h3>
+            <span>하루 종일</span>
             <input
               id="toggleSwitch"
               className={styles.toggleBar}
@@ -408,9 +409,9 @@ const Create: React.FC = () => {
               onChange={(e) => handleToggleAllDay(e.target.checked)}
             />
           </label>
-        </div>
+        </section>
 
-        <div className={styles.calendar}>
+        <section className={styles.calendar}>
           <div className={styles.pickerGroup}>
             <DatePicker
               className={styles.datePicker}
@@ -454,7 +455,7 @@ const Create: React.FC = () => {
               />
             )}
           </div>
-        </div>
+        </section>
         <section className={styles.address}>
           <h3>주소 입력</h3>
           <div>
@@ -477,7 +478,7 @@ const Create: React.FC = () => {
             )}
           </div>
         </section>
-        <div className={styles.meMo}>
+        <section className={styles.meMo}>
           <h3>메모</h3>
           <textarea
             className={styles.textArea}
@@ -489,7 +490,7 @@ const Create: React.FC = () => {
           <div className={styles.memoCount}>
             {memoCount} / {maxLength}
           </div>
-        </div>
+        </section>
       </form>
       {isAddressModal && (
         <Modal isOpen={isAddressModal} onClose={handleHideAddressModal}>
