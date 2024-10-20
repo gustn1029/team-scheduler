@@ -193,7 +193,7 @@ function Detail() {
         sessionStorage.removeItem("seconds");
       }
       navigate("/");
-      toast.success("일정를 삭제했습니다.");
+      toast.success("일정을 삭제했습니다.");
     } catch (err) {
       console.error("일정 삭제 중 오류가 발생했습니다:", err);
       setError("일정 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
