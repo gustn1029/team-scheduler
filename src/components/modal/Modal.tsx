@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import styles from  './modal.module.scss';
+import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import styles from "./modal.module.scss";
+import { motion } from "framer-motion";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -22,16 +23,15 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
     }
 
     const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onClose();
       }
     };
-    window.addEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
 
     return () => {
-      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener("keydown", handleEsc);
     };
-    
   }, [isOpen, onClose]);
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDialogElement>) => {
@@ -41,15 +41,22 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
   };
 
   return createPortal(
-    <dialog 
-      ref={dialog} 
+    <motion.dialog
+      variants={{
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0 },
+      }}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      ref={dialog}
       className={styles.dialog}
       onClick={handleBackgroundClick}
     >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
-    </dialog>,
-    document.getElementById('modal') as HTMLElement
+    </motion.dialog>,
+    document.getElementById("modal") as HTMLElement
   );
 }
