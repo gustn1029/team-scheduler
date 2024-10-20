@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import styles from "./create.module.scss";
-import { motion } from "framer-motion";
-import { opacityVarients } from "../../../utils/Animations";
+import { AnimatePresence, motion } from "framer-motion";
+import { listItemVariants, opacityVarients } from "../../../utils/Animations";
 
 interface CustomTimePickerProps {
   selectedDate: Date;
@@ -89,19 +89,37 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
           {isOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
         </i>
       </div>
-      {isOpen && (
-        <ul className={styles.timeOptions}>
-          {timeOptions.map((time, index) => (
-            <li
-              key={index}
-              className={styles.timeOption}
-              onClick={() => handleSelectTime(time)}
-            >
-              {time}
-            </li>
-          ))}
-        </ul>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.ul
+            variants={{
+              hidden: { opacity: 0, y: -10 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: {
+                  staggerChildren: 0.1,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className={styles.timeOptions}
+          >
+            {timeOptions.map((time, index) => (
+              <motion.li
+                variants={listItemVariants}
+                key={index}
+                className={styles.timeOption}
+                onClick={() => handleSelectTime(time)}
+              >
+                {time}
+              </motion.li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
