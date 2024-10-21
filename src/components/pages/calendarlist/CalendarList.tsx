@@ -24,7 +24,11 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
-import { listItemVariants, layoutYVarients, listVariants } from "../../../utils/Animations";
+import {
+  listItemVariants,
+  layoutYVarients,
+  listVariants,
+} from "../../../utils/Animations";
 
 type EventColor =
   | "red"
@@ -177,11 +181,6 @@ function CalendarList() {
   const isAllDayEvent = (event: Event, selectedDate: Date) => {
     const startDate = new Date(event.startDate.seconds * 1000);
     const endDate = new Date(event.endDate.seconds * 1000);
-    const selectedDateStart = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      selectedDate.getDate()
-    );
     const selectedDateEnd = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
@@ -190,17 +189,35 @@ function CalendarList() {
       59,
       59
     );
-
-    const isFullDay =
-      startDate.getHours() === 0 &&
-      startDate.getMinutes() === 0 &&
-      endDate.getHours() === 23 &&
-      endDate.getMinutes() === 59;
-
-    const isMultiDayEvent =
-      startDate < selectedDateStart && endDate > selectedDateEnd;
-
-    return isFullDay || isMultiDayEvent;
+  
+    // 이벤트가 하루 이상 지속되는지 확인
+    const isMultiDayEvent = endDate.getTime() - startDate.getTime() > 24 * 60 * 60 * 1000;
+  
+    if (isMultiDayEvent) {
+      // 다중 일정인 경우
+      if (
+        endDate.getDate() === selectedDate.getDate() &&
+        endDate.getMonth() === selectedDate.getMonth() &&
+        endDate.getFullYear() === selectedDate.getFullYear()
+      ) {
+        // 마지막 날인 경우
+        return endDate.getHours() === 23 && endDate.getMinutes() === 59;
+      } else {
+        // 시작일이거나 중간 날짜인 경우
+        return startDate <= selectedDateEnd;
+      }
+    } else {
+      // 단일 일정인 경우
+      return (
+        startDate.getHours() === 0 &&
+        startDate.getMinutes() === 0 &&
+        endDate.getHours() === 23 &&
+        endDate.getMinutes() === 59 &&
+        startDate.getDate() === selectedDate.getDate() &&
+        startDate.getMonth() === selectedDate.getMonth() &&
+        startDate.getFullYear() === selectedDate.getFullYear()
+      );
+    }
   };
 
   const colorMap: Record<EventColor, string> = {
@@ -231,7 +248,10 @@ function CalendarList() {
   }, []);
 
   return (
-    <MainAnimationLayout variants={layoutYVarients} className={styles.calendarListMain}>
+    <MainAnimationLayout
+      variants={layoutYVarients}
+      className={styles.calendarListMain}
+    >
       <header className={styles.calendarListHeader}>
         <IconLinkButton
           icon={<RiCloseFill className={styles.closeButton} />}
