@@ -160,10 +160,10 @@
 
 | App       | URL                                        | Views Function    | HTML File Name                        | Note           |
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
-| accounts  | 'login/'                                   | login             | src/components/pages/Login         |로그인           |
-| accounts  | 'signup/'                                | signup          | src/components/pages/SignUp                |회원가입         |
-| accounts  | 'profile/'                                 | profile           | src/components/Profile                 | 프로필 상세 및 수정 |
-| accounts  | 'findpassword/'                                 | findpassword           | src/components/pages/Findpassword                 | 비밀번호 찾기 기능 |
+| accounts  | '/login'                                   | login             | src/components/pages/Login         |로그인           |
+| accounts  | '/signup'                                | signup          | src/components/pages/SignUp                |회원가입         |
+| accounts  | '/profile'                                 | profile           | src/components/Profile                 | 프로필 상세 및 수정 |
+| accounts  | '/findpassword'                                 | findpassword           | src/components/pages/Findpassword                 | 비밀번호 찾기 기능 |
 
 - calendar
 
