@@ -23,13 +23,12 @@
 
 #### 주요 기능
 
-- **직관적인 캘린더 인터페이스**: 월별, 주별, 일별 보기로 일정을 한눈에 파악할 수 있습니다.
-- **유연한 To-Do 리스트**: 우선순위 설정, 마감일 지정, 반복 작업 설정 등 다양한 옵션을 제공합니다.
+- **직관적인 캘린더 인터페이스**: 월별 보기로 일정을 한눈에 파악할 수 있습니다.
+- **유연한 To-Do 리스트**: 완료 상태 옵션을 제공합니다.
 - **캘린더와 To-Do의 완벽한 연동**: To-Do 항목을 캘린더에 쉽게 추가하고 관리할 수 있습니다.
-- **알림 기능**: 중요한 일정과 작업을 놓치지 않도록 맞춤형 알림을 설정할 수 있습니다.
-- **다양한 기기 지원**: 반응형 디자인으로 데스크톱, 태블릿, 모바일 등 모든 기기에서 원활하게 사용 가능합니다.
+- **다양한 기기 지원**: 웹앱 디자인으로 브라우저와 모바일에서 원활하게 사용 가능합니다.
 
-이 웹페이지는 개인 사용자부터 소규모 팀까지 다양한 사용자의 요구를 충족시킬 수 있도록 설계되었습니다. 직관적인 사용자 인터페이스와 강력한 기능을 통해 사용자는 더 효율적으로 시간을 관리하고 목표를 달성할 수 있습니다.
+이 웹페이지는 개인 사용자의 요구를 충족시킬 수 있도록 설계되었습니다. 직관적인 사용자 인터페이스와 강력한 기능을 통해 사용자는 더 효율적으로 시간을 관리하고 목표를 달성할 수 있습니다.
 
 > 시간은 한정되어 있지만, 이 도구를 활용하면 그 시간을 최대한 활용할 수 있습니다. 지금 바로 시작하여 당신의 일상을 더욱 체계적이고 생산적으로 만들어보세요.
 
@@ -89,7 +88,6 @@
 
     - 강력한 타입 시스템으로 런타임 오류를 줄이고 코드의 안정성을 높입니다.
     - 자동 완성, 리팩토링 등 개발 도구의 지원을 강화하여 생산성을 향상시킵니다.
-    - 코드의 가독성과 자체 문서화 효과로 팀 협업과 유지보수가 용이해집니다.
 
 - 모든 React 컴포넌트와 주요 함수에 타입을 적용하여 버그를 사전에 방지하고 코드 품질을 개선했습니다.
 
@@ -162,22 +160,22 @@
 
 | App       | URL                                        | Views Function    | HTML File Name                        | Note           |
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
-| accounts  | 'login/'                                   | login             | src/components/pages/login         |로그인           |
-| accounts  | 'signup/'                                | signup          | src/components/pages/signup                |회원가입         |
-| accounts  | 'profile/'                                 | profile           | src/components/profile                 | 프로필 상세 및 수정 |
-| accounts  | 'findpassword/'                                 | findpassword           | src/components/pages/findpassword                 | 비밀번호 찾기 기능 |
+| accounts  | 'login/'                                   | login             | src/components/pages/Login         |로그인           |
+| accounts  | 'signup/'                                | signup          | src/components/pages/SignUp                |회원가입         |
+| accounts  | 'profile/'                                 | profile           | src/components/Profile                 | 프로필 상세 및 수정 |
+| accounts  | 'findpassword/'                                 | findpassword           | src/components/pages/Findpassword                 | 비밀번호 찾기 기능 |
 
 - calendar
 
 | App       | URL                                        | Views Function    | HTML File Name                        | Note           |
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
-| calendar      | '/calendar'                                        | calendar              | src/components/pages/calendar                        | 캘린더 메인 화면          |
-| calendar      | '/create'                                  | create             | src/components/pages/create                       | 일정 생성               |
-| calendar      | '/calendarList?date={timestamp}'                                  | calendarList             | src/components/pages/calendarlist                       | 일정 목록
-| calendar      | '/calendarlist/{id}'                                  | detail             | src/components/pages/detail                       | 일정 상세
-| calendar      | '/calendarlist/{id}/edit'                                  | edit             | src/components/pages/edit                       | 일정 수정
-| calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제 |
-| calendar      | '/notFound'                                  |   notFound           | src/components/pages/notFound                       | 404 페이지 |
+| calendar      | '/calendar'                                        | calendar              | src/components/pages/CalendarComponent                        | 캘린더 메인 화면          |
+| calendar      | '/create'                                  | create             | src/components/pages/Create                       | 일정 생성               |
+| calendar      | '/calendarlist                               | calendarList             | src/components/pages/CalendarList                       | 일정 목록
+| calendar      | '/calendarlist/{id}'                                  | detail             | src/components/pages/Detail                       | 일정 상세
+| calendar      | '/calendarlist/{id}/edit'                                  | edit             | src/components/pages/Edit                       | 일정 수정
+| calendar      | '/todo'                                  | todo             | src/components/pages/Todos                       | To-Do 생성 및 편집, 삭제 |
+| calendar      | '/notFound'                                  |   notFound           | src/components/pages/NotFound                       | 404 페이지 |
 
 ## 4. 프로젝트 구조
 
@@ -407,23 +405,11 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 
 - 성능 최적화
 
-    - 불필요한 리렌더링을 최소화하고 폼 제출 시 데이터 처리 속도를 개선했습니다. 이를 통해 대규모 폼에서도 부드러운 사용자 경험을 제공할 수 있게 되었습니다.
-
-- 유효성 검사 강화
-
-    - Yup이나 Zod와 같은 스키마 유효성 검사 라이브러리를 react-hook-form과 통합하여 강력하고 유연한 폼 유효성 검사 시스템을 구축했습니다. 이를 통해 사용자 입력 오류를 즉시 감지하고 피드백을 제공할 수 있게 되었습니다.
+    - 불필요한 리렌더링을 최소화하고 폼 제출 시 데이터 처리 속도를 개선했습니다. 이를 통해 부드러운 사용자 경험을 제공할 수 있게 되었습니다.
 
 - 타입 안정성
 
     - TypeScript와 함께 react-hook-form을 사용하여 폼 데이터의 타입 안정성을 확보했습니다. 이로 인해 개발 과정에서 발생할 수 있는 오류를 사전에 방지하고 코드의 신뢰성을 높였습니다.
-
-- 테스트 용이성
-
-    - react-hook-form의 테스트 친화적인 API를 활용하여 단위 테스트와 통합 테스트를 작성했습니다. 이를 통해 폼 로직의 안정성을 보장하고 지속적인 유지보수를 용이하게 만들었습니다.
-
-- 동적 폼 구현
-
-    - react-hook-form의 `useFieldArray` 훅을 사용하여 동적으로 필드를 추가하거나 제거할 수 있는 복잡한 폼을 구현했습니다. 이를 통해 사용자의 다양한 요구사항을 유연하게 수용할 수 있게 되었습니다.
 
 세밀한 에러 핸들링 로직을 구현하여 사용자에게 명확하고 친절한 오류 메시지를 제공했습니다. 이는 폼 작성 과정에서 사용자의 혼란을 최소화하고 성공적인 제출률을 높이는 데 기여했습니다.
 
@@ -439,7 +425,7 @@ React Query를 도입하면서 다음 핵심 포인트들에 집중했습니다.
 - 캐싱 최적화
     - staleTime과 cacheTime을 조정하여 불필요한 네트워크 요청을 최소화하고 데이터 신선도를 유지했습니다.
 - 에러 및 로딩 상태 관리
-    - isLoading, isError 등의 상태를 활용해 사용자에게 적절한 피드백을 제공하고, 에러 발생 시 재시도 로직을 구현했습니다.
+    - useIsFetching(), isLoading, isError 등의 상태를 활용해 사용자에게 적절한 피드백을 제공하고, 에러 발생 시 재시도 로직을 구현했습니다.
 - 개발자 도구 활용
     -ReactQueryDevtools를 사용해 쿼리 상태를 모니터링하고 성능을 최적화했습니다. 
 
