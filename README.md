@@ -9,9 +9,9 @@
     - 테스트 이메일 : test@test.com
     - 테스트 비밀번호 : qqq111!!!
 
-- [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/gustn1029/team-scheduler) 
-- [![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/dLjpvzCFiJu486ymphJFtm/Team_Scheduler?node-id=171-707&node-type=frame&t=jMkuuEiFHgB5wWWU-0) 
-- [![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/10631d91ebd780f796eac9bfcf443400?pvs=4)
+## [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/gustn1029/team-scheduler) 
+## [![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/dLjpvzCFiJu486ymphJFtm/Team_Scheduler?node-id=171-707&node-type=frame&t=jMkuuEiFHgB5wWWU-0) 
+## [![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/10631d91ebd780f796eac9bfcf443400?pvs=4)
 
 <br>
 
@@ -50,24 +50,24 @@
 ## 1. 개발 환경
 
 - 디자인 : 
-    - ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+    ### ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 - 버전 및 이슈관리 : 
-    - ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+    ### ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 - 협업 툴 : 
-    - ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
-    - ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
+    ### ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
+    ### ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
 - 서비스 배포 환경 : 
-    - ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+    ### ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 
 - 개발 도구 :
-    - ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white)
+    ### ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white)
 
 - Front-end : 
-    - ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-    - ![TypeScript](https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white)
+    ### ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+    ### ![TypeScript](https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white)
 
  - Back-end :   
-    - ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
+    ### ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
 <br>
 
 ## 2. 채택한 개발 기술과 브랜치 전략
@@ -606,24 +606,24 @@ React Query를 도입하면서 다음 핵심 포인트들에 집중했습니다.
 
 ## 10. 프로젝트 후기
 
-###  김현수
+### 김현수
 
 초기 기획부터 마무리까지 팀원들과 함께 진행하며 많은 것을 배울 수 있었던 시간이었습니다. 프로젝트를 진행하며 각자 맡은 업무만 진행하는 것이 아니라 서로 도움이 필요할 때 함께 논의하고 고민하여 해결해 나가면서 협업의 중요성을 느낄 수 있었습니다. 그렇기에 협업하여 해결했던 이슈들을 따로 기록하지 못한 것이 큰 아쉬움으로 남았습니다. 한 달이라는 시간이 짧게 느껴질 정도로 즐겁게 프로젝트를 진행한 것 같습니다. 여기서 멈추는 것이 아니라 앞으로도 함께 목표를 이루어 나갔으면 좋겠습니다. 다들 수고하셨습니다! 
 
 <br>
 
-###  이한수
+### 이한수
 
 프로젝트 초반에 디자인 부분을 맡아 작업하게 되어, 다른 분들이 개발을 시작하시고 일주일 이후에 개발에 뛰어들게 되었습니다. 디자인하는 기간 때문에 개발의 공백기가 있어 내가 맡은 부분을 기간 내에 구현할 수 있을까 걱정이 되었지만 작은 것 부터 시작해서 크게 키워가면 된다는 멘토님의 말씀을 듣고 페이지를 점차 완성하게 되며 자신감을 얻게 되었습니다. 또한 마음이 맞는 팀원들과 함께하며, 서로 모르는 것은 알아보고 알려주며 함께 성장하는 계기가 되었다고 생각합니다. 같은 조원분들에게 정말 감사하다는 말을 전해주고 싶습니다!
 <br>
 
-###  이민서
+### 이민서
 
 이번 프로젝트를 통해 다양한 부분에서 성장할 수 있었습니다. 각자 맡은 역할에 충실하면서도 서로의 어려움을 함께 고민하며 해결해 나가는 과정에서 협업의 의미를 깨달을 수 있었습니다. 새로운 기술 스택들을 다루는 부분이 있었는데, 처음에는 생소했지만 팀원들과 다같이 학습하고 공유하는 과정에서 빠르게 적응할 수 있었습니다. 한 달이라는 기간 동안 이룬 결과물을 보며 뿌듯함과 아쉬움이 동시에 남습니다. 힘든 순간에도 서로를 격려하고 응원해준 팀원분들에게 감사의 마음을 전하고 싶습니다.
 
 <br>
 
-###  신진석
+### 신진석
 
 제 자신이 너무 부족한 부분이 많았다고 생각했는데 좋은 팀장님, 팀원분들을 만나서 팀 프로젝트를 하면서 제게 필요한 부분과 스케쥴 관리 등 많은 것에 대해서 배우고 간다고 생각합니다. 좋은 분들을 만나서 너무 행복한 시간이였습니다!
 
