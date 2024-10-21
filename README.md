@@ -172,7 +172,7 @@
 | calendar      | '/calendarlist'                                  | calendarlist             | src/components/pages/calendarlist                       | 캘린더 편집
 | calendar      | '/calendarList'                                  | detail             | src/components/pages/detail                       | 캘린더 상세
 | calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제 |
-
+| calendar      | '/notFound'                                  |              | src/components/pages/notFound                       | 404 페이지 |
 
 ## 4. 프로젝트 구조
 
