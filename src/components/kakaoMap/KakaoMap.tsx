@@ -19,7 +19,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
   useEffect(() => {
     if (isLoaded && mapRef.current && !map) {
-      console.log("Initializing map");
       const options = {
         center: new window.kakao.maps.LatLng(latitude, longitude),
         level: level,
@@ -39,7 +38,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
   useEffect(() => {
     if (map) {
-      console.log("Map loaded, calling relayout");
       map.relayout();
     }
   }, [map]);
