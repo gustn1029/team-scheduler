@@ -387,13 +387,16 @@
   margin-bottom: 10px;
   
   label {
-    flex-grow: 1;
+    flex: 1;
   }
 
   button {
+    max-width: 60px;
+    padding: 10px;
     height: 40px;
   }
 }
+
 .addressLabel {
   display: block;
   font-size: 0.85rem;
@@ -404,6 +407,7 @@
 }
 
 .addressInput {
+  width: 100%;
   height: 40px;
   padding-left: 10px;
   border-radius: 5px;
