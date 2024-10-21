@@ -181,43 +181,18 @@ function CalendarList() {
   const isAllDayEvent = (event: Event, selectedDate: Date) => {
     const startDate = new Date(event.startDate.seconds * 1000);
     const endDate = new Date(event.endDate.seconds * 1000);
-    const selectedDateEnd = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      selectedDate.getDate(),
-      23,
-      59,
-      59
-    );
-  
+
     // 이벤트가 하루 이상 지속되는지 확인
-    const isMultiDayEvent = endDate.getTime() - startDate.getTime() > 24 * 60 * 60 * 1000;
-  
+    const isMultiDayEvent =
+      endDate.getTime() - startDate.getTime() > 24 * 60 * 60 * 1000;
+
     if (isMultiDayEvent) {
-      // 다중 일정인 경우
-      if (
-        endDate.getDate() === selectedDate.getDate() &&
-        endDate.getMonth() === selectedDate.getMonth() &&
-        endDate.getFullYear() === selectedDate.getFullYear()
-      ) {
-        // 마지막 날인 경우
-        return endDate.getHours() === 23 && endDate.getMinutes() === 59;
-      } else {
-        // 시작일이거나 중간 날짜인 경우
-        return startDate <= selectedDateEnd;
-      }
-    } else {
-      // 단일 일정인 경우
-      return (
-        startDate.getHours() === 0 &&
-        startDate.getMinutes() === 0 &&
-        endDate.getHours() === 23 &&
-        endDate.getMinutes() === 59 &&
-        startDate.getDate() === selectedDate.getDate() &&
-        startDate.getMonth() === selectedDate.getMonth() &&
-        startDate.getFullYear() === selectedDate.getFullYear()
-      );
+      // 첫째 날이나 마지막 날이 아닌 경우만 true 반환
+      return selectedDate > startDate && selectedDate < endDate;
     }
+
+    // 단일 일정인 경우 항상 false 반환 (시간 표시를 위해)
+    return false;
   };
 
   const colorMap: Record<EventColor, string> = {
@@ -291,30 +266,79 @@ function CalendarList() {
                   >
                     <div className={styles.textContainer}>
                       <div className={styles.timeContainerIf}>
-                        {isAllDayEvent(event, date) ? (
-                          <p className={styles.allDay}>종일</p>
-                        ) : (
-                          <div className={styles.timeContainer}>
-                            <p>
-                              {new Date(
-                                event.startDate.seconds * 1000
-                              ).toLocaleTimeString("ko-KR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })}
-                            </p>
-                            <p>
-                              {new Date(
-                                event.endDate.seconds * 1000
-                              ).toLocaleTimeString("ko-KR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })}
-                            </p>
-                          </div>
-                        )}
+                        {(() => {
+                          const eventStart = new Date(
+                            event.startDate.seconds * 1000
+                          );
+                          const eventEnd = new Date(
+                            event.endDate.seconds * 1000
+                          );
+                          const isStartDay =
+                            eventStart.toDateString() === date.toDateString();
+                          const isEndDay =
+                            eventEnd.toDateString() === date.toDateString();
+                          const isMultiDayEvent =
+                            eventEnd.getTime() - eventStart.getTime() >
+                            24 * 60 * 60 * 1000;
+
+                          if (isMultiDayEvent) {
+                            if (isStartDay) {
+                              return (
+                                <div className={styles.timeContainer}>
+                                  <p>
+                                    {eventStart.toLocaleTimeString("ko-KR", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: false,
+                                    })}
+                                  </p>
+                                  <p className={styles.allDay}> 종일</p>
+                                </div>
+                              );
+                            } else if (isEndDay) {
+                              return (
+                                <div className={styles.timeContainer}>
+                                  <p>
+                                    {eventStart.toLocaleTimeString("ko-KR", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: false,
+                                    })}
+                                  </p>
+                                  <p>
+                                    {eventEnd.toLocaleTimeString("ko-KR", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: false,
+                                    })}
+                                  </p>
+                                </div>
+                              );
+                            } else if (isAllDayEvent(event, date)) {
+                              return <p className={styles.allDay}>종일</p>;
+                            }
+                          }
+
+                          // 하루 일정이거나 다중 일정의 마지막 날
+                          return (
+                            <div className={styles.timeContainer}>
+                              <p>
+                                {eventStart.toLocaleTimeString("ko-KR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: false,
+                                })}
+                              </p>
+                              <p>
+                                {eventEnd.toLocaleTimeString("ko-KR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: false,
+                                })}
+                              </p>
+                            </div>
+                          );
+                        })()}
                       </div>
                       <div
                         className={styles.listColor}
