@@ -204,7 +204,7 @@ function CalendarList() {
       } else if (isEndDay) {
         return (
           <>
-            <p>{formatTime(startDate)}</p>
+            <p>00:00</p>
             <p>{formatTime(endDate)}</p>
           </>
         );
