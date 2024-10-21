@@ -1,31 +1,37 @@
 # 📅 스케쥴러, To-Do Site TimeFlow
 
-<div align="center">
 
 <a href="https://time-flow-app.vercel.app">
-<img src="./src/assets/images/logo.svg"/>
+<img src="./public/main.png"/>
 </a>
 
+- 배포 URL : https://time-flow-app.vercel.app
+    - 테스트 이메일 : test@test.com
+    - 테스트 비밀번호 : qqq111!!!
 
-배포 URL : https://time-flow-app.vercel.app
-
-테스트 이메일 : test@test.com
-
-테스트 비밀번호 : qqq111!!!
-
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/gustn1029/team-scheduler)
-
-
-</div>
+- [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/gustn1029/team-scheduler) 
+- [![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/dLjpvzCFiJu486ymphJFtm/Team_Scheduler?node-id=171-707&node-type=frame&t=jMkuuEiFHgB5wWWU-0) 
+- [![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/10631d91ebd780f796eac9bfcf443400?pvs=4)
 
 <br>
 
 ## 프로젝트 소개
 
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+### 효율적인 일정 및 작업 관리를 위한 올인원 솔루션 TimeFlow
+
+일상 생활과 업무의 균형을 유지하는 것이 점점 더 어려워지는 현대 사회에서, 효과적인 시간 관리는 성공의 핵심 요소입니다. 이러한 필요성을 충족시키기 위해 개발된 이 웹 애플리케이션은 캘린더와 To-Do 리스트를 완벽하게 통합하여 사용자의 생산성을 극대화합니다.
+
+#### 주요 기능
+
+- **직관적인 캘린더 인터페이스**: 월별, 주별, 일별 보기로 일정을 한눈에 파악할 수 있습니다.
+- **유연한 To-Do 리스트**: 우선순위 설정, 마감일 지정, 반복 작업 설정 등 다양한 옵션을 제공합니다.
+- **캘린더와 To-Do의 완벽한 연동**: To-Do 항목을 캘린더에 쉽게 추가하고 관리할 수 있습니다.
+- **알림 기능**: 중요한 일정과 작업을 놓치지 않도록 맞춤형 알림을 설정할 수 있습니다.
+- **다양한 기기 지원**: 반응형 디자인으로 데스크톱, 태블릿, 모바일 등 모든 기기에서 원활하게 사용 가능합니다.
+
+이 웹페이지는 개인 사용자부터 소규모 팀까지 다양한 사용자의 요구를 충족시킬 수 있도록 설계되었습니다. 직관적인 사용자 인터페이스와 강력한 기능을 통해 사용자는 더 효율적으로 시간을 관리하고 목표를 달성할 수 있습니다.
+
+> 시간은 한정되어 있지만, 이 도구를 활용하면 그 시간을 최대한 활용할 수 있습니다. 지금 바로 시작하여 당신의 일상을 더욱 체계적이고 생산적으로 만들어보세요.
 
 <br>
 
@@ -35,7 +41,7 @@
 
 | **김현수** | **이한수** | **이민서** | **신진석** |
 |:-------:|:-------:|:-------:|:-------:|
-| [<img src="./public/khs.png" height=150 width=150>](https://github.com/gustn1029) | [<img src="./public/hans.png" height=150 width=150>](https://github.com/biktory01) | [<img src="./public/minseo.png" height=150 width=150>](https://github.com/LeeMinseo0117) |   이미지   |
+| [<img src="./public/khs.png" height=150 width=150>](https://github.com/gustn1029) | [<img src="./public/hans.png" height=150 width=150>](https://github.com/biktory01) | [<img src="./public/minseo.png" height=150 width=150>](https://github.com/LeeMinseo0117) |  [<img src="./public/js.png" height=150 width=150>](https://github.com/nanamihiromachi) |
 
 </div>
 
@@ -43,12 +49,25 @@
 
 ## 1. 개발 환경
 
+- 디자인 : 
+    - ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+- 버전 및 이슈관리 : 
+    - ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+- 협업 툴 : 
+    - ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
+    - ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
+- 서비스 배포 환경 : 
+    - ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+
 - 개발 도구 :
     - ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white)
 
 - Front-end : 
     - ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
     - ![TypeScript](https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white)
+
+ - Back-end :   
+    - ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
 <br>
 
 ## 2. 채택한 개발 기술과 브랜치 전략
@@ -132,7 +151,29 @@
 
 <br>
 
-## 3. 프로젝트 구조
+## 3. URL 구조(모놀리식)
+
+- accounts
+
+| App       | URL                                        | Views Function    | HTML File Name                        | Note           |
+|-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
+| accounts  | 'login/'                                   | login             | src/          components/pages/login         |로그인           |
+| accounts  | 'signup/'                                | signup          | src/          components/pages/signup                |회원가입         |
+| accounts  | 'profile/'                                 | profile           | src/          components/profile                 | 프로필 상세 및 수정 |
+| accounts  | 'findpassword/'                                 | findpassword           | src/          components/pages/findpassword                 | 비밀번호 찾기 기능 |
+
+- calendar
+
+| App       | URL                                        | Views Function    | HTML File Name                        | Note           |
+|-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
+| calendar      | '/calendar'                                        | calendar              | src/components/pages/calendar                        | 캘린더 메인 화면          |
+| calendar      | '/create'                                  | create             | src/components/pages/create                       | 캘린더 생성               |
+| calendar      | '/calendarlist'                                  | calendarlist             | src/components/pages/calendarlist                       | 캘린더 편집
+| calendar      | '/calendarList'                                  | detail             | src/components/pages/detail                       | 캘린더 상세
+| calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제 |
+| calendar      | '/notFound'                                  |   notFound           | src/components/pages/notFound                       | 404 페이지 |
+
+## 4. 프로젝트 구조
 
 ```
 📦src
@@ -193,7 +234,7 @@
  ┃ ┃ ┃ ┗ 📜labelToggle.module.scss
  ┃ ┃ ┣ 📜LabelLayout.tsx
  ┃ ┃ ┗ 📜labelLayout.module.scss
- ┃ ┣ 📂kakaoMap
+ ┃ ┣ 📂kakaoMap // 주소 불러오기를 위한 컴포넌트
  ┃ ┃ ┣ 📜KakaoMap.tsx
  ┃ ┃ ┗ 📜kakaoMap.module.scss
  ┃ ┣ 📂layouts
@@ -209,41 +250,41 @@
  ┃ ┃ ┣ 📜Navigation.tsx
  ┃ ┃ ┗ 📜navigation.module.scss
  ┃ ┣ 📂pages
- ┃ ┃ ┣ 📂SignUp
+ ┃ ┃ ┣ 📂SignUp // 회원 가입 페이지
  ┃ ┃ ┃ ┣ 📜SignUp.tsx
  ┃ ┃ ┃ ┗ 📜signup.module.scss
- ┃ ┃ ┣ 📂calendar
+ ┃ ┃ ┣ 📂calendar   // 캘린더 페이지
  ┃ ┃ ┃ ┣ 📜CalendarComponent.tsx
  ┃ ┃ ┃ ┗ 📜calendar.module.scss
- ┃ ┃ ┣ 📂calendarlist
+ ┃ ┃ ┣ 📂calendarlist   // 캘린더 목록 페이지
  ┃ ┃ ┃ ┣ 📜CalendarList.tsx
  ┃ ┃ ┃ ┗ 📜calendarlist.module.scss
- ┃ ┃ ┣ 📂create
+ ┃ ┃ ┣ 📂create // 캘린더 생성 페이지
  ┃ ┃ ┃ ┣ 📜Create.tsx
  ┃ ┃ ┃ ┣ 📜CustomTimePicker.tsx
  ┃ ┃ ┃ ┗ 📜create.module.scss
- ┃ ┃ ┣ 📂detail
+ ┃ ┃ ┣ 📂detail // 캘린더 상세 페이지
  ┃ ┃ ┃ ┣ 📜Detail.tsx
  ┃ ┃ ┃ ┗ 📜detail.module.scss
- ┃ ┃ ┣ 📂edit
+ ┃ ┃ ┣ 📂edit   // 캘린더 일정 수정 페이지
  ┃ ┃ ┃ ┗ 📜Edit.tsx
- ┃ ┃ ┣ 📂findpassword
+ ┃ ┃ ┣ 📂findpassword   // 비밀번호 찾기 페이지
  ┃ ┃ ┃ ┣ 📜FindPassword.tsx
  ┃ ┃ ┃ ┗ 📜findpassword.module.scss
- ┃ ┃ ┣ 📂login
+ ┃ ┃ ┣ 📂login  // 로그인 페이지
  ┃ ┃ ┃ ┣ 📜Login.tsx
  ┃ ┃ ┃ ┗ 📜login.module.scss
- ┃ ┃ ┣ 📂notFound
+ ┃ ┃ ┣ 📂notFound   // 404 페이지
  ┃ ┃ ┃ ┣ 📜NotFound.tsx
  ┃ ┃ ┃ ┗ 📜notFound.module.scss
- ┃ ┃ ┣ 📂todos
+ ┃ ┃ ┣ 📂todos  // To-do 페이지
  ┃ ┃ ┃ ┣ 📜TodoForm.tsx
  ┃ ┃ ┃ ┣ 📜TodoList.tsx
  ┃ ┃ ┃ ┣ 📜TodoListItem.tsx
  ┃ ┃ ┃ ┣ 📜Todos.tsx
  ┃ ┃ ┃ ┗ 📜todos.module.scss
  ┃ ┃ ┣ 📜Profile.module.scss
- ┃ ┃ ┗ 📜Profile.tsx
+ ┃ ┃ ┗ 📜Profile.tsx    // 프로필 페이지
  ┃ ┣ 📂test
  ┃ ┃ ┣ 📜FormTest.tsx
  ┃ ┃ ┗ 📜formTest.module.scss
@@ -281,14 +322,14 @@
 
 <br>
 
-## 4. 역할 분담
+## 5. 역할 분담
 
 ### 김현수
 
 - **UI**
 
     - 페이지 : 캘린더 메인, To-Do, 404
-    - 공통 Components : Menu, Button, Input, Modal
+    - 공통 컴포넌트 : Menu, Button, Input, Modal
 
 - **기능**
 
@@ -314,81 +355,128 @@
 
     - 회원가입, 로그인, 일정 목록, 일정 상세, 준비중
 
-- **Feature**
+- **기능**
 
-    - 회원가입 유효성 및 중복성 검사, 로그인 유효성 및 중복성 검사
+    - 회원가입, 로그인, 일정 목록, 일정 상세, 회원가입 유효성 및 중복성 검사, 로그인 유효성 및 중복성 검사
 
-- **Database**
+- **데이터베이스**
 
     - Firebase 초기 세팅 및 연결
-
 <br>
 
 ### 신진석
 
 - **UI**
-    - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+    - 프로필 상세 및 편집 작업 및 README 작성
 - **기능**
-    - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+    - 프로필 상세 및 편집
 
 <br>
 
-## 5. 개발 기간 및 작업 관리
+## 6. 개발 기간 및 작업 관리
 
 ### 개발 기간
 
 - 전체 개발 기간 : 2024-09-23 ~ 2024-10-20
-- UI 구현 : 2024-09-25 ~ 2024-10-16
-- 기능 구현 : 2024-09-25 ~ 2024-10-16
+- UI 구현 : 2024-09-25 ~ 2024-10-04
+- 기능 구현 : 2024-10-04 ~ 2024-10-16
 - 1차 테스트 및 오류 수정: 2024-10-17 ~ 2024-10-18
 - 2차 테스트 및 오류 수정: 2024-10-18 ~ 2024-10-20
 
 <br>
 
 ### 작업 관리
-
-- 매일 아침, 저녁에 회의를 통해 진행 상황을 공유했습니다. 
+ 
+- 매일 오전에 전체 회의를 진행하며, 오늘의 목표 및 건의사항 등을 얘기하고, 오후에 전체 회의를 진행하며 진행 사항을 공유했습니다.
 - 각각의 기능, 페이지에 맞게 브랜치를 생성하여 GitHub를 관리했습니다. 
 
 <br>
 
-## 6. 신경 쓴 부분
+## 7. 신경 쓴 부분
 
-- [신경 쓴 부분 1](링크)
+### react-hook-form 활용 최적화
 
-- [신경 쓴 부분 2](링크)
+react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라이브러리의 핵심 기능을 최대한 활용하여 성능과 사용자 경험을 향상시켰습니다.
+
+
+- 성능 최적화
+
+    - 불필요한 리렌더링을 최소화하고 폼 제출 시 데이터 처리 속도를 개선했습니다. 이를 통해 대규모 폼에서도 부드러운 사용자 경험을 제공할 수 있게 되었습니다.
+
+- 유효성 검사 강화
+
+    - Yup이나 Zod와 같은 스키마 유효성 검사 라이브러리를 react-hook-form과 통합하여 강력하고 유연한 폼 유효성 검사 시스템을 구축했습니다. 이를 통해 사용자 입력 오류를 즉시 감지하고 피드백을 제공할 수 있게 되었습니다.
+
+- 타입 안정성
+
+    - TypeScript와 함께 react-hook-form을 사용하여 폼 데이터의 타입 안정성을 확보했습니다. 이로 인해 개발 과정에서 발생할 수 있는 오류를 사전에 방지하고 코드의 신뢰성을 높였습니다.
+
+- 테스트 용이성
+
+    - react-hook-form의 테스트 친화적인 API를 활용하여 단위 테스트와 통합 테스트를 작성했습니다. 이를 통해 폼 로직의 안정성을 보장하고 지속적인 유지보수를 용이하게 만들었습니다.
+
+- 동적 폼 구현
+
+    - react-hook-form의 `useFieldArray` 훅을 사용하여 동적으로 필드를 추가하거나 제거할 수 있는 복잡한 폼을 구현했습니다. 이를 통해 사용자의 다양한 요구사항을 유연하게 수용할 수 있게 되었습니다.
+
+세밀한 에러 핸들링 로직을 구현하여 사용자에게 명확하고 친절한 오류 메시지를 제공했습니다. 이는 폼 작성 과정에서 사용자의 혼란을 최소화하고 성공적인 제출률을 높이는 데 기여했습니다.
+
+이러한 노력을 통해 react-hook-form의 장점을 최대한 활용하고, 프로젝트의 요구사항에 맞는 최적의 폼 관리 솔루션을 구현할 수 있었습니다.
+
+
+### React Testing Library 사용 시 주요 고려사항
+
+- 사용자 관점 테스트
+
+    - 사용자가 실제로 보고 상호작용하는 요소에 집중합니다. 내부 구현보다는 사용자 경험을 테스트합니다.
+
+- 접근성 우선
+
+    - getByRole, getByLabelText 같은 접근성 친화적인 쿼리를 우선 사용합니다.
+
+- 비동기 처리
+
+    - waitFor와 act를 사용해 비동기 작업과 상태 업데이트를 올바르게 테스트합니다.
+
+- 테스트 격리
+
+    - afterEach로 각 테스트 후 cleanup을 실행하여 테스트 간 독립성을 유지합니다.
+
+- 효율적인 쿼리 선택
+
+    - 상황에 맞는 적절한 쿼리 메서드를 선택합니다. findBy는 비동기 요소에, getBy는 즉시 나타나는 요소에 사용합니다.
 
 <br>
 
-## 7. 페이지별 기능
+## 8. 페이지별 기능
 
 ### 로그인
 
-- 서비스 접속 초기 화면으로 로그인 화면이 나타남
-    - Firebase에 유저가 저장되어 있을 경우 : 해당 이메일 및 구글 이메일로 로그인 가능
-    - Firebase에 유저가 저장되어 있지 않은 경우 : 로그인이 불가능 하고 회원가입으로 유저 등록 후 이용 가능
-    - 구글 이메일이 있는 사용자는 회원가입 없이 구글 로그인만으로도 회원가입 및 로그인 가능
-- 이메일 및 비밀번호 유효성 검사 진행
-    - 이메일 형식이 맞지 않을 경우, 이메일 로컬 부분이 30자 이상인 경우, 비밀번호가 8자 이내인 경우, 비밀번호에 영어 소문자, 특수문자, 숫자를 모두 포함하지 않은 경우, input의 값이 비어있는 경우 : 각 경우에 알맞는 경고 문구가 나타남
+- 서비스 접속 초기 화면으로 로그인 화면이 나타납니다.
+- Firebase에 유저가 저장되어 있을 경우 해당 이메일 및 구글 이메일로 로그인 가능합니다.
+- Firebase에 유저가 저장되어 있지 않은 경우 이메일 로그인이 불가능 하고, 회원가입으로 유저 등록 후 이용 가능합니다.
+- 구글 이메일이 있는 사용자는 회원가입 없이 구글 로그인만으로도 회원가입 및 로그인 가능합니다.
+- 이메일 형식이 맞지 않을 경우, 이메일 로컬 부분이 30자 이상인 경우, 비밀번호가 8자 이내인 경우, 비밀번호에 영어 소문자, 특수문자, 숫자를 모두 포함하지 않은 경우, input의 값이 비어있는 경우,각 경우에 맞게 유효성 검사를 하고 경고 문구가 나타납니다.
 
-| 로그인 | 구글 로그인 |
-|----------|----------|
-| 이미지 | 이미지 |
+| 로그인 |
+|----------|
+| ![Login](./public/login.webp) |
 
 <br>
 
 ### 회원가입
 
-- 이메일 및 비밀번호 유효성 검사 진행
-    - 이메일 형식이 맞지 않을 경우, 이메일 로컬 부분이 30자 이상인 경우, 비밀번호가 8자 이내인 경우, 비밀번호 확인 input이 비밀번호 input의 값과 일치하지 않은 경우, 비밀번호에 영어 소문자, 특수문자, 숫자를 모두 포함하지 않은 경우, input의 값이 비어있는 경우 : 각 경우에 알맞는 경고 문구가 나타남
-- input의 값을 전체 입력하면 확인 버튼 색상이 변경됨
-    - 조건과 일치하지 않는 input일 경우 : border의 색상이 빨간색으로 나타나고 경고 문구가 출력됨
-    - 조건과 일치하는 input일 경우: border의 색상이 초록색으로 나타남
-    - 조건과 일치하지 않았다가 일치하게 작성했을 경우 : border의 색상이 초록색으로 변경되며 경고 문구가 사라짐
+- 이메일 형식이 맞지 않을 경우, 이메일 로컬 부분이 30자 이상인 경우, 비밀번호가 8자 이내인 경우, 비밀번호 확인 input이 비밀번호 input의 값과 일치하지 않은 경우, 비밀번호에 영어 소문자, 특수문자, 숫자를 모두 포함하지 않은 경우, input의 값이 비어있는 경우, 각 경우에 맞게 유효성 검사를 하고 경고 문구가 나타납니다.
+- 이메일 중복시 회원가입이 불가능 합니다.
+- input의 값을 전체 입력하면 확인 버튼 색상이 변경됩니다.
+- 조건과 일치하지 않는 input일 경우, border의 색상이 빨간색으로 변경되고 경고 문구가 출력됩니다.
+- 조건과 일치하는 input일 경우, border의 색상이 초록색으로 변경됩니다.
+- 조건과 일치하지 않았다가 일치하게 작성했을 경우, border의 색상이 빨간색에서 초록색으로 변경되며 경고 문구가 사라집니다.
+- input 값 입력 및 유효성 검사, 중복 검사를 모두 통과하면 Firebase에 정보 저장 및 회원가입이 완료됩니다.
 
-| 회원가입 | 비밀번호 조건에 안맞을 시 | 회원가입 조건에 맞을 시 |
-|----------|----------|----------|
-| 이미지 | 이미지 | 이미지 |
+| 회원가입 |
+|----------|
+| ![Signup](./public/signup.webp) |
 
 <br>
 
@@ -405,9 +493,9 @@
 - 메뉴를 통해 로그아웃이 가능합니다.
 - 메뉴를 통해 프로필 관리 페이지로 이동이 가능합니다.
 
-| 메인 페이지 | 캘린더 월 변경 | + 버튼 터치시 |
-|----------|----------|----------|
-| 이미지 | gif 이미지 | 이미지 |
+| 캘린더 | 메뉴 |
+|----------|----------|
+| ![calendar](./public/calendar.png) | ![menu](./public/menu.webp) |
 
 <br>
 
@@ -422,36 +510,37 @@
 - 메모를 100글자 까지만 입력할 수 있으며, 필수사항이 아닙니다.
 - 일정이 추가되면 캘린더 페이지로 이동합니다.
 
-| 일정 추가 | 하루 종일 설정 시 | 메모 글자 수 제한 |
-|----------|----------|----------|
-| 이미지 | 이미지 | gif 이미지 |
+| 일정 추가 | 하루 종일 설정 시 | 주소 추가 | 일정 추가 시연 |
+|----------|----------|----------|----------|
+| ![add](./public/calendaradd.png) | ![toggle](./public/calendartoggle.png) | ![address](./public/calendaraddress.png) | ![calendarwebp](./public/calendar.webp) |
 
 <br>
 
 ### 일정 목록 페이지
-- 공휴일, 작성한 일정을 날짜별로 확인할 수 있음
-    - 공휴일은 목록 최상단에 위치
-- 하루종일로 설정한 일정은 목록에 "종일"로 나오며 시간을 설정한 일정은 시작 시간과 종료 시간이 나옴
-    - 시작 날짜 < 종료 날짜일 경우 : 종료 시간은 00:00으로 나오게 됨
-    - 시작 날짜 > 종료 날짜일 경우 : 시작 시간은 00:00으로 나오게 됨
-- 우측 상단의 + 클릭시 모달창이 나옴
+
+- 공휴일, 작성한 일정을 날짜별로 확인할 수 있습니다.
+- 공휴일은 일정 목록 최상단에 위치합니다.
+- 하루종일로 설정한 일정은 목록에 "종일"로 나오며 시간을 설정한 일정은 시작 시간과 종료 시간이 나옵니다.
+- 시작 날짜 < 종료 날짜일 경우에는 종료 시간은 00:00으로 나오게 됩니다.
+- 시작 날짜 > 종료 날짜일 경우에는 시작 시간은 00:00으로 나오게 됩니다.
+- 우측 상단의 + 클릭시 모달창이 나옵니다.
 
 | 일정 목록 페이지 |
 |----------|
-| 이미지 |
+| ![list](./public/calendarlist.png) |
 
 <br>
 
 ### 일정 상세 페이지
 
-- 우측 상단은 각각 일정 편집, 일정 삭제 버튼으로 이루어져 있음
-    - 일정 편집 클릭 시 해당 일정의 id를 일정 편집 페이지에 보내줌
-    - 일정 삭제 클릭 시 Firebase에서도 해당 일정 데이터를 제거함
-- 해당 일정의 작성자 닉네임, 작성자 프로필 이미지, 일정 색상, 일정 제목, 일정 시작 및 종료 시간, 메모를 보여줌
+- 우측 상단은 각각 일정 편집, 일정 삭제 버튼으로 이루어져 있습니다.
+- 일정 편집 클릭 시 해당 일정의 id를 일정 편집 페이지에 보내줍니다.
+- 일정 삭제 클릭 시 Firebase에서도 해당 일정 데이터를 제거합니다.
+- 해당 일정의 작성자 닉네임, 작성자 프로필 이미지, 일정 색상, 일정 제목, 일정 시작 및 종료 시간, 메모를 보여줍니다.
 
 | 일정 상세 페이지 |
 |----------|
-| 이미지 |
+| ![detail](./public/detail1.png) |
 
 <br>
 
@@ -468,7 +557,7 @@
 
 | 일정 수정 페이지 |
 |----------|
-| 이미지 |
+| ![edit](./public/calendaredit.png) |
 
 <br>
 
@@ -484,7 +573,7 @@
 
 | 프로필 상세 페이지 | 프로필 수정 페이지 |
 |----------|----------|
-| 이미지 | 이미지 |
+| ![profile](./public/profile.png) | ![profileedit](./public/profileedit.png) |
 
 <br>
 
@@ -500,11 +589,11 @@
 
 | To-Do 페이지 |
 |----------|
-| 이미지 |
+| ![Todo](./public/todo.webp) |
 
 <br>
 
-## 8. 트러블 슈팅
+## 9. 트러블 슈팅
 
 - [트러블1](링크)
 
@@ -512,17 +601,14 @@
 
 <br>
 
-## 9. 개선 목표
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+## 10. 개선 목표
 
-    - Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-
+- 비밀번호 찾기 기능에 대한 기능 구현
+- 팀 단위로 캘린더 관리가 가능할 수 있게 구현
 
 <br>
 
-## 10. 프로젝트 후기
+## 11. 프로젝트 후기
 
 ###  김현수
 
@@ -537,10 +623,12 @@
 
 ###  이민서
 
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+이번 프로젝트를 통해 다양한 부분에서 성장할 수 있었습니다. 각자 맡은 역할에 충실하면서도 서로의 어려움을 함께 고민하며 해결해 나가는 과정에서 협업의 의미를 깨달을 수 있었습니다. 새로운 기술 스택들을 다루는 부분이 있었는데, 처음에는 생소했지만 팀원들과 다같이 학습하고 공유하는 과정에서 빠르게 적응할 수 있었습니다. 한 달이라는 기간 동안 이룬 결과물을 보며 뿌듯함과 아쉬움이 동시에 남습니다. 힘든 순간에도 서로를 격려하고 응원해준 팀원분들에게 감사의 마음을 전하고 싶습니다.
 
 <br>
 
 ###  신진석
 
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+제 자신이 너무 부족한 부분이 많았다고 생각했는데 좋은 팀장님, 팀원분들을 만나서 팀 프로젝트를 하면서 제게 필요한 부분과 스케쥴 관리 등 많은 것에 대해서 배우고 간다고 생각합니다. 좋은 분들을 만나서 너무 행복한 시간이였습니다!
+
+<br>
