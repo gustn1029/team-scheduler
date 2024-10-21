@@ -41,7 +41,7 @@
 
 | **김현수** | **이한수** | **이민서** | **신진석** |
 |:-------:|:-------:|:-------:|:-------:|
-| [<img src="./public/khs.png" height=150 width=150>](https://github.com/gustn1029) | [<img src="./public/hans.png" height=150 width=150>](https://github.com/biktory01) | [<img src="./public/minseo.png" height=150 width=150>](https://github.com/LeeMinseo0117) |   이미지   |
+| [<img src="./public/khs.png" height=150 width=150>](https://github.com/gustn1029) | [<img src="./public/hans.png" height=150 width=150>](https://github.com/biktory01) | [<img src="./public/minseo.png" height=150 width=150>](https://github.com/LeeMinseo0117) |  [<img src="./public/js.png" height=150 width=150>](https://github.com/nanamihiromachi) |
 
 </div>
 
@@ -159,8 +159,7 @@
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
 | accounts  | 'login/'                                   | login             | src/          components/pages/login         |로그인           |
 | accounts  | 'signup/'                                | signup          | src/          components/pages/signup                |회원가입         |
-| accounts  | 'logout/'                                  | logout            | src/          components/pages/login                 |로그아웃         |
-| accounts  | 'profile/'                                 | profile           | src/          components/profile                 | 비밀번호변경기능 / <br>프로필 수정/ 닉네임추가 |
+| accounts  | 'profile/'                                 | profile           | src/          components/profile                 | 프로필 상세 및 수정 |
 | accounts  | 'findpassword/'                                 | findpassword           | src/          components/pages/findpassword                 | 비밀번호 찾기 기능 |
 
 - calendar
