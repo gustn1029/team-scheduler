@@ -172,7 +172,7 @@
 | calendar      | '/calendarlist'                                  | calendarlist             | src/components/pages/calendarlist                       | 캘린더 편집
 | calendar      | '/calendarList'                                  | detail             | src/components/pages/detail                       | 캘린더 상세
 | calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제 |
-| calendar      | '/notFound'                                  |              | src/components/pages/notFound                       | 404 페이지 |
+| calendar      | '/notFound'                                  |   notFound           | src/components/pages/notFound                       | 404 페이지 |
 
 ## 4. 프로젝트 구조
 
@@ -235,7 +235,7 @@
  ┃ ┃ ┃ ┗ 📜labelToggle.module.scss
  ┃ ┃ ┣ 📜LabelLayout.tsx
  ┃ ┃ ┗ 📜labelLayout.module.scss
- ┃ ┣ 📂kakaoMap
+ ┃ ┣ 📂kakaoMap // 주소 불러오기를 위한 컴포넌트
  ┃ ┃ ┣ 📜KakaoMap.tsx
  ┃ ┃ ┗ 📜kakaoMap.module.scss
  ┃ ┣ 📂layouts
@@ -251,41 +251,41 @@
  ┃ ┃ ┣ 📜Navigation.tsx
  ┃ ┃ ┗ 📜navigation.module.scss
  ┃ ┣ 📂pages
- ┃ ┃ ┣ 📂SignUp
+ ┃ ┃ ┣ 📂SignUp // 회원 가입 페이지
  ┃ ┃ ┃ ┣ 📜SignUp.tsx
  ┃ ┃ ┃ ┗ 📜signup.module.scss
- ┃ ┃ ┣ 📂calendar
+ ┃ ┃ ┣ 📂calendar   // 캘린더 페이지
  ┃ ┃ ┃ ┣ 📜CalendarComponent.tsx
  ┃ ┃ ┃ ┗ 📜calendar.module.scss
- ┃ ┃ ┣ 📂calendarlist
+ ┃ ┃ ┣ 📂calendarlist   // 캘린더 목록 페이지
  ┃ ┃ ┃ ┣ 📜CalendarList.tsx
  ┃ ┃ ┃ ┗ 📜calendarlist.module.scss
- ┃ ┃ ┣ 📂create
+ ┃ ┃ ┣ 📂create // 캘린더 생성 페이지
  ┃ ┃ ┃ ┣ 📜Create.tsx
  ┃ ┃ ┃ ┣ 📜CustomTimePicker.tsx
  ┃ ┃ ┃ ┗ 📜create.module.scss
- ┃ ┃ ┣ 📂detail
+ ┃ ┃ ┣ 📂detail // 캘린더 상세 페이지
  ┃ ┃ ┃ ┣ 📜Detail.tsx
  ┃ ┃ ┃ ┗ 📜detail.module.scss
- ┃ ┃ ┣ 📂edit
+ ┃ ┃ ┣ 📂edit   // 캘린더 일정 수정 페이지
  ┃ ┃ ┃ ┗ 📜Edit.tsx
- ┃ ┃ ┣ 📂findpassword
+ ┃ ┃ ┣ 📂findpassword   // 비밀번호 찾기 페이지
  ┃ ┃ ┃ ┣ 📜FindPassword.tsx
  ┃ ┃ ┃ ┗ 📜findpassword.module.scss
- ┃ ┃ ┣ 📂login
+ ┃ ┃ ┣ 📂login  // 로그인 페이지
  ┃ ┃ ┃ ┣ 📜Login.tsx
  ┃ ┃ ┃ ┗ 📜login.module.scss
- ┃ ┃ ┣ 📂notFound
+ ┃ ┃ ┣ 📂notFound   // 404 페이지
  ┃ ┃ ┃ ┣ 📜NotFound.tsx
  ┃ ┃ ┃ ┗ 📜notFound.module.scss
- ┃ ┃ ┣ 📂todos
+ ┃ ┃ ┣ 📂todos  // To-do 페이지
  ┃ ┃ ┃ ┣ 📜TodoForm.tsx
  ┃ ┃ ┃ ┣ 📜TodoList.tsx
  ┃ ┃ ┃ ┣ 📜TodoListItem.tsx
  ┃ ┃ ┃ ┣ 📜Todos.tsx
  ┃ ┃ ┃ ┗ 📜todos.module.scss
  ┃ ┃ ┣ 📜Profile.module.scss
- ┃ ┃ ┗ 📜Profile.tsx
+ ┃ ┃ ┗ 📜Profile.tsx    // 프로필 페이지
  ┃ ┣ 📂test
  ┃ ┃ ┣ 📜FormTest.tsx
  ┃ ┃ ┗ 📜formTest.module.scss
@@ -512,7 +512,7 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 - 일정이 추가되면 캘린더 페이지로 이동합니다.
 
 | 일정 추가 | 하루 종일 설정 시 | 주소 추가 | 일정 추가 시연 |
-|----------|----------|----------|
+|----------|----------|----------|----------|
 | ![add](./public/calendaradd.png) | ![toggle](./public/calendartoggle.png) | ![address](./public/calendaraddress.png) | ![calendarwebp](./public/calendar.webp) |
 
 <br>
