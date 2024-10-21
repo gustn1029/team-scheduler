@@ -106,7 +106,12 @@
 
 ### ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
 
-- Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+- **Firebase**를 채택한 이유
+    - 실시간 데이터베이스와 서버리스 아키텍처로 빠른 개발과 배포가 가능합니다.
+    - 통합된 인증, 호스팅, 스토리지 서비스로 개발 복잡성을 줄이고 생산성을 높입니다.
+    - Google의 인프라를 기반으로 높은 확장성과 안정성을 제공합니다. 
+
+- Firebase의 다양한 기능을 활용하여 백엔드 인프라를 구축하고 효율적인 개발 환경을 조성했습니다.
 
 ### ![TanStack Query](https://img.shields.io/badge/Tanstack%20Query-FF4154?style=for-the-badge&logo=TanstackQuery&logoColor=white)
 
@@ -157,19 +162,20 @@
 
 | App       | URL                                        | Views Function    | HTML File Name                        | Note           |
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
-| accounts  | 'login/'                                   | login             | src/          components/pages/login         |로그인           |
-| accounts  | 'signup/'                                | signup          | src/          components/pages/signup                |회원가입         |
-| accounts  | 'profile/'                                 | profile           | src/          components/profile                 | 프로필 상세 및 수정 |
-| accounts  | 'findpassword/'                                 | findpassword           | src/          components/pages/findpassword                 | 비밀번호 찾기 기능 |
+| accounts  | 'login/'                                   | login             | src/components/pages/login         |로그인           |
+| accounts  | 'signup/'                                | signup          | src/components/pages/signup                |회원가입         |
+| accounts  | 'profile/'                                 | profile           | src/components/profile                 | 프로필 상세 및 수정 |
+| accounts  | 'findpassword/'                                 | findpassword           | src/components/pages/findpassword                 | 비밀번호 찾기 기능 |
 
 - calendar
 
 | App       | URL                                        | Views Function    | HTML File Name                        | Note           |
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
 | calendar      | '/calendar'                                        | calendar              | src/components/pages/calendar                        | 캘린더 메인 화면          |
-| calendar      | '/create'                                  | create             | src/components/pages/create                       | 캘린더 생성               |
-| calendar      | '/calendarlist'                                  | calendarlist             | src/components/pages/calendarlist                       | 캘린더 편집
-| calendar      | '/calendarList'                                  | detail             | src/components/pages/detail                       | 캘린더 상세
+| calendar      | '/create'                                  | create             | src/components/pages/create                       | 일정 생성               |
+| calendar      | '/calendarList?date={timestamp}'                                  | calendarList             | src/components/pages/calendarlist                       | 일정 목록
+| calendar      | '/calendarlist/{id}'                                  | detail             | src/components/pages/detail                       | 일정 상세
+| calendar      | '/calendarlist/{id}/edit'                                  | edit             | src/components/pages/edit                       | 일정 수정
 | calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제 |
 | calendar      | '/notFound'                                  |   notFound           | src/components/pages/notFound                       | 404 페이지 |
 
@@ -234,7 +240,7 @@
  ┃ ┃ ┃ ┗ 📜labelToggle.module.scss
  ┃ ┃ ┣ 📜LabelLayout.tsx
  ┃ ┃ ┗ 📜labelLayout.module.scss
- ┃ ┣ 📂kakaoMap // 주소 불러오기를 위한 컴포넌트
+ ┃ ┣ 📂kakaoMap
  ┃ ┃ ┣ 📜KakaoMap.tsx
  ┃ ┃ ┗ 📜kakaoMap.module.scss
  ┃ ┣ 📂layouts
@@ -256,17 +262,17 @@
  ┃ ┃ ┣ 📂calendar   // 캘린더 페이지
  ┃ ┃ ┃ ┣ 📜CalendarComponent.tsx
  ┃ ┃ ┃ ┗ 📜calendar.module.scss
- ┃ ┃ ┣ 📂calendarlist   // 캘린더 목록 페이지
+ ┃ ┃ ┣ 📂calendarlist   // 일정 목록 페이지
  ┃ ┃ ┃ ┣ 📜CalendarList.tsx
  ┃ ┃ ┃ ┗ 📜calendarlist.module.scss
- ┃ ┃ ┣ 📂create // 캘린더 생성 페이지
+ ┃ ┃ ┣ 📂create // 일정 생성 페이지
  ┃ ┃ ┃ ┣ 📜Create.tsx
  ┃ ┃ ┃ ┣ 📜CustomTimePicker.tsx
  ┃ ┃ ┃ ┗ 📜create.module.scss
- ┃ ┃ ┣ 📂detail // 캘린더 상세 페이지
+ ┃ ┃ ┣ 📂detail // 일정 상세 페이지
  ┃ ┃ ┃ ┣ 📜Detail.tsx
  ┃ ┃ ┃ ┗ 📜detail.module.scss
- ┃ ┃ ┣ 📂edit   // 캘린더 일정 수정 페이지
+ ┃ ┃ ┣ 📂edit   // 일정 수정 페이지
  ┃ ┃ ┃ ┗ 📜Edit.tsx
  ┃ ┃ ┣ 📂findpassword   // 비밀번호 찾기 페이지
  ┃ ┃ ┃ ┣ 📜FindPassword.tsx
@@ -424,27 +430,20 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 이러한 노력을 통해 react-hook-form의 장점을 최대한 활용하고, 프로젝트의 요구사항에 맞는 최적의 폼 관리 솔루션을 구현할 수 있었습니다.
 
 
-### React Testing Library 사용 시 주요 고려사항
+### React Query 사용 시 주요 고려사항
 
-- 사용자 관점 테스트
+React Query를 도입하면서 다음 핵심 포인트들에 집중했습니다.
 
-    - 사용자가 실제로 보고 상호작용하는 요소에 집중합니다. 내부 구현보다는 사용자 경험을 테스트합니다.
+- 효율적인 쿼리 키 설계
+    - 데이터 무효화와 리페칭을 위해 쿼리 키를 신중하게 구성했습니다. 동적 매개변수를 포함한 배열 형태의 키를 사용해 관련 쿼리들을 효과적으로 관리했습니다.
+- 캐싱 최적화
+    - staleTime과 cacheTime을 조정하여 불필요한 네트워크 요청을 최소화하고 데이터 신선도를 유지했습니다.
+- 에러 및 로딩 상태 관리
+    - isLoading, isError 등의 상태를 활용해 사용자에게 적절한 피드백을 제공하고, 에러 발생 시 재시도 로직을 구현했습니다.
+- 개발자 도구 활용
+    -ReactQueryDevtools를 사용해 쿼리 상태를 모니터링하고 성능을 최적화했습니다. 
 
-- 접근성 우선
-
-    - getByRole, getByLabelText 같은 접근성 친화적인 쿼리를 우선 사용합니다.
-
-- 비동기 처리
-
-    - waitFor와 act를 사용해 비동기 작업과 상태 업데이트를 올바르게 테스트합니다.
-
-- 테스트 격리
-
-    - afterEach로 각 테스트 후 cleanup을 실행하여 테스트 간 독립성을 유지합니다.
-
-- 효율적인 쿼리 선택
-
-    - 상황에 맞는 적절한 쿼리 메서드를 선택합니다. findBy는 비동기 요소에, getBy는 즉시 나타나는 요소에 사용합니다.
+이러한 노력으로 React Query의 장점을 최대한 활용하여 데이터 관리를 간소화하고 애플리케이션의 성능과 사용자 경험을 크게 개선했습니다.
 
 <br>
 
