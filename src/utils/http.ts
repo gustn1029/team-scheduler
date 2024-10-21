@@ -306,7 +306,6 @@ export const eventAddressFetch = async (query: string) => {
   let data = await fetchAddress(query, "address");
 
   if (data.length === 0) {
-    console.log("data", data)
     data = await fetchAddress(query, "keyword");
   }
 

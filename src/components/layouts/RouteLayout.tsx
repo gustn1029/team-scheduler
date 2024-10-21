@@ -10,7 +10,6 @@ const RouteLayout = () => {
 
   useEffect(() => {
     if (!isAuthenticated && !user) {
-      console.log(isAuthenticated);
       navigate("/login");
     }
   }, [isAuthenticated, navigate, user]);
