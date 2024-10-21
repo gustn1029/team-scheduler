@@ -496,7 +496,7 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 
 | 캘린더 | 메뉴 |
 |----------|----------|
-| ![calendar](./public/calendar.webp) | ![menu](./public/menu.webp) |
+| ![calendar](./public/calendar.png) | ![menu](./public/menu.webp) |
 
 <br>
 
@@ -511,9 +511,9 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 - 메모를 100글자 까지만 입력할 수 있으며, 필수사항이 아닙니다.
 - 일정이 추가되면 캘린더 페이지로 이동합니다.
 
-| 일정 추가 | 하루 종일 설정 시 | 주소 추가 |
+| 일정 추가 | 하루 종일 설정 시 | 주소 추가 | 일정 추가 시연 |
 |----------|----------|----------|
-| ![add](./public/calendaradd.png) | ![toggle](./public/calendartoggle.png) | ![address](./public/calendaraddress.png) |
+| ![add](./public/calendaradd.png) | ![toggle](./public/calendartoggle.png) | ![address](./public/calendaraddress.png) | ![calendarwebp](./public/calendar.webp) |
 
 <br>
 
