@@ -220,7 +220,6 @@ function Detail() {
     return querySnapshot.docs[0].data() as CurrentUserData;
   };
 
-  console.log(eventData);
   return (
     <MainAnimationLayout variants={layoutXVarients}>
       <Header
