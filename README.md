@@ -17,11 +17,11 @@
 
 ## 프로젝트 소개
 
-# 효율적인 일정 및 작업 관리를 위한 올인원 솔루션 TimeFlow
+### 효율적인 일정 및 작업 관리를 위한 올인원 솔루션 TimeFlow
 
 일상 생활과 업무의 균형을 유지하는 것이 점점 더 어려워지는 현대 사회에서, 효과적인 시간 관리는 성공의 핵심 요소입니다. 이러한 필요성을 충족시키기 위해 개발된 이 웹 애플리케이션은 캘린더와 To-Do 리스트를 완벽하게 통합하여 사용자의 생산성을 극대화합니다.
 
-## 주요 기능
+#### 주요 기능
 
 - **직관적인 캘린더 인터페이스**: 월별, 주별, 일별 보기로 일정을 한눈에 파악할 수 있습니다.
 - **유연한 To-Do 리스트**: 우선순위 설정, 마감일 지정, 반복 작업 설정 등 다양한 옵션을 제공합니다.
@@ -49,15 +49,24 @@
 
 ## 1. 개발 환경
 
+- 디자인 : 
+    - ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+- 버전 및 이슈관리 : 
+    - ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+- 협업 툴 : 
+    - ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
+    - ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
+- 서비스 배포 환경 : 
+    - ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+
 - 개발 도구 :
     - ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white)
 
 - Front-end : 
     - ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
     - ![TypeScript](https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white)
-    - ![TanStack Query](https://img.shields.io/badge/Tanstack%20Query-FF4154?style=for-the-badge&logo=TanstackQuery&logoColor=white)
-    - ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
-    - ![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white)
+
+ - Back-end :   
     - ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
 <br>
 
@@ -149,7 +158,7 @@
 | App       | URL                                        | Views Function    | HTML File Name                        | Note           |
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
 | accounts  | 'login/'                                   | login             | src/          components/pages/login         |로그인           |
-| accounts  | 'register/'                                | register          | src/          components/pages/register                |회원가입         |
+| accounts  | 'signup/'                                | signup          | src/          components/pages/signup                |회원가입         |
 | accounts  | 'logout/'                                  | logout            | src/          components/pages/login                 |로그아웃         |
 | accounts  | 'profile/'                                 | profile           | src/          components/profile                 | 비밀번호변경기능 / <br>프로필 수정/ 닉네임추가 |
 | accounts  | 'findpassword/'                                 | findpassword           | src/          components/pages/findpassword                 | 비밀번호 찾기 기능 |
@@ -160,8 +169,9 @@
 |-----------|--------------------------------------------|-------------------|---------------------------------------|----------------|
 | calendar      | '/calendar'                                        | calendar              | src/components/pages/calendar                        | 캘린더 메인 화면          |
 | calendar      | '/create'                                  | create             | src/components/pages/create                       | 캘린더 생성               |
-| calendar      | '/calendarlist'                                  | calendarlist             | src/components/pages/calendarlist                       | 캘린더 상세 및 편집
-| calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제
+| calendar      | '/calendarlist'                                  | calendarlist             | src/components/pages/calendarlist                       | 캘린더 편집
+| calendar      | '/calendarList'                                  | detail             | src/components/pages/detail                       | 캘린더 상세
+| calendar      | '/todo'                                  | todo             | src/components/pages/todos                       | To-Do 생성 및 편집, 삭제 |
 
 
 ## 4. 프로젝트 구조
@@ -370,7 +380,7 @@
 
 - 전체 개발 기간 : 2024-09-23 ~ 2024-10-20
 - UI 구현 : 2024-09-25 ~ 2024-10-04
-- 기능 구현 : 2024-09-25 ~ 2024-10-16
+- 기능 구현 : 2024-10-04 ~ 2024-10-16
 - 1차 테스트 및 오류 수정: 2024-10-17 ~ 2024-10-18
 - 2차 테스트 및 오류 수정: 2024-10-18 ~ 2024-10-20
 
@@ -415,7 +425,27 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 이러한 노력을 통해 react-hook-form의 장점을 최대한 활용하고, 프로젝트의 요구사항에 맞는 최적의 폼 관리 솔루션을 구현할 수 있었습니다.
 
 
-- [신경 쓴 부분 2](링크)
+### React Testing Library 사용 시 주요 고려사항
+
+- 사용자 관점 테스트
+
+    - 사용자가 실제로 보고 상호작용하는 요소에 집중합니다. 내부 구현보다는 사용자 경험을 테스트합니다.
+
+- 접근성 우선
+
+    - getByRole, getByLabelText 같은 접근성 친화적인 쿼리를 우선 사용합니다.
+
+- 비동기 처리
+
+    - waitFor와 act를 사용해 비동기 작업과 상태 업데이트를 올바르게 테스트합니다.
+
+- 테스트 격리
+
+    - afterEach로 각 테스트 후 cleanup을 실행하여 테스트 간 독립성을 유지합니다.
+
+- 효율적인 쿼리 선택
+
+    - 상황에 맞는 적절한 쿼리 메서드를 선택합니다. findBy는 비동기 요소에, getBy는 즉시 나타나는 요소에 사용합니다.
 
 <br>
 
@@ -594,7 +624,7 @@ react-hook-form을 도입하여 폼 관리를 크게 개선했습니다. 이 라
 
 ###  이민서
 
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+이번 프로젝트를 통해 다양한 부분에서 성장할 수 있었습니다. 각자 맡은 역할에 충실하면서도 서로의 어려움을 함께 고민하며 해결해 나가는 과정에서 협업의 의미를 깨달을 수 있었습니다. 새로운 기술 스택들을 다루는 부분이 있었는데, 처음에는 생소했지만 팀원들과 다같이 학습하고 공유하는 과정에서 빠르게 적응할 수 있었습니다. 한 달이라는 기간 동안 이룬 결과물을 보며 뿌듯함과 아쉬움이 동시에 남습니다. 힘든 순간에도 서로를 격려하고 응원해준 팀원분들에게 감사의 마음을 전하고 싶습니다.
 
 <br>
 
