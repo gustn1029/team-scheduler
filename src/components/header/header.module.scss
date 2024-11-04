@@ -7,12 +7,14 @@
   align-items: center;
   background-color: #fff;
   box-sizing: border-box;
+  color: var(--icon-color);
 
   .closeButton,
   .editAndDeleteAndConfirmButtonWrap {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    color: inherit;
   }
 
   .closeButton {
@@ -25,28 +27,25 @@
     font-size: 20px;
     font-weight: bold;
     margin: 0;
+    color: inherit;
   }
 
   .editAndDeleteAndConfirmButtonWrap {
     right: 15px;
     display: flex;
     align-items: center;
+    color: inherit;
   }
 
-  .confirmButton {
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-  }
-  .editButton {
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-  }
+  .confirmButton,
+  .editButton,
   .deleteButton {
     width: 22px;
     height: 22px;
-    margin-left: 10px;
     cursor: pointer;
+    color: inherit;
+  }
+  .deleteButton {
+    margin-left: 10px;
   }
 }
