@@ -11,18 +11,22 @@ import { SignUp } from "./components/pages/signup/SignUp";
 import FindPassword from "./components/pages/findpassword/FindPassword";
 import NotFound from "./components/pages/notFound/NotFound";
 import Loader from "./components/loader/Loader";
-import ToastProvider from "./components/toast/ToastProvider";
 import CalendarList from "./components/pages/calendarlist/CalendarList";
 import Todos from "./components/pages/todos/Todos";
 import RouteLayout from "./components/layouts/RouteLayout";
 import Edit from "./components/pages/edit/Edit";
 import Detail from "./components/pages/detail/Detail";
-import { AnimatePresence } from "framer-motion";
+import ToastProvider from "./components/toast/ToastProvider";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RouteLayout />,
+    element: (
+      <>
+        <Loader />
+        <RouteLayout />
+      </>
+    ),
     children: [
       { index: true, element: <Navigate to="/calendar" replace /> },
       {
@@ -77,10 +81,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <Loader />
-      <AnimatePresence>
-        <RouterProvider router={router} />
-      </AnimatePresence>
+      <RouterProvider router={router} />
       <ToastProvider />
     </>
   );

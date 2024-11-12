@@ -18,7 +18,7 @@ import Loader from "../../loader/Loader";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
 import KakaoMap from "../../kakaoMap/KakaoMap";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 import { layoutXVarients } from "../../../utils/Animations";
 

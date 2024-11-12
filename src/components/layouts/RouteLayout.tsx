@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useAuthState } from "../../hooks/useAuthState";
 import Loader from "../loader/Loader";
+import { AnimatePresence } from "framer-motion";
 
 const RouteLayout = () => {
   const isAuthenticated = sessionStorage.getItem("user");
@@ -18,7 +19,11 @@ const RouteLayout = () => {
     return <Loader />;
   }
 
-  return (isAuthenticated && user) ? <Outlet /> : null;
+  return isAuthenticated && user ? (
+    <AnimatePresence>
+      <Outlet />
+    </AnimatePresence>
+  ) : null;
 };
 
 export default RouteLayout;

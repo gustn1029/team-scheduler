@@ -17,7 +17,7 @@ import Header from "../header/Header";
 
 import { FaPen } from "react-icons/fa6";
 import { ProfileData } from "../../types";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Modal from "../modal/Modal";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
@@ -49,7 +49,13 @@ const Profile = () => {
   const updateProfileMutation = useMutation({
     mutationFn: profileUpdateFetch,
     onSuccess: () => {
-      toast.success("프로필을 수정했습니다.");
+      toast.success("프로필을 수정했습니다.", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
       setIsEditing(false);
       queryClient.invalidateQueries({
         queryKey: ["auth", appAuth!.currentUser!.uid],
@@ -61,7 +67,7 @@ const Profile = () => {
   const deleteUserMutation = useMutation({
     mutationFn: deleteUserFetch,
     onSuccess: () => {
-      toast.dark("정상적으로 탈퇴되었습니다.");
+      toast.success("정상적으로 탈퇴되었습니다.");
       sessionStorage.removeItem("user");
       queryClient.removeQueries({ queryKey: ["auth"] });
 
