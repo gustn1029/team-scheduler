@@ -19,7 +19,7 @@ import Header from "../../header/Header";
 import { AddressResult, EventAddress, EventsData } from "../../../types";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import Loader from "../../loader/Loader";
 import Modal from "../../modal/Modal";
 import Button from "../../button/Button";

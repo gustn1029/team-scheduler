@@ -15,7 +15,7 @@ import {
 import { appAuth } from "../../../firebase/config";
 import { useTodoStore } from "../../../store/useTodoStore";
 import { TodoData } from "../../../types";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import Modal from "../../modal/Modal";
 import Header from "../../header/Header";
@@ -57,6 +57,12 @@ const Todos = () => {
       setTodos([]);
     }
   }, [todoData, setTodos]);
+
+  useEffect(() => {
+    if (todoData?.length === 0 && todos.length === 0) {
+      setIsComplete(false);
+    }
+  }, [setIsComplete, todos, todoData]);
 
   // 선택된 날짜 저장
   useEffect(() => {
@@ -104,9 +110,7 @@ const Todos = () => {
           selectedDate.toISOString().split("T")[0],
         ],
       });
-      if (!emptyTodosCheck) {
-        toast.success(message);
-      }
+      toast.success(message);
       navigate(-1);
 
       if (isComplete) {
@@ -145,6 +149,7 @@ const Todos = () => {
   const handleShowDeleteModal = () => {
     if (todos.length !== 0) {
       setIsDeleteModal(true);
+      console.log(todos);
     } else {
       toast.error("삭제할 데이터가 없습니다.");
     }
@@ -152,7 +157,7 @@ const Todos = () => {
 
   // todo 데이터 삭제 함수
   const handleDeleteTodo = async () => {
-    if (!todoData || todoData.length === 0 || todos.length === 0) {
+    if (!todoData || todoData.length === 0) {
       toast.error("삭제할 할일이 없습니다.");
       setIsDeleteModal(false);
       return;
@@ -222,6 +227,7 @@ const Todos = () => {
 
   const emptyTodosCheck = todoData && todoData[0]?.todos && todos.length === 0;
 
+  console.log(emptyTodosCheck);
   return (
     <MainAnimationLayout
       variants={layoutYVarients}
