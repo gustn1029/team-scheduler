@@ -1,4 +1,4 @@
-# 📅 [이스트소프트 프론트엔드 1기 대상 수상]스케쥴러, To-Do Site TimeFlow
+# 📅 [이스트소프트 프론트엔드 1기 대상 수상]TimeFlow
 
 
 <a href="https://time-flow-app.vercel.app">
