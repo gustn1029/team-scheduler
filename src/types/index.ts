@@ -79,7 +79,7 @@ export interface EventsData {
   category: any[];
   eventMemo: string;
   address: EventAddress | null;
-  like: number;
+  like: string[];
   comments: any[];
   createDate: Date;
   updateDate: Date | null;
