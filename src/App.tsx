@@ -28,7 +28,10 @@ const router = createBrowserRouter([
       </>
     ),
     children: [
-      { index: true, element: <Navigate to="/calendar" replace /> },
+      {
+        index: true,
+        element: <Navigate to="/calendar" replace />,
+      },
       {
         path: "calendar",
         element: <CalendarComponent />,
@@ -57,6 +60,43 @@ const router = createBrowserRouter([
         path: "todo",
         element: <Todos />,
       },
+      {
+        path: ":teamId/",
+        children: [
+          {
+            index: true,
+            element: <Navigate to=":teamId/calendar" replace />,
+          },
+          {
+            path: "calendar",
+            element: <CalendarComponent />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
+          },
+          {
+            path: "create",
+            element: <Create />,
+          },
+          {
+            path: "calendarlist/:id/edit",
+            element: <Edit />,
+          },
+          {
+            path: "calendarlist",
+            element: <CalendarList />,
+          },
+          {
+            path: "calendarlist/:id",
+            element: <Detail />,
+          },
+          {
+            path: "todo",
+            element: <Todos />,
+          },
+        ]
+      }
     ],
   },
 
