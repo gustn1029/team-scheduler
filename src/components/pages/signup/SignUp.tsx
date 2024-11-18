@@ -146,11 +146,11 @@ export const SignUp: React.FC = () => {
   }, [clearErrors, setError, watch]);
 
   return (
-    <main>
-      <div className={styles.logoContainer}>
-        <img className={styles.logo} src={logo} alt="TimeFlow" />
-      </div>
+    <main className={styles.mainContaier}>
+      <section className={styles.logoContainer}>
+        <img className={styles.logo} src={logo} alt="TimeFlow" /> 
       <h1 className={styles.h1}>TimeFlow</h1>
+      </section>
       <div className={styles.formContainer}>
         <h2>회원가입</h2>
         <form
