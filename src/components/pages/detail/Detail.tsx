@@ -12,15 +12,20 @@ import {
   where,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
-import { appFireStore } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 import { EventsData, UserData } from "../../../types";
 import Loader from "../../loader/Loader";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
 import KakaoMap from "../../kakaoMap/KakaoMap";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 import { layoutXVarients } from "../../../utils/Animations";
+import { useTeamStore } from "../../../store/useTeamStore";
+
+import { AiOutlineLike } from "react-icons/ai";
+import { AiFillLike } from "react-icons/ai";
+import IconButton from "../../button/iconButton/IconButton";
 
 type CurrentUserData = Omit<UserData, "token">;
 
@@ -49,7 +54,9 @@ function Detail() {
   const [userData, setUserData] = useState<CurrentUserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLike, setIsLike] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { teamName } = useTeamStore();
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -93,6 +100,17 @@ function Detail() {
         }
       }
     };
+    if (eventData && eventData.like) {
+      const likeCheck = eventData.like.filter(
+        (id) => id === appAuth.currentUser?.uid
+      );
+
+      if (likeCheck.length !== 0) {
+        setIsLike(true);
+      } else {
+        setIsLike(false);
+      }
+    }
 
     fetchUserData();
   }, [eventData]);
@@ -172,7 +190,11 @@ function Detail() {
 
   const handleCancel = () => {
     const seconds = sessionStorage.getItem("seconds");
-    navigate(`/calendarList?date=${seconds}`);
+    let src = `/calendarList?date=${seconds}`;
+    if (teamName) {
+      src = `/${teamName}${src}`;
+    }
+    navigate(src);
   };
 
   const handleDelete = async () => {
@@ -226,28 +248,40 @@ function Detail() {
         onCancel={handleCancel}
         title="일정 상세"
         {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
-          onEdit: () => navigate(`/calendarlist/${id}/edit`),
+          onEdit: () =>
+            navigate(
+              `${teamName ? `/${teamName}/` : "/"}calendarlist/${id}/edit`
+            ),
         })}
         {...(eventData.eventType !== EventTypeEnum.HOLIDAY && {
           onDelete: handleDelete,
         })}
       />
       {eventData.eventType !== EventTypeEnum.HOLIDAY && (
-        <div className={styles.writerContainer}>
-          <h3>작성자</h3>
-          {userData && userData.profileImg ? (
-            <p>
-              <img
-                src={userData.profileImg}
-                alt="작성자 프로필"
-                className={styles.profileImg}
-              />
-              <span>{userData.nickname}</span>
-            </p>
-          ) : (
-            <div className={styles.defaultProfileImg}>프로필 없음</div>
-          )}
-        </div>
+        <section className={styles.writerContainer}>
+          <div>
+            <h3>작성자</h3>
+            {userData && userData.profileImg ? (
+              <figure>
+                <img
+                  src={userData.profileImg}
+                  alt="작성자 프로필"
+                  className={styles.profileImg}
+                />
+                <figcaption>{userData.nickname}</figcaption>
+              </figure>
+            ) : (
+              <p className={styles.defaultProfileImg}>프로필 없음</p>
+            )}
+          </div>
+          <div className={styles.likeAndCommentWrap}>
+            <IconButton
+              icon={!isLike ? <AiOutlineLike /> : <AiFillLike />}
+              className={styles.likeButton}
+            />
+            <span className="like">{eventData?.like?.length}</span>
+          </div>
+        </section>
       )}
       <div className={styles.titleContainer}>
         <div
@@ -272,10 +306,12 @@ function Detail() {
           {eventData.address && eventData.address.x && eventData.address.y && (
             <div className={styles.eventAddress}>
               <h3>일정 장소</h3>
-              <KakaoMap
-                latitude={Number(eventData.address.y)}
-                longitude={Number(eventData.address.x)}
-              />
+              <a href={`https://map.kakao.com/?q=`} target="_blank">
+                <KakaoMap
+                  latitude={Number(eventData.address.y)}
+                  longitude={Number(eventData.address.x)}
+                />
+              </a>
               <address>
                 {eventData.address.place_name && (
                   <strong> {eventData.address.place_name}</strong>
