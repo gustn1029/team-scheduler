@@ -74,7 +74,7 @@ const baseEventData: Omit<
   category: [],
   eventMemo: "",
   address: null,
-  like: 0,
+  like: [],
   comments: [],
   createDate: new Date(),
   updateDate: null,
@@ -265,7 +265,7 @@ export const addEventsFetch = async (data: EventPostData) => {
     createDate: new Date(),
     category: [],
     comments: [],
-    like: 0,
+    like: [],
     updateDate: null,
   };
 

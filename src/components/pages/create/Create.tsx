@@ -143,7 +143,7 @@ const Create: React.FC = () => {
       updateDate: null,
       eventColor: selectedColor,
       eventType: EventTypeEnum.EVENTS,
-      like: 0,
+      like: [],
       address: eventAddress ? eventAddress : null,
       comments: [],
       category: [],
