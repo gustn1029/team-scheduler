@@ -148,11 +148,11 @@ export const SignUp: React.FC = () => {
   }, [clearErrors, setError, watch]);
 
   return (
-    <MainAnimationLayout variants={layoutYVarients}>
-      <div className={styles.logoContainer}>
+    <MainAnimationLayout variants={layoutYVarients} className={styles.mainContainer}>
+      <section className={styles.logoContainer}>
         <img className={styles.logo} src={logo} alt="TimeFlow" />
-      </div>
       <h1 className={styles.h1}>TimeFlow</h1>
+      </section>
       <div className={styles.formContainer}>
         <h2>회원가입</h2>
         <form
