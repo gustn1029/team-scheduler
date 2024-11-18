@@ -1,12 +1,19 @@
-main {
+.mainContainer {
   width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+display: flex;
+flex-direction: column;
 }
 .logoContainer {
+  flex-grow: 1;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  margin-bottom: 15px;
 }
 .logo {
-  margin-top: 125px;
   margin-bottom: 8px;
 }
 .h1 {
@@ -15,9 +22,9 @@ main {
   color: #3fa9f5;
   display: flex;
   justify-content: center;
-  margin-bottom: 117px;
 }
 .formContainer {
+  width: 100%;
   max-width: 300px;
   margin: 0 auto;
   border-radius: 10px;
@@ -25,6 +32,8 @@ main {
   box-shadow: 0px 2px 2px 0px #00000040;
   display: flex;
   flex-direction: column;
+  margin-bottom: 40px;
+
   h2 {
     text-align: center;
     font-size: 20px;
