@@ -1,0 +1,16 @@
+.commentsForm {
+    padding: 15px;
+    box-shadow: 4px 4px 14px rgba($color: #000000, $alpha: 0.2);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    flex-grow: 1;
+    background-color: white;
+    display: flex;
+    gap: 10px;
+
+    & label {
+        flex-grow: 1;
+    }
+}
