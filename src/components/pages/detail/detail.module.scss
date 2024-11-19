@@ -1,3 +1,9 @@
+.detailContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .writerContainer {
   font-size: 16px;
   font-weight: 500;

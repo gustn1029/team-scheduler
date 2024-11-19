@@ -26,6 +26,10 @@ import { useTeamStore } from "../../../store/useTeamStore";
 import { AiOutlineLike } from "react-icons/ai";
 import { AiFillLike } from "react-icons/ai";
 import IconButton from "../../button/iconButton/IconButton";
+import { useMutation } from "@tanstack/react-query";
+import { eventLikeFetch } from "../../../utils/http/event/http";
+import { queryClient } from "../../../utils/http";
+import Comments from "../../comments/Comments";
 
 type CurrentUserData = Omit<UserData, "token">;
 
@@ -55,8 +59,20 @@ function Detail() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLike, setIsLike] = useState<boolean>(false);
+  const [addressUrl, setAddressUrl] = useState<string>("");
   const navigate = useNavigate();
   const { teamName } = useTeamStore();
+
+  const likeMutation = useMutation({
+    mutationFn: eventLikeFetch,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", id] });
+      setIsLike((prevState) => !prevState);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -112,8 +128,43 @@ function Detail() {
       }
     }
 
+    if (eventData && eventData.address) {
+      if (eventData.address?.place_name) {
+        setAddressUrl(`${eventData.address.place_name}`);
+      } else {
+        setAddressUrl(
+          `${eventData.address?.road_address_name}${
+            eventData.address?.detail_address
+              ? ` ${eventData?.address.detail_address}`
+              : ""
+          }`
+        );
+      }
+    }
+
     fetchUserData();
   }, [eventData]);
+
+  const handleLikeUpdate = async () => {
+    if (eventData && id && appAuth && appAuth.currentUser) {
+      const checkLikeState = eventData?.like.indexOf(appAuth.currentUser?.uid);
+      let newLikeState: string[] = [];
+      console.log(checkLikeState);
+      if (checkLikeState >= 0) {
+        const filteredUid: string[] = eventData.like.filter(
+          (uid) => uid !== appAuth.currentUser?.uid
+        );
+        newLikeState = filteredUid;
+      } else {
+        newLikeState = [...eventData.like, appAuth.currentUser?.uid];
+      }
+
+      await likeMutation.mutateAsync({
+        eventId: id,
+        like: newLikeState,
+      });
+    }
+  };
 
   const getEventColor = (colorName: EventColor | string): string => {
     return colorName in colorMap
@@ -243,7 +294,10 @@ function Detail() {
   };
 
   return (
-    <MainAnimationLayout variants={layoutXVarients}>
+    <MainAnimationLayout
+      variants={layoutXVarients}
+      className={styles.detailContainer}
+    >
       <Header
         onCancel={handleCancel}
         title="일정 상세"
@@ -274,13 +328,16 @@ function Detail() {
               <p className={styles.defaultProfileImg}>프로필 없음</p>
             )}
           </div>
-          <div className={styles.likeAndCommentWrap}>
-            <IconButton
-              icon={!isLike ? <AiOutlineLike /> : <AiFillLike />}
-              className={styles.likeButton}
-            />
-            <span className="like">{eventData?.like?.length}</span>
-          </div>
+          {teamName && (
+            <div className={styles.likeAndCommentWrap}>
+              <IconButton
+                onClick={handleLikeUpdate}
+                icon={!isLike ? <AiOutlineLike /> : <AiFillLike />}
+                className={styles.likeButton}
+              />
+              <span className="like">{eventData?.like?.length}</span>
+            </div>
+          )}
         </section>
       )}
       <div className={styles.titleContainer}>
@@ -306,7 +363,10 @@ function Detail() {
           {eventData.address && eventData.address.x && eventData.address.y && (
             <div className={styles.eventAddress}>
               <h3>일정 장소</h3>
-              <a href={`https://map.kakao.com/?q=`} target="_blank">
+              <a
+                href={`https://map.kakao.com/?q=${addressUrl}`}
+                target="_blank"
+              >
                 <KakaoMap
                   latitude={Number(eventData.address.y)}
                   longitude={Number(eventData.address.x)}
@@ -326,6 +386,14 @@ function Detail() {
                 <span>지번 주소: {eventData.address.region_address_name}</span>
               </address>
             </div>
+          )}
+          {teamName && (
+            <Comments
+              eventId={id ?? ""}
+              uid={appAuth.currentUser?.uid ?? ""}
+              nickname={userData?.nickname ?? ""}
+              profileImg={userData?.profileImg ?? ""}
+            />
           )}
         </>
       )}
