@@ -3,6 +3,8 @@ import { LabelInputProps } from "../../../types";
 import { ErrorMessage } from "@hookform/error-message";
 import ErrorTooltip from "../../tootip/ErrorTooltip";
 
+import styles from "./labelTextarea.module.scss";
+
 const LabelTextarea = (props: LabelInputProps) => {
   return (
     <LabelLayout {...props}>
@@ -10,7 +12,7 @@ const LabelTextarea = (props: LabelInputProps) => {
         id={props.label}
         placeholder={props.placeholder}
         {...props.register}
-        className={``}
+        className={`${styles.labelTextarea}`}
       ></textarea>
       {props.errorView && (
         <ErrorMessage

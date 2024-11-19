@@ -123,6 +123,31 @@ export interface AddressResult {
   y: string;
 }
 
+export interface EventLikeFetchProps {
+  eventId: string;
+  like: string[];
+}
+
+export interface EventComments {
+  id?:string;
+  total: number;
+  comments: CommentData[]
+}
+
+export interface CommentData {
+  id?:number;
+  comment: string;
+  date: Date;
+  uid?: string;
+  nickname: string;
+  profileImg: string;
+}
+
+export interface EventCommentsFetchProps {
+  eventId: string;
+  comments: CommentData;
+}
+
 export interface EventAddress {
   region_address_name?: string;
   place_url?: string;
