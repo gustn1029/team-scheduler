@@ -21,7 +21,7 @@ export interface UserData {
 export interface ProfileData {
   nickname: string;
   profileImg: string;
-  userPassword?:string;
+  userPassword?: string;
 }
 
 export interface ProfileUpdateFetchProps {
@@ -102,6 +102,7 @@ export interface EventsFetchProps {
   year: number;
   month: number;
   uid: string;
+  teamId?: string;
 }
 
 export type EventPostData = Omit<
@@ -110,12 +111,12 @@ export type EventPostData = Omit<
 >;
 
 export interface AddressResult {
-  id?:string;
+  id?: string;
   address_name: string;
   place_name?: string;
-  road_address_name?:string;
-  place_url?:string;
-  address_type?: 'REGION' | 'ROAD' | 'REGION_ADDR' | 'ROAD_ADDR';
+  road_address_name?: string;
+  place_url?: string;
+  address_type?: "REGION" | "ROAD" | "REGION_ADDR" | "ROAD_ADDR";
   address: {
     address_name: string;
   };
@@ -129,13 +130,13 @@ export interface EventLikeFetchProps {
 }
 
 export interface EventComments {
-  id?:string;
+  id?: string;
   total: number;
-  comments: CommentData[]
+  comments: CommentData[];
 }
 
 export interface CommentData {
-  id?:number;
+  id?: number;
   comment: string;
   date: Date;
   uid?: string;
@@ -151,9 +152,9 @@ export interface EventCommentsFetchProps {
 export interface EventAddress {
   region_address_name?: string;
   place_url?: string;
-  road_address_name?:string;
-  place_name?:string;
-  detail_address?:string;
+  road_address_name?: string;
+  place_name?: string;
+  detail_address?: string;
   x?: string;
   y?: string;
 }
@@ -199,4 +200,20 @@ export interface TodoAddFetchProps {
 export interface TodoUpdateFetchProps {
   data: TodoItem[];
   uid: string;
+}
+
+export interface TeamData {
+  id: string;
+  manager: TeamMember;
+  participants: TeamParticipant[];
+}
+
+export interface TeamMember {
+  email: string;
+  nickname: string;
+  uid: string;
+}
+
+export interface TeamParticipant extends TeamMember {
+  inState: boolean;
 }
