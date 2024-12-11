@@ -80,7 +80,7 @@ export interface EventsData {
   eventMemo: string;
   address: EventAddress | null;
   like: string[];
-  comments: any[];
+  comments: EventComments | null;
   createDate: Date;
   updateDate: Date | null;
 }
@@ -137,7 +137,7 @@ export interface EventComments {
 export interface CommentData {
   id?:number;
   comment: string;
-  date: Date;
+  date: Date | Timestamp;
   uid?: string;
   nickname: string;
   profileImg: string;
