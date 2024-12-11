@@ -549,6 +549,7 @@ const CalendarComponent = () => {
               다음
             </button>
           </div>
+          <button className={styles.TeamInvitation}>팀 초대</button>
         </div>
         <IconButton
           icon={<AiFillPlusCircle className={styles.createBtn} />}
