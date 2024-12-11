@@ -1,19 +1,9 @@
 import { useEffect, useState } from "react";
 import Header from "../../header/Header";
 import styles from "../detail/detail.module.scss";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  Timestamp,
-  where,
-} from "firebase/firestore";
+import { deleteDoc, doc, Timestamp } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { appAuth, appFireStore } from "../../../firebase/config";
-import { EventsData, UserData } from "../../../types";
 import Loader from "../../loader/Loader";
 import { EventTypeEnum } from "../../../types/enum/EventTypeEnum";
 import dayjs from "dayjs";
@@ -26,12 +16,14 @@ import { useTeamStore } from "../../../store/useTeamStore";
 import { AiOutlineLike } from "react-icons/ai";
 import { AiFillLike } from "react-icons/ai";
 import IconButton from "../../button/iconButton/IconButton";
-import { useMutation } from "@tanstack/react-query";
-import { eventLikeFetch } from "../../../utils/http/event/http";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  eventLikeFetch,
+  fetchEventData,
+  fetchUserData,
+} from "../../../utils/http/event/http";
 import { queryClient } from "../../../utils/http";
 import Comments from "../../comments/Comments";
-
-type CurrentUserData = Omit<UserData, "token">;
 
 type EventColor =
   | "red"
@@ -54,9 +46,6 @@ const colorMap: Record<EventColor, string> = {
 
 function Detail() {
   const { id } = useParams<{ id: string }>();
-  const [eventData, setEventData] = useState<EventsData | null>(null);
-  const [userData, setUserData] = useState<CurrentUserData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLike, setIsLike] = useState<boolean>(false);
   const [addressUrl, setAddressUrl] = useState<string>("");
@@ -74,61 +63,30 @@ function Detail() {
     },
   });
 
-  useEffect(() => {
-    const fetchEventData = async () => {
-      if (!id) {
-        setError("일정 ID가 없습니다.");
-        setIsLoading(false);
-        return;
-      }
+  // Event data query
+  const { data: eventData, isLoading: isEventDataLoading } = useQuery({
+    queryKey: ["event", id],
+    queryFn: () => fetchEventData(id!),
+    enabled: !!id,
+  });
 
-      try {
-        const eventDoc = doc(appFireStore, "events", id);
-        const docSnap = await getDoc(eventDoc);
-
-        if (docSnap.exists()) {
-          setEventData(docSnap.data() as EventsData);
-        } else {
-          setError("해당 이벤트를 찾을 수 없습니다.");
-        }
-      } catch (err) {
-        console.error("데이터를 불러오는 중 오류가 발생했습니다.", err);
-        setError("데이터를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEventData();
-  }, [id]);
+  // User data query
+  const { data: userData } = useQuery({
+    queryKey: ["user", eventData?.uid],
+    queryFn: () => fetchUserData(eventData!.uid!),
+    enabled: !!eventData?.uid,
+  });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (eventData && eventData.uid) {
-        try {
-          const userData = await userDataFetch(eventData.uid);
-          setUserData(userData);
-        } catch (err) {
-          console.error(
-            "사용자 데이터를 불러오는 중 오류가 발생했습니다.",
-            err
-          );
-        }
-      }
-    };
-    if (eventData && eventData.like) {
+    if (eventData?.like) {
       const likeCheck = eventData.like.filter(
         (id) => id === appAuth.currentUser?.uid
       );
 
-      if (likeCheck.length !== 0) {
-        setIsLike(true);
-      } else {
-        setIsLike(false);
-      }
+      setIsLike(likeCheck.length !== 0);
     }
 
-    if (eventData && eventData.address) {
+    if (eventData?.address) {
       if (eventData.address?.place_name) {
         setAddressUrl(`${eventData.address.place_name}`);
       } else {
@@ -141,29 +99,34 @@ function Detail() {
         );
       }
     }
-
-    fetchUserData();
   }, [eventData]);
 
   const handleLikeUpdate = async () => {
-    if (eventData && id && appAuth && appAuth.currentUser) {
-      const checkLikeState = eventData?.like.indexOf(appAuth.currentUser?.uid);
-      let newLikeState: string[] = [];
-      console.log(checkLikeState);
-      if (checkLikeState >= 0) {
-        const filteredUid: string[] = eventData.like.filter(
-          (uid) => uid !== appAuth.currentUser?.uid
-        );
-        newLikeState = filteredUid;
-      } else {
-        newLikeState = [...eventData.like, appAuth.currentUser?.uid];
-      }
-
-      await likeMutation.mutateAsync({
-        eventId: id,
-        like: newLikeState,
-      });
+    if (!id) {
+      toast.error("이벤트 ID가 없습니다.");
+      return;
     }
+
+    if (!appAuth.currentUser) {
+      toast.error("로그인이 필요합니다.");
+      return;
+    }
+
+    if (!eventData) {
+      toast.error("이벤트 데이터를 찾을 수 없습니다.");
+      return;
+    }
+
+    const checkLikeState = eventData.like.indexOf(appAuth.currentUser.uid);
+    const newLikeState =
+      checkLikeState >= 0
+        ? eventData.like.filter((uid) => uid !== appAuth.currentUser?.uid)
+        : [...eventData.like, appAuth.currentUser.uid];
+
+    await likeMutation.mutateAsync({
+      eventId: id,
+      like: newLikeState,
+    });
   };
 
   const getEventColor = (colorName: EventColor | string): string => {
@@ -215,7 +178,7 @@ function Detail() {
       end.minute() === 59
     );
   };
-  if (isLoading) {
+  if (isEventDataLoading) {
     return <Loader />;
   }
 
@@ -258,7 +221,6 @@ function Detail() {
     if (!confirmDelete) return;
 
     try {
-      setIsLoading(true);
       const eventDocRef = doc(appFireStore, "events", id);
       await deleteDoc(eventDocRef);
       const seconds = sessionStorage.getItem("seconds");
@@ -270,27 +232,7 @@ function Detail() {
     } catch (err) {
       console.error("일정 삭제 중 오류가 발생했습니다:", err);
       setError("일정 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
-    } finally {
-      setIsLoading(false);
     }
-  };
-
-  const userDataFetch = async (
-    userId: string
-  ): Promise<CurrentUserData | null> => {
-    if (!userId) {
-      throw new Error("userId is required");
-    }
-
-    const userCollection = collection(appFireStore, "users");
-    const q = query(userCollection, where("uid", "==", userId));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      return null;
-    }
-
-    return querySnapshot.docs[0].data() as CurrentUserData;
   };
 
   return (
@@ -389,6 +331,7 @@ function Detail() {
           )}
           {teamName && (
             <Comments
+              commentsData={eventData?.comments?.comments || []}
               eventId={id ?? ""}
               uid={appAuth.currentUser?.uid ?? ""}
               nickname={userData?.nickname ?? ""}
