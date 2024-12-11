@@ -148,6 +148,11 @@ export interface EventCommentsFetchProps {
   comments: CommentData;
 }
 
+export interface DeleteCommentsProps {
+  data: CommentData[];
+  id: string;
+}
+
 export interface EventAddress {
   region_address_name?: string;
   place_url?: string;
