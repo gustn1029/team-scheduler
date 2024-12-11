@@ -9,31 +9,44 @@ import { useMutation } from "@tanstack/react-query";
 import { eventCommentsFetch } from "../../utils/http/event/http";
 import toast from "react-hot-toast";
 import { queryClient } from "../../utils/http";
-import { CommentsProps } from "./Comments";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 interface CommentsFormData {
   comment: string;
 }
 
-const CommentsForm = ({ nickname, eventId, uid, profileImg }: CommentsProps) => {
-    const [isPost, setIsPost] = useState<boolean>(false);
+interface CommentsFormProps {
+  nickname: string;
+  eventId: string;
+  uid: string;
+  profileImg: string;
+}
+
+const CommentsForm = ({
+  nickname,
+  eventId,
+  uid,
+  profileImg,
+}: CommentsFormProps) => {
+  const [isPost, setIsPost] = useState<boolean>(false);
+  const { id } = useParams<{ id: string }>();
   const {
     register,
     watch,
     formState: { errors },
     handleSubmit,
-    reset
+    reset,
   } = useForm<CommentsFormData>();
 
   const commentsMutation = useMutation({
     mutationFn: eventCommentsFetch,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["comments", eventId, uid],
+        queryKey: ["event", id],
       });
       toast.success(data?.message ?? "댓글을 등록했습니다.");
-      reset({comment: ""});
+      reset({ comment: "" });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -47,7 +60,7 @@ const CommentsForm = ({ nickname, eventId, uid, profileImg }: CommentsProps) => 
         date: new Date(),
         uid: uid,
         nickname: nickname,
-        profileImg: profileImg
+        profileImg: profileImg,
       };
 
       await commentsMutation.mutateAsync({
@@ -63,10 +76,10 @@ const CommentsForm = ({ nickname, eventId, uid, profileImg }: CommentsProps) => 
         isLabelTextHidden
         register={register("comment", {
           onChange: (e) => {
-            if(e.target.value.trim() !== "") {
-                setIsPost(true);
+            if (e.target.value.trim() !== "") {
+              setIsPost(true);
             } else {
-                setIsPost(false);
+              setIsPost(false);
             }
             e.target.style.height = "40px";
             if (e.target.scrollHeight > 20) {
@@ -86,11 +99,8 @@ const CommentsForm = ({ nickname, eventId, uid, profileImg }: CommentsProps) => 
       <Button
         type="submit"
         disabled={!isPost}
-        buttonStyle={
-          !isPost
-            ? ButtonStyleEnum.Primary
-            : ButtonStyleEnum.Normal
-        }
+        buttonStyle={!isPost ? ButtonStyleEnum.Primary : ButtonStyleEnum.Normal}
+        buttonClassName={styles.commentsButton}
       >
         등록
       </Button>
