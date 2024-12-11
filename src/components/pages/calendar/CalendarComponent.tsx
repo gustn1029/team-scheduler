@@ -28,10 +28,16 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { appAuth } from "../../../firebase/config";
+import { appAuth, appFireStore } from "../../../firebase/config";
 
 import { FaPlus } from "react-icons/fa6";
-import { Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { layoutYVarients } from "../../../utils/Animations";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
@@ -51,6 +57,18 @@ const CalendarComponent = () => {
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
   const eventsRef = useRef<HTMLSpanElement | null>(null);
 
+  // 팀 데이터 가져오는 쿼리
+  const { data: teamData } = useQuery({
+    queryKey: ["team", appAuth.currentUser?.uid],
+    queryFn: async () => {
+      const teamsRef = collection(appFireStore, "teams");
+      const q = query(teamsRef, where("uid", "==", appAuth.currentUser?.uid));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs[0]?.data();
+    },
+    enabled: !!appAuth.currentUser?.uid,
+  });
+
   // 현재 월의 이벤트 데이터를 가져오는 쿼리
   const { data: events } = useQuery({
     queryKey: [
@@ -58,12 +76,14 @@ const CalendarComponent = () => {
       appAuth.currentUser?.uid,
       date.getFullYear(),
       date.getMonth(),
+      teamData?.id,
     ],
     queryFn: () =>
       eventsDataFetch({
         year: date.getFullYear(),
         month: date.getMonth(),
         uid: appAuth.currentUser?.uid as string,
+        teamId: teamData?.id,
       }),
     enabled: !!appAuth.currentUser?.uid,
   });
@@ -503,18 +523,18 @@ const CalendarComponent = () => {
           {isView && (
             <motion.div
               variants={{
-                hidden: { 
+                hidden: {
                   opacity: 0,
-                  transition: { delay: 0, duration: 0.3 }
+                  transition: { delay: 0, duration: 0.3 },
                 },
-                visible: { 
+                visible: {
                   opacity: 1,
-                  transition: { delay: 0.5, duration: 0.3 }
+                  transition: { delay: 0.5, duration: 0.3 },
                 },
-                exit: { 
+                exit: {
                   opacity: 0,
-                  transition: { delay: 0, duration: 0.3 }
-                }
+                  transition: { delay: 0, duration: 0.3 },
+                },
               }}
               initial="hidden"
               animate="visible"

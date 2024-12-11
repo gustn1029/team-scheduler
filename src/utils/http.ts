@@ -228,6 +228,7 @@ export const eventsDataFetch = async ({
   year,
   month,
   uid,
+  teamId,
 }: EventsFetchProps): Promise<EventsData[]> => {
   const monthStart = dayjs(new Date(year, month, 1)).startOf("month");
   const monthEnd = monthStart.endOf("month");
@@ -236,12 +237,19 @@ export const eventsDataFetch = async ({
   const queryEndDate = monthEnd.add(7, "day").toDate();
 
   const userCollection = collection(appFireStore, "events");
-  const q = query(
-    userCollection,
+
+  const conditions = [
     where("uid", "==", uid),
     where("startDate", ">=", queryStartDate),
-    where("startDate", "<=", queryEndDate)
-  );
+    where("startDate", "<=", queryEndDate),
+  ];
+
+  // teamId 필터링
+  if (teamId) {
+    conditions.push(where("teamId", "==", teamId));
+  }
+
+  const q = query(userCollection, ...conditions);
   const querySnapshot = await getDocs(q);
 
   const holidays = await holidayDataFetch({ year, month });
