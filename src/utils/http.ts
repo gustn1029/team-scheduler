@@ -247,6 +247,9 @@ export const eventsDataFetch = async ({
   // teamId 필터링
   if (teamId) {
     conditions.push(where("teamId", "==", teamId));
+  } else {
+    // teamId가 없으면 개인 이벤트만 조회
+    conditions.push(where("uid", "==", uid));
   }
 
   const q = query(userCollection, ...conditions);
