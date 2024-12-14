@@ -476,6 +476,32 @@ export const profileUpdateFetch = async ({
   });
 };
 
+// teamDataFetch
+export const teamDataFetch = async (uid: string) => {
+  const teamsRef = collection(appFireStore, "teams");
+
+  const managerQuery = query(teamsRef, where("manager.uid", "==", uid));
+
+  const participantQuery = query(
+    teamsRef,
+    where("participants", "array-contains", { uid: uid })
+  );
+
+  const [managerSnapshot, participantSnapshot] = await Promise.all([
+    getDocs(managerQuery),
+    getDocs(participantQuery),
+  ]);
+
+  const teams = [...managerSnapshot.docs, ...participantSnapshot.docs].map(
+    (doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })
+  );
+
+  return teams.length ? teams[0] : null;
+};
+
 // 탈퇴 관련 함수
 async function deleteUserProfileImage(id: string) {
   try {
