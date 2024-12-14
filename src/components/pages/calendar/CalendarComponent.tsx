@@ -8,6 +8,7 @@ import {
   calendarTodosFetch,
   eventsDataFetch,
   queryClient,
+  teamDataFetch,
 } from "../../../utils/http";
 import {
   Fragment,
@@ -28,16 +29,10 @@ import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { appAuth, appFireStore } from "../../../firebase/config";
+import { appAuth } from "../../../firebase/config";
 
 import { FaPlus } from "react-icons/fa6";
-import {
-  collection,
-  getDocs,
-  query,
-  Timestamp,
-  where,
-} from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { layoutYVarients } from "../../../utils/Animations";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
@@ -60,12 +55,7 @@ const CalendarComponent = () => {
   // 팀 데이터 가져오는 쿼리
   const { data: teamData } = useQuery({
     queryKey: ["team", appAuth.currentUser?.uid],
-    queryFn: async () => {
-      const teamsRef = collection(appFireStore, "teams");
-      const q = query(teamsRef, where("uid", "==", appAuth.currentUser?.uid));
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs[0]?.data();
-    },
+    queryFn: () => teamDataFetch(appAuth.currentUser?.uid as string),
     enabled: !!appAuth.currentUser?.uid,
   });
 
