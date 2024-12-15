@@ -247,6 +247,9 @@ export const eventsDataFetch = async ({
   // teamId 필터링
   if (teamId) {
     conditions.push(where("teamId", "==", teamId));
+  } else {
+    // teamId가 없으면 개인 이벤트만 조회
+    conditions.push(where("uid", "==", uid));
   }
 
   const q = query(userCollection, ...conditions);
@@ -474,6 +477,32 @@ export const profileUpdateFetch = async ({
     nickname: data.nickname,
     profileImg: data.profileImg,
   });
+};
+
+// teamDataFetch
+export const teamDataFetch = async (uid: string) => {
+  const teamsRef = collection(appFireStore, "teams");
+
+  const managerQuery = query(teamsRef, where("manager.uid", "==", uid));
+
+  const participantQuery = query(
+    teamsRef,
+    where("participants", "array-contains", { uid: uid })
+  );
+
+  const [managerSnapshot, participantSnapshot] = await Promise.all([
+    getDocs(managerQuery),
+    getDocs(participantQuery),
+  ]);
+
+  const teams = [...managerSnapshot.docs, ...participantSnapshot.docs].map(
+    (doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })
+  );
+
+  return teams.length ? teams[0] : null;
 };
 
 // 탈퇴 관련 함수

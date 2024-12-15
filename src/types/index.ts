@@ -168,6 +168,7 @@ export interface EventsFetchProps {
   year: number;
   month: number;
   uid: string;
+  teamId?: string;
 }
 
 export interface CalendarTodos {

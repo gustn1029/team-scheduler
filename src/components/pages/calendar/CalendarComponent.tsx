@@ -22,22 +22,16 @@ import { CalendarTodos, EventsData } from "../../../types";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import CreateModal from "../../createModal/CreateModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaBars } from "react-icons/fa6";
 import IconButton from "../../button/iconButton/IconButton";
 import { useViewNavStore } from "../../../store/useViewNavStore";
 import Navigation from "../../navigation/Navigation";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { appAuth, appFireStore } from "../../../firebase/config";
+import { appAuth } from "../../../firebase/config";
 
 import { FaPlus } from "react-icons/fa6";
-import {
-  collection,
-  getDocs,
-  query,
-  Timestamp,
-  where,
-} from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { layoutYVarients } from "../../../utils/Animations";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
@@ -56,18 +50,8 @@ const CalendarComponent = () => {
   const { isView, toggleIsView } = useViewNavStore();
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
   const eventsRef = useRef<HTMLSpanElement | null>(null);
-
-  // 팀 데이터 가져오는 쿼리
-  const { data: teamData } = useQuery({
-    queryKey: ["team", appAuth.currentUser?.uid],
-    queryFn: async () => {
-      const teamsRef = collection(appFireStore, "teams");
-      const q = query(teamsRef, where("uid", "==", appAuth.currentUser?.uid));
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs[0]?.data();
-    },
-    enabled: !!appAuth.currentUser?.uid,
-  });
+  const [searchParams] = useSearchParams();
+  const teamId = searchParams.get("teamId");
 
   // 현재 월의 이벤트 데이터를 가져오는 쿼리
   const { data: events } = useQuery({
@@ -76,14 +60,14 @@ const CalendarComponent = () => {
       appAuth.currentUser?.uid,
       date.getFullYear(),
       date.getMonth(),
-      teamData?.id,
+      teamId,
     ],
     queryFn: () =>
       eventsDataFetch({
         year: date.getFullYear(),
         month: date.getMonth(),
         uid: appAuth.currentUser?.uid as string,
-        teamId: teamData?.id,
+        teamId: teamId || undefined,
       }),
     enabled: !!appAuth.currentUser?.uid,
   });
