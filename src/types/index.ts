@@ -16,6 +16,7 @@ export interface UserData {
   profileImg: string;
   name: string;
   nickname: string;
+  teams:any[];
 }
 
 export interface ProfileData {
