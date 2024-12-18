@@ -49,7 +49,6 @@ const Navigation = () => {
 
   useEffect(() => {
     setIsView(false);
-    console.log(isView);
   }, [pathname]);
 
   const handleLogout = () => {
