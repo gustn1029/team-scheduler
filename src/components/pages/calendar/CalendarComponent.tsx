@@ -36,6 +36,7 @@ import { layoutYVarients } from "../../../utils/Animations";
 import MainAnimationLayout from "../../layouts/MainAnimationLayout";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useTeamStore } from "../../../store/useTeamStore";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -47,11 +48,10 @@ const CalendarComponent = () => {
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const navigate = useNavigate();
   const navRef = useRef<HTMLElement | null>(null);
-  const { isView, toggleIsView } = useViewNavStore();
+  const { isView, setIsView } = useViewNavStore();
   const { date, setDate, prevMonth, nextMonth } = useDateStore();
   const eventsRef = useRef<HTMLSpanElement | null>(null);
-  const [searchParams] = useSearchParams();
-  const teamId = searchParams.get("teamId");
+  const {teamName:teamId} = useTeamStore();
 
   // 현재 월의 이벤트 데이터를 가져오는 쿼리
   const { data: events } = useQuery({
@@ -470,7 +470,7 @@ const CalendarComponent = () => {
     if (!navRef.current) return;
 
     if (navRef.current === e.target) {
-      toggleIsView();
+      setIsView(false);
     }
   };
 
@@ -482,7 +482,7 @@ const CalendarComponent = () => {
       setIsCreate(false);
     }
 
-    toggleIsView();
+    setIsView(true);
   };
 
   return (

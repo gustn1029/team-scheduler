@@ -2,10 +2,10 @@ import { create } from "zustand";
 
 interface ViewNavStore {
   isView: boolean;
-  toggleIsView: () => void;
+  setIsView: (isView:boolean) => void;
 }
 
 export const useViewNavStore = create<ViewNavStore>((set) => ({
   isView: false,
-  toggleIsView: () => set((state) => ({ isView: !state.isView })),
+  setIsView: (isView) => set({ isView: isView }),
 }));
