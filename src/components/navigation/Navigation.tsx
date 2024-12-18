@@ -9,16 +9,19 @@ import { logoutFetch, queryClient, userDataFetch } from "../../utils/http";
 import thumbnailImage from "../../assets/images/profile/thumbnail.svg";
 import Button from "../button/Button";
 import { ButtonStyleEnum } from "../../types/enum/ButtonEnum";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { FaCog } from "react-icons/fa";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa6";
 import { useDateStore } from "../../store/useDateStore";
+import { useEffect } from "react";
 
 const Navigation = () => {
-  const { toggleIsView } = useViewNavStore();
+  const { setIsView, isView } = useViewNavStore();
   const { setDate } = useDateStore();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const { data: authData } = useQuery({
     queryKey: ["auth", appAuth.currentUser?.uid],
@@ -30,7 +33,7 @@ const Navigation = () => {
     mutationFn: logoutFetch,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] });
-      toggleIsView();
+      setIsView(false);
       sessionStorage.removeItem("user");
       if (sessionStorage.getItem("currentDate") !== null) {
         sessionStorage.removeItem("currentDate");
@@ -44,17 +47,22 @@ const Navigation = () => {
     },
   });
 
+  useEffect(() => {
+    setIsView(false);
+    console.log(isView);
+  }, [pathname]);
+
   const handleLogout = () => {
     logoutMutation.mutate();
   };
 
   const handleLogin = () => {
-    toggleIsView();
+    setIsView(false);
     navigate("/login");
   };
 
   const handleRouteUrl = () => {
-    toggleIsView();
+    setIsView(false);
     if (authData) {
       navigate("/profile");
     } else {
@@ -69,7 +77,7 @@ const Navigation = () => {
           <IconButton
             className={styles.closeBtn}
             icon={<FaXmark />}
-            onClick={toggleIsView}
+            onClick={()=> setIsView(false)}
           />
         </li>
         <li className={styles.profileWrap}>
@@ -92,7 +100,22 @@ const Navigation = () => {
         </li>
         <li className={styles.categoryWrap}>
           <dl>
-            <dt>카테고리</dt>
+            <dt>
+              <span>카테고리</span>
+              <IconButton icon={<FaPlus />} />
+            </dt>
+            <dd>
+              <Link to={"/"} className={styles.user}>
+                개인
+              </Link>
+            </dd>
+            {authData?.teams.map((el) => (
+              <dd>
+                <Link to={`/${el.teamId}/calendar`} className={styles.team}>
+                  {el.title}
+                </Link>
+              </dd>
+            ))}
           </dl>
         </li>
       </ul>

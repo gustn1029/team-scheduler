@@ -61,9 +61,58 @@
 
     .categoryWrap {
       dt {
+        padding-left: 20px;
         color: white;
         padding-bottom: 10px;
         border-bottom: 1px solid white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        button {
+          color: white;
+          font-size: 1.3rem;
+        }
+      }
+
+      dd {
+        margin: 0;
+
+        a {
+          padding: 10px 20px;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          transition: all 0.3s;
+
+          &:hover {
+            color: #86BEFF;
+          }
+
+          &::before {
+            content: "";
+            width: 14px;
+            height: 14px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+          }
+
+          &.user::before {
+            background-image: url(../../assets/images/teams/single.svg);
+          }
+
+          &.user:hover:before {
+            background-image: url(../../assets/images/teams/single_hover.svg);
+          }
+
+          &.team::before {
+            background-image: url(../../assets/images/teams/multi.svg);
+          }
+          &.team:hover::before {
+            background-image: url(../../assets/images/teams/multi_hover.svg);
+          }
+        }
       }
     }
   }
